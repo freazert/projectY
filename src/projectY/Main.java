@@ -1,5 +1,8 @@
 package projectY;
 
 public class Main {
-	qcsqc
+	public static void Main(String args[])
+	{
+		System.out.print("Jeroen is raar");
+	}
 }
