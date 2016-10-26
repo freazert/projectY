@@ -1,12 +1,18 @@
 package node;
 
+import java.net.MalformedURLException;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 
-import be.uantwerpen.rmiInterfaces.IBankAccount;
+import interfaces.IWrapper;
 
 public class Main {
-	public static void main(String args[])
+	public static void main(String args[]) throws MalformedURLException, RemoteException, NotBoundException
 	{
-		IBankAccount obj = (IBankAccount) Naming.lookup( "//"+"localhost"+"/Bank");         //objectname in registry 
+		IWrapper obj = (IWrapper) Naming.lookup( "//"+"localhost"+"/hash");         //objectname in registry
+		String ip = obj.getFileNode("test.txt");
+		
+		System.out.print(ip);
 	}
 }
