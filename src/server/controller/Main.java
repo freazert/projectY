@@ -1,20 +1,28 @@
 package server.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.StringWriter;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import java.rmi.AlreadyBoundException;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 public class Main {
 
-	public static void main(String[] args) {
-		Hashing hash = new Hashing("YorickDeBock");
+	public static void main(String[] args) throws AlreadyBoundException 
+	{
+		Registry registry;
+		try {
+			
+			Wrapper wrap = new Wrapper();
+			
+			registry = LocateRegistry.createRegistry(1099);
+			registry.bind("hash", (Remote)wrap);
+			
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/*Hashing hash = new Hashing("YorickDeBock");
 		HashingMap hmap;
 
 		/*System.out.println(hash.getHash());
@@ -29,7 +37,7 @@ public class Main {
 		
 		
 
-		try {
+		/*-try {
 			hmap = xmlToObject();
 			System.out.println(hmap.getNext(new Hashing("test.txt")));
 			//System.out.println(hmap.toString());
@@ -55,33 +63,6 @@ public class Main {
 
 	}
 
-	private static <T> void objectToXml(T object) throws JAXBException {
-		JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
-		// StringWriter writerTo = new StringWriter();
-		FileOutputStream fileOut;
-		try {
-			fileOut = new FileOutputStream("D:/school/hashMap.xml");
-			Marshaller marshaller = jaxbContext.createMarshaller();
-			//StringWriter wr = new StringWriter();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			marshaller.marshal(object, fileOut);
-			//System.out.println(wr);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	private static HashingMap xmlToObject() throws JAXBException {
-		JAXBContext jaxbContext = JAXBContext.newInstance(HashingMap.class);
-		// StringWriter writerTo = new StringWriter();
-		FileOutputStream fileOut;
-
-		// marshaller = jaxbContext.createMarshaller();
-		Unmarshaller u = jaxbContext.createUnmarshaller();
-		
-		return (HashingMap) u.unmarshal(new File("D:/school/hashMap.xml"));
-
-	}
+	
 
 }
