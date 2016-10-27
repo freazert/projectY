@@ -7,30 +7,59 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-//import marshal2.Jef;
 @XmlRootElement
 public class HashingMap {
 	@XmlElement
 	public HashMap<Integer, String> hashMap;
 
-	public HashingMap(Hashing hash) {
+	public HashingMap(Hashing hash) 
+	{
 		this.hashMap = new HashMap<Integer, String>();
 		addRecord(hash, "192.168.1.1");
 	}
 
-	public HashingMap() {
+	public HashingMap() 
+	{
 		this.hashMap = new HashMap<Integer, String>();
 	}
 
-	public void addRecord(Hashing hash, String ip) {
-		this.hashMap.put(hash.getHash(), ip);
+	public int addRecord(Hashing hash, String ip) 
+	{
+		try {
+			String isFree = this.hashMap.get(hash.getHash());
+			System.out.println(isFree);
+			if(isFree == null) {
+				this.hashMap.put(hash.getHash(), ip);
+				System.out.println("toch ni null, ofwel ofni");
+				return 1;
+			}
+			
+			return 0;
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+			
+			return 0;
+		}
+		
 	}
 
-	public void removeRecord(Hashing hash) {
-		this.hashMap.remove(hash.getHash());
+	public int removeRecord(Hashing hash) 
+	{
+		try {
+			this.hashMap.remove(hash.getHash());
+			
+			return 1;
+		} catch(Exception e) {
+			e.printStackTrace();
+			
+			return 0;
+		}
+		
 	}
 
-	public String getIp(Hashing hash) {
+	public String getIp(Hashing hash) 
+	{
 		return this.hashMap.get(hash.getHash()).toString();
 	}
 
@@ -45,13 +74,10 @@ public class HashingMap {
 	    while (it.hasNext()) {
 	        Map.Entry<Integer, String> pair = (Map.Entry)it.next();
 	        if( record == null) {
-	        	System.out.println("record is null");
 	        	record = pair;
 	        	highestRecord = pair;
 	        	lowestRecord = pair;
-	        } else {
-	        	System.out.println("hash: " + hash.getHash());
-	        	
+	        } else {	        	
 	        	//set lowest and highest hashes
 	        	if(highestRecord.getKey() < pair.getKey()) {
 	        		highestRecord = pair;
@@ -64,8 +90,6 @@ public class HashingMap {
 	        		record = pair;
 	        	}
 	        }
-	        
-	        it.remove(); // avoids a ConcurrentModificationException
 	    }
 	    
 	    // if fileHash is higher than highest hash, take lowest hash
@@ -75,9 +99,4 @@ public class HashingMap {
 	    
 		return record.getValue();
 	}
-
-	private void sort() {
-
-	}
-
 }

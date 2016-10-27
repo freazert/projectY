@@ -20,6 +20,11 @@ public class Hashing {
 		return this.hash;
 	}
 	
+	public String getName()
+	{
+		return this.name;
+	}
+	
 	private void makeHash()
 	{
 		MessageDigest md = null;
@@ -40,10 +45,7 @@ public class Hashing {
 		this.hash = h % 32769;
 	}
 	
-	public String getName()
-	{
-		return this.name;
-	}
+	
 	
 	
 	
