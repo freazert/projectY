@@ -126,7 +126,8 @@ public class HashingMap {
 	        	}
 	        	
 	        	//check for new record
-	        	if(fileHash > pair.getKey() && record.getKey() > pair.getKey()) {
+	        	if(fileHash > pair.getKey() && 
+	        			(pair.getKey() > record.getKey() || fileHash < record.getKey())){
 	        		record = pair;
 	        		System.out.println("new: " + record.getKey());
 	        		//System.out.Println(record.getKey().toString());
@@ -141,6 +142,7 @@ public class HashingMap {
 	    	System.out.println("new at end: " + record.getKey());
 	    }
 	    System.out.println("Search complete");
+	    System.out.println("result: " + record.getKey());
 	    
 		return record.getValue();
 	}
