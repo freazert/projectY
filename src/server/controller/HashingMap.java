@@ -99,4 +99,49 @@ public class HashingMap {
 	    
 		return record.getValue();
 	}
+	
+	public String getNode(Hashing hash)
+	{
+		Map.Entry<Integer, String> record = null;
+		Map.Entry<Integer, String> highestRecord = null;
+		Map.Entry<Integer, String> lowestRecord = null;
+		int fileHash = hash.getHash();
+		
+		Iterator it = this.hashMap.entrySet().iterator();
+		System.out.println("searching... filehash = " + fileHash);
+	    while (it.hasNext()) {
+	        Map.Entry<Integer, String> pair = (Map.Entry)it.next();
+	        System.out.println("pair key = " + pair.getKey());
+	        if( record == null) {
+	        	record = pair;
+	        	System.out.println("new at start: " + record.getKey());
+	        	highestRecord = pair;
+	        	lowestRecord = pair;
+	        } else {	        	
+	        	//set lowest and highest hashes
+	        	if(highestRecord.getKey() < pair.getKey()) {
+	        		highestRecord = pair;
+	        	} else if(lowestRecord.getKey() > pair.getKey()) {
+	        		lowestRecord = pair;
+	        	}
+	        	
+	        	//check for new record
+	        	if(fileHash > pair.getKey() && record.getKey() > pair.getKey()) {
+	        		record = pair;
+	        		System.out.println("new: " + record.getKey());
+	        		//System.out.Println(record.getKey().toString());
+	        	}
+	        }
+	    }
+	    
+	    
+	    // if fileHash is higher than highest hash, take lowest hash
+	    if(fileHash < lowestRecord.getKey()) {
+	    	record = highestRecord;
+	    	System.out.println("new at end: " + record.getKey());
+	    }
+	    System.out.println("Search complete");
+	    
+		return record.getValue();
+	}
 }

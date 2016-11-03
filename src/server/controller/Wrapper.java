@@ -37,7 +37,7 @@ public class Wrapper extends UnicastRemoteObject implements IWrapper{
 		Hashing hash = new Hashing(name);
 		System.out.println(hash.getHash());
 		
-		return this.hmap.getNext(hash);
+		return this.hmap.getNode(hash);
 	}
 	
 	public int removeNode(String name)
@@ -102,6 +102,7 @@ public class Wrapper extends UnicastRemoteObject implements IWrapper{
 	private HashingMap xmlToObject() throws JAXBException {
 		JAXBContext jaxbContext = JAXBContext.newInstance(HashingMap.class);
 		Unmarshaller u = jaxbContext.createUnmarshaller();
+		this.hmap = new HashingMap();
 		
 		return (HashingMap) u.unmarshal(new File("D:/school/hashMap.xml"));
 
