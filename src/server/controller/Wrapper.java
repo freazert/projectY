@@ -3,6 +3,7 @@ package server.controller;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
@@ -61,7 +62,7 @@ public class Wrapper extends UnicastRemoteObject implements IWrapper{
 		// StringWriter writerTo = new StringWriter();
 		FileOutputStream fileOut;
 		try {
-			fileOut = new FileOutputStream("D:/school/hashMap.xml");
+			fileOut = new FileOutputStream("hashMap.xml");
 			Marshaller marshaller = jaxbContext.createMarshaller();
 			//StringWriter wr = new StringWriter();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -104,7 +105,18 @@ public class Wrapper extends UnicastRemoteObject implements IWrapper{
 		Unmarshaller u = jaxbContext.createUnmarshaller();
 		this.hmap = new HashingMap();
 		
-		return (HashingMap) u.unmarshal(new File("D:/school/hashMap.xml"));
+		
+		try {
+			File f = new File("hashMap.xml");
+			f.createNewFile();
+			this.hmap = new HashingMap();
+			objectToXml();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return (HashingMap) u.unmarshal(new File("hashMap.xml"));
 
 	}
 
