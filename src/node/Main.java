@@ -17,12 +17,18 @@ public class Main {
 	public static void main(String args[]) throws MalformedURLException, RemoteException, NotBoundException {
 		IWrapper obj = (IWrapper) Naming.lookup("//" + "localhost" + "/hash"); // objectname
 																				// in
-																				// registry
-		obj.createNode("kris");
+		obj.createNode("Kris");
+		obj.createNode("YorickDeBock");																		// registry
+		obj.createNode("test1234");
+		obj.createNode("Hupsakee");
+		
 		// System.out.println(obj.removeNode("test1234"));
 
-		String ip = obj.getFileNode("test1234");
-		System.out.println(ping(ip));
+		String ip = obj.getFileNode("Jeroen");
+		obj.getFileNode("TESt");
+		obj.getFileNode("test");
+		obj.getFileNode("j");
+		//System.out.println(ping(ip));
 
 	}
 
