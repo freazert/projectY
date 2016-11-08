@@ -5,11 +5,12 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
-public class MulticastServerThread {
+public class MulticastServerThread extends Thread {
+	private Wrapper wrap;
 
-	public MulticastServerThread()
+	public MulticastServerThread(Wrapper wrap)
 	{
-		
+		this.wrap = wrap;
 	}
 	
 	public void run()
@@ -28,7 +29,7 @@ public class MulticastServerThread {
             //get packet
             DatagramPacket packet;
             boolean is_true = true;
-            while (is_true){
+            //while (is_true){
                 byte[] buf = new byte[256];
                 packet = new DatagramPacket(buf,buf.length);
                 socket.receive(packet);
@@ -36,11 +37,12 @@ public class MulticastServerThread {
                 int len = packet.getLength();
                 String received = (new String(buf)).substring(0,len);
                 try{
+                	this.wrap.createNode(received, packet.getAddress().getHostAddress());
                     System.out.println("Agent name: " + received + " (" + packet.getAddress() + ")");
                 } catch (NumberFormatException e){
                     System.out.println("cannot interpret number");
                 }
-            }
+            //}
             socket.leaveGroup(group);
             socket.close();
             

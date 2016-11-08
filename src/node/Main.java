@@ -15,7 +15,7 @@ import sun.misc.IOUtils;
 public class Main {
 
 	public static void main(String args[]) throws MalformedURLException, RemoteException, NotBoundException {
-		String name;
+		/*String name;
 		if(args.length > 0) {
 			name = args[0]; 
 		} else {
@@ -29,7 +29,8 @@ public class Main {
 		boolean test = ping(ip);
 		if(test) {
 			System.out.println("yowza");
-		}
+		}*/
+		MulticastClient mc = new MulticastClient();
 
 	}
 

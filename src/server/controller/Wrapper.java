@@ -81,18 +81,18 @@ public class Wrapper extends UnicastRemoteObject implements IWrapper{
 		return ip;
 	}
 	
-	public int createNode(String name)
+	public int createNode(String name, String ip)
 	{
 		try {
-			int success = this.hmap.addRecord(new Hashing(name), getClientHost());
+			int success = this.hmap.addRecord(new Hashing(name), ip);
 			objectToXml();
 			
 			return success;
-		} catch (ServerNotActiveException e) {
+		/*} catch (ServerNotActiveException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
-			return 0;
+			return 0;*/
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			
