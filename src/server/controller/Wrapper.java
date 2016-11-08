@@ -119,5 +119,11 @@ public class Wrapper extends UnicastRemoteObject implements IWrapper{
 		return (HashingMap) u.unmarshal(new File("hashMap.xml"));
 
 	}
+	
+	public int getCount()
+	{
+		return hmap.getCount();
+	}
+	
 
 }
