@@ -15,8 +15,10 @@ public class Main {
 			
 			Wrapper wrap = new Wrapper();
 			
-			registry = LocateRegistry.createRegistry(1099);
-			registry.bind("hash", (Remote)wrap);
+			new MulticastServerThread(wrap).start();
+			
+			/*registry = LocateRegistry.createRegistry(1099);
+			registry.bind("hash", (Remote)wrap);*/
 			
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
