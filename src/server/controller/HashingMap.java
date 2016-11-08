@@ -146,4 +146,9 @@ public class HashingMap {
 	    
 		return record.getValue();
 	}
+    public int getCount()
+    {
+    	return this.hashMap.size();
+    }
+    
 }

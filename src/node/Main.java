@@ -15,6 +15,8 @@ import sun.misc.IOUtils;
 public class Main {
 
 	public static void main(String args[]) throws MalformedURLException, RemoteException, NotBoundException {
+		String prevNode, nextNode;
+		
 		/*String name;
 		if(args.length > 0) {
 			name = args[0]; 
