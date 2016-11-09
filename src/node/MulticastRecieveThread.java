@@ -31,6 +31,13 @@ public class MulticastRecieveThread extends Thread {
 			{
 				socket.receive(dp);
 				System.out.print("lol");
+				
+				buf = dp.getData();
+                int len = dp.getLength();
+                String received = (new String(buf)).substring(0,len);
+                
+                System.out.println("nodenaam: " + received);
+				
 			}
 		}
 		catch(Exception e)
