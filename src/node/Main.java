@@ -24,7 +24,10 @@ public class Main {
 			name = "noName";
 		}
 		IWrapper obj = (IWrapper) Naming.lookup("//" + "192.168.1.16" + "/hash"); // objectname
-																				// in
+			
+		System.out.println("connected");
+		//obj.createNode(name, ip)
+		// in
 		//obj.createNode(name);
 		String ip = obj.getFileNode("lalala");
 		System.out.println(ip);

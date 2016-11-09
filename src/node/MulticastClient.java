@@ -14,7 +14,7 @@ public class MulticastClient {
 
     private DatagramSocket socket;
     private boolean broadcast =  true;
-    private String group = "224.0.0.0"; //group address
+    private String group = "230.2.2.3"; //group address
     private int delay = 5000;
     private DatagramSocket socketReceive;
 	private MulticastSocket multiSocket;
@@ -26,14 +26,17 @@ public class MulticastClient {
 	        Scanner sc = new Scanner(System.in);
 	        String agentName = sc.nextLine();
 	        
-            socket = new DatagramSocket();
+            socket = new DatagramSocket(portMulticasting);
             socketReceive = new DatagramSocket(3000);
            
-            multiSocket = new MulticastSocket(portMulticasting);
+            
             
             System.out.println("agent ready");
             
             start(agentName);
+            
+            socket.close();
+            multiSocket = new MulticastSocket(portMulticasting);
             
             new MulticastRecieveThread(multiSocket, group).start();
         }
@@ -56,8 +59,9 @@ public class MulticastClient {
                 
                 buf = new byte[256];
                 packet = new DatagramPacket(buf, buf.length);
-                
+                System.out.println("before receive");
                 socketReceive.receive(packet);
+                System.out.println("after receive");
                 
                 int countNodes = Integer.parseInt(new String(packet.getData(), 0, packet.getLength()));
                 
