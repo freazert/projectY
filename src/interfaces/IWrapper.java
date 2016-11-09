@@ -10,6 +10,6 @@ public interface IWrapper extends Remote {
 	String getIp(String name) throws RemoteException;
 	int createNode(String name, String ip) throws RemoteException;
 	int removeNode(String name) throws RemoteException;
-	Hashing getHash(String name);
+	int getHash(String name) throws RemoteException;
 
 }
