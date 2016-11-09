@@ -17,15 +17,16 @@ public class Main {
 			
 			new MulticastServerThread(wrap).start();
 			
-			/*registry = LocateRegistry.createRegistry(1099);
-			registry.bind("hash", (Remote)wrap);*/
+			
+			//registry = LocateRegistry.createRegistry(1099);
+			//registry.bind("hash", (Remote)wrap);
 			
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		/*Hashing hash = new Hashing("YorickDeBock");
-		HashingMap hmap;
+		HashingMap hmap;z
 
 		/*System.out.println(hash.getHash());
 		System.out.println(hash.getName());
