@@ -125,5 +125,10 @@ public class Wrapper extends UnicastRemoteObject implements IWrapper{
 		return hmap.getCount();
 	}
 	
+	public Hashing getHash(String name)
+	{
+		return new Hashing(name);
+	}
+	
 
 }
