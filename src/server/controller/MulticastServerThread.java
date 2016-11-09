@@ -18,7 +18,7 @@ public class MulticastServerThread extends Thread {
 	
 	public void run()
 	{
-		String groupIP = "224.0.0.0";
+		String groupIP = "230.2.2.3";
         int portMulticasting = 4446;
         MulticastSocket socket;
         
@@ -37,7 +37,7 @@ public class MulticastServerThread extends Thread {
             //get a multicast socket and join group
             socket = new MulticastSocket(portMulticasting);
             group = InetAddress.getByName(groupIP);
-            socket.joinGroup(group);
+            socket.joinGroup(InetAddress.getByName(groupIP));
             //get packet
             DatagramPacket packet;
             boolean is_true = true;
@@ -49,10 +49,12 @@ public class MulticastServerThread extends Thread {
                 int len = packet.getLength();
                 String received = (new String(buf)).substring(0,len);
                 try{
+                	
                 	this.wrap.createNode(received, packet.getAddress().getHostAddress());
                     System.out.println("Agent name: " + received + " (" + packet.getAddress() + ")");
                     
                     buf = new byte[256];
+                    
                     buf = String.valueOf(wrap.getCount()).getBytes();
                     packet = new DatagramPacket(buf , buf.length, packet.getAddress(), 3000);
                     socketUni.send(packet);
