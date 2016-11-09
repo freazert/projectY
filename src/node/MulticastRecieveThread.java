@@ -5,6 +5,9 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.Socket;
+import java.rmi.Naming;
+
+import interfaces.IWrapper;
 
 public class MulticastRecieveThread extends Thread {
 	
@@ -27,6 +30,8 @@ public class MulticastRecieveThread extends Thread {
 			socket.joinGroup(InetAddress.getByName(this.addr));
 			System.out.println("joined group");
 			DatagramPacket dp = new DatagramPacket(buf, buf.length);
+			
+			IWrapper obj = (IWrapper) Naming.lookup("//" + "192.168.1.16" + "/hash");
 			while(true)
 			{
 				socket.receive(dp);
@@ -37,6 +42,7 @@ public class MulticastRecieveThread extends Thread {
                 String received = (new String(buf)).substring(0,len);
                 
                 System.out.println("nodenaam: " + received);
+                int newHashing = obj.getHash(received);
 				
 			}
 		}
