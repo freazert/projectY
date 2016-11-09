@@ -21,7 +21,11 @@ public class MulticastRecieveThread extends Thread {
 	{
 		try{
 			byte[] buf = new byte[256];
-			socket.joinGroup(InetAddress.getByName(addr));
+			System.out.println("before join");
+			System.out.println(this.addr);
+			System.out.println(this.socket.toString());
+			socket.joinGroup(InetAddress.getByName(this.addr));
+			System.out.println("joined group");
 			DatagramPacket dp = new DatagramPacket(buf, buf.length);
 			while(true)
 			{
@@ -31,7 +35,7 @@ public class MulticastRecieveThread extends Thread {
 		}
 		catch(Exception e)
 		{
-			
+			e.printStackTrace();
 		}
 			
 	}
