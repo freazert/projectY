@@ -6,6 +6,8 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+import interfaces.IInitNodes;
+
 public class Main {
 
 	public static void main(String[] args) throws AlreadyBoundException 
@@ -17,6 +19,10 @@ public class Main {
 			
 			new MulticastServerThread(wrap).start();
 			
+			
+			IInitNodes newNode = new InitNodes();
+			registry = LocateRegistry.createRegistry(1099);
+			registry.bind("initNode", (Remote)newNode);
 			
 			//registry = LocateRegistry.createRegistry(1099);
 			//registry.bind("hash", (Remote)wrap);
