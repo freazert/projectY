@@ -6,7 +6,10 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.SocketException;
+import java.rmi.Naming;
 import java.util.Scanner;
+
+import interfaces.IInitNodes;
 
 
 public class MulticastClient {
@@ -29,11 +32,14 @@ public class MulticastClient {
             socket = new DatagramSocket(portMulticasting);
             socketReceive = new DatagramSocket(3000);
            
-            
+            String prevNode, nextNode;
+    		IInitNodes obj = (IInitNodes) Naming.lookup("//" + "192.168.1.16" + "/initNode");
             
             System.out.println("agent ready");
             
             start(agentName);
+            
+            System.out.print(obj.getCurrent(agentName));
             
             socket.close();
             multiSocket = new MulticastSocket(portMulticasting);
