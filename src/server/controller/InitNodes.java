@@ -10,26 +10,28 @@ import java.rmi.server.UnicastRemoteObject;
  */
 public class InitNodes extends UnicastRemoteObject implements IInitNodes {
     private int currentNode, previousNode, nextNode;
+    private HashingMap hashmap;
+    private Hashing currentHash;
 
-    public InitNodes(int currentNode, int previousNode, int nextNode) throws RemoteException{
-        this.currentNode = currentNode;
-        this.previousNode = previousNode;
-        this.nextNode = nextNode;
+    public InitNodes(HashingMap hashmap) throws RemoteException{
+    	super();
+    	this.hashmap = hashmap;
     }
 
     @Override
-    public int getCurrent() throws RemoteException {
-        return 0;
+    public int getCurrent(String userName) throws RemoteException {
+    	currentHash = new Hashing(userName);
+        return this.currentHash.getHash();
     }
 
     @Override
-    public int getPrevious() throws RemoteException {
-        return 0;
+    public int getPrevious(String userName) throws RemoteException {
+        return this.hashmap.getNext(this.currentHash);
     }
 
     @Override
-    public int getNext() throws RemoteException {
-        return 0;
+    public int getNext(String userName) throws RemoteException {
+        return this.hashmap.getNext(this.currentHash);
     }
 
 

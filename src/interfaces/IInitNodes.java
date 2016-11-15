@@ -9,7 +9,7 @@ import java.rmi.RemoteException;
 public interface IInitNodes extends Remote
 
 {
-    int getCurrent() throws RemoteException;
-    int getPrevious() throws RemoteException;
-    int getNext()  throws RemoteException;
+    int getCurrent(String userName) throws RemoteException;
+    int getPrevious(String userName) throws RemoteException;
+    int getNext(String userName)  throws RemoteException;
 }
