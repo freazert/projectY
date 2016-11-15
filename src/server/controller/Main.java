@@ -12,15 +12,17 @@ public class Main {
 
 	public static void main(String[] args) throws AlreadyBoundException 
 	{
+		HashingMap hmap;
 		Registry registry;
 		try {
-			
+		
 			Wrapper wrap = new Wrapper();
 			
 			new MulticastServerThread(wrap).start();
 			
 			
-			IInitNodes newNode = new InitNodes();
+			
+			InitNodes newNode = new InitNodes(wrap.getHashingMap());
 			registry = LocateRegistry.createRegistry(1099);
 			registry.bind("initNode", (Remote)newNode);
 			
