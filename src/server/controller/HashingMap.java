@@ -63,7 +63,7 @@ public class HashingMap {
 		return this.hashMap.get(hash.getHash()).toString();
 	}
 
-	public String getNext(Hashing hash)
+	public int getNext(Hashing hash)
 	{
 		Map.Entry<Integer, String> record = null;
 		Map.Entry<Integer, String> highestRecord = null;
@@ -97,7 +97,7 @@ public class HashingMap {
 	    	record = lowestRecord;
 	    }
 	    
-		return record.getValue();
+		return record.getKey();
 	}
 	
 	public String getNode(Hashing hash)
