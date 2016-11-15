@@ -100,7 +100,7 @@ public class HashingMap {
 		return record.getKey();
 	}
 	
-	public String getPrev(Hashing hash)
+	public int getPrev(Hashing hash)
 	{
 		Map.Entry<Integer, String> record = null;
 		Map.Entry<Integer, String> highestRecord = null;
@@ -134,7 +134,7 @@ public class HashingMap {
 	    	record = lowestRecord;
 	    }
 	    
-		return record.getValue();
+		return record.getKey();
 	}
 	
 	public String get(Hashing hash)

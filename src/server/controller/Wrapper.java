@@ -32,7 +32,10 @@ public class Wrapper extends UnicastRemoteObject implements IWrapper{
 			e.printStackTrace();
 		}
 	}
-	
+	public HashingMap getHashingMap()
+	{
+		return this.hmap;
+	}
 	public String getFileNode(String name)
 	{
 		Hashing hash = new Hashing(name);
