@@ -100,6 +100,80 @@ public class HashingMap {
 		return record.getValue();
 	}
 	
+	public String getPrev(Hashing hash)
+	{
+		Map.Entry<Integer, String> record = null;
+		Map.Entry<Integer, String> highestRecord = null;
+		Map.Entry<Integer, String> lowestRecord = null;
+		int fileHash = hash.getHash();
+		
+		Iterator it = this.hashMap.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry<Integer, String> pair = (Map.Entry)it.next();
+	        if( record == null) {
+	        	record = pair;
+	        	highestRecord = pair;
+	        	lowestRecord = pair;
+	        } else {	        	
+	        	//set lowest and highest hashes
+	        	if(highestRecord.getKey() < pair.getKey()) {
+	        		highestRecord = pair;
+	        	} else if(lowestRecord.getKey() > pair.getKey()) {
+	        		lowestRecord = pair;
+	        	}
+	        	
+	        	//check for new record
+	        	if(fileHash > pair.getKey() && record.getKey() < pair.getKey()) {
+	        		record = pair;
+	        	}
+	        }
+	    }
+	    
+	    // if fileHash is higher than highest hash, take lowest hash
+	    if(fileHash < lowestRecord.getKey()) {
+	    	record = lowestRecord;
+	    }
+	    
+		return record.getValue();
+	}
+	
+	public String get(Hashing hash)
+	{
+		Map.Entry<Integer, String> record = null;
+		Map.Entry<Integer, String> highestRecord = null;
+		Map.Entry<Integer, String> lowestRecord = null;
+		int fileHash = hash.getHash();
+		
+		Iterator it = this.hashMap.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry<Integer, String> pair = (Map.Entry)it.next();
+	        if( record == null) {
+	        	record = pair;
+	        	highestRecord = pair;
+	        	lowestRecord = pair;
+	        } else {	        	
+	        	//set lowest and highest hashes
+	        	if(highestRecord.getKey() < pair.getKey()) {
+	        		highestRecord = pair;
+	        	} else if(lowestRecord.getKey() > pair.getKey()) {
+	        		lowestRecord = pair;
+	        	}
+	        	
+	        	//check for new record
+	        	if(fileHash < pair.getKey() && record.getKey() > pair.getKey()) {
+	        		record = pair;
+	        	}
+	        }
+	    }
+	    
+	    // if fileHash is higher than highest hash, take lowest hash
+	    if(fileHash > highestRecord.getKey()) {
+	    	record = lowestRecord;
+	    }
+	    
+		return record.getValue();
+	}
+	
 	public String getNode(Hashing hash)
 	{
 		Map.Entry<Integer, String> record = null;
