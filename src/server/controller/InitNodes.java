@@ -26,7 +26,7 @@ public class InitNodes extends UnicastRemoteObject implements IInitNodes {
 
     @Override
     public int getPrevious(String userName) throws RemoteException {
-        return this.hashmap.getNext(this.currentHash);
+        return this.hashmap.getPrev(this.currentHash);
     }
 
     @Override
