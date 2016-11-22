@@ -10,10 +10,10 @@ public class Node {
 		this.prevNode = 8;
 	}
 	
-	public void setNodes(String name)
+	public void setNodes(int hash)
 	{
-		setPrev(1);
-		setNext(1);
+		setPrev(hash);
+		setNext(hash);
 	}
 	
 	private void setPrev(int hash)
@@ -26,7 +26,7 @@ public class Node {
 	
 	private void setNext(int hash)
 	{
-		if ((hash < this.nextNode && hash > this.myNode)||
+		if ((hash < this.nextNode && hash > this.myNode) ||
 				( this.myNode > this.nextNode && hash < this.nextNode)){
 			this.nextNode = hash;
 		}

@@ -6,7 +6,10 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.SocketException;
+import java.rmi.Naming;
 import java.util.Scanner;
+
+import interfaces.IInitNodes;
 
 
 public class MulticastClient {
@@ -33,7 +36,14 @@ public class MulticastClient {
             
             System.out.println("agent ready");
             
+            String prevNode, nextNode;
+    		IInitNodes obj = (IInitNodes) Naming.lookup("//" + "192.168.1.16" + "/initNode");
+    		System.out.println(obj.getCurrent(agentName) + "n gggnad");
+            
+            System.out.println("agent ready");
+            
             start(agentName);
+            
             
             socket.close();
             multiSocket = new MulticastSocket(portMulticasting);
@@ -66,11 +76,7 @@ public class MulticastClient {
                 int countNodes = Integer.parseInt(new String(packet.getData(), 0, packet.getLength()));
                 
                 System.out.print(countNodes);
-                try{
-                    Thread.sleep(delay);
-                } catch (InterruptedException e){
-                    System.exit(0);
-                }   
+                   
             //}
             socket.close();
         } catch (IOException e){
