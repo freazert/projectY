@@ -31,7 +31,7 @@ public class MulticastRecieveThread extends Thread {
 			System.out.println("joined group");
 			DatagramPacket dp = new DatagramPacket(buf, buf.length);
 			
-			IWrapper obj = (IWrapper) Naming.lookup("//" + "192.168.1.16" + "/hash");
+			//IWrapper obj = (IWrapper) Naming.lookup("//" + "192.168.1.16" + "/");
 			while(true)
 			{
 				socket.receive(dp);
@@ -42,7 +42,7 @@ public class MulticastRecieveThread extends Thread {
                 String received = (new String(buf)).substring(0,len);
                 
                 System.out.println("nodenaam: " + received);
-                int newHashing = obj.getHash(received);
+                //int newHashing = obj.getHash(received);
 				
 			}
 		}
