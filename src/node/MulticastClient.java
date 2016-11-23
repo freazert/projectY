@@ -32,17 +32,19 @@ public class MulticastClient {
             socket = new DatagramSocket(portMulticasting);
             socketReceive = new DatagramSocket(3000);
            
-            
+            start(agentName);
             
             System.out.println("agent ready");
             
             String prevNode, nextNode;
-    		IInitNodes obj = (IInitNodes) Naming.lookup("//" + "192.168.1.16" + "/initNode");
+    		IInitNodes obj = (IInitNodes) Naming.lookup("//" + "192.168.1.15" + "/initNode");
     		System.out.println(obj.getCurrent(agentName) + "n gggnad");
+    		System.out.println(obj.getPrevious(agentName) + "previous");
+    		System.out.println(obj.getNext(agentName) + "next");
             
             System.out.println("agent ready");
             
-            start(agentName);
+            
             
             
             socket.close();
