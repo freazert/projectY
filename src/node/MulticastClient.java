@@ -10,6 +10,7 @@ import java.rmi.Naming;
 import java.util.Scanner;
 
 import interfaces.IInitNodes;
+import javafx.application.Platform;
 
 
 public class MulticastClient {
@@ -57,7 +58,17 @@ public class MulticastClient {
             System.exit(1);
         }
 	}
-	
+
+    public static void println(String s){
+        Platform.runLater(new Runnable() {//in case you call from other thread
+            @Override
+            public void run() {
+                textArea.setText(textArea.getText()+s+"\n");
+                System.out.println(s);//for echo if you want
+            }
+        });
+    }
+
 	public void start(String name)
 	{
 		DatagramPacket packet;

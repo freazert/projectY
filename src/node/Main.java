@@ -6,14 +6,21 @@ import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
+import javafx.scene.control.TextArea;
 import java.rmi.RemoteException;
+import javafx.application.Application;
 import java.util.Scanner;
-
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import interfaces.IInitNodes;
 import interfaces.IWrapper;
 import sun.misc.IOUtils;
 
-public class Main {
+public class Main extends Application{
 
 	public static void main(String args[]) throws MalformedURLException, RemoteException, NotBoundException {
 	
@@ -35,8 +42,7 @@ public class Main {
 		if(test) {
 			System.out.println("yowza");
 		}*/
-		MulticastClient mc = new MulticastClient();
-
+		launch(args);
 	}
 
 	public static boolean ping(String ip) {
@@ -76,6 +82,30 @@ public class Main {
 */
 	}
 
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		Button btn = new Button();
+		TextArea textArea = new TextArea();
+
+
+		btn.setText("Start agent");
+		btn.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				MulticastClient mc = new MulticastClient();
+			}
+		});
+
+		StackPane root = new StackPane();
+		root.getChildren().add(btn);
+
+		Scene scene = new Scene(root, 300, 250);
+
+		primaryStage.setTitle("Hello World!");
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	}
 }
 //TESt = 30538 => solution = 192.168.56.1
 //Jeroen = 23658 => solution = 192.168.1.1
