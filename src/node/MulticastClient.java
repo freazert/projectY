@@ -4,12 +4,16 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.MulticastSocket;
 import java.net.SocketException;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.Scanner;
 
 import interfaces.IInitNodes;
+import interfaces.IWrapper;
 
 
 public class MulticastClient {
@@ -38,6 +42,8 @@ public class MulticastClient {
             
             String prevNode, nextNode;
     		IInitNodes obj = (IInitNodes) Naming.lookup("//" + "192.168.1.15" + "/initNode");
+    		
+    		
     		System.out.println(obj.getCurrent(agentName) + "n gggnad");
     		System.out.println(obj.getPrevious(agentName) + "previous");
     		System.out.println(obj.getNext(agentName) + "next");
@@ -84,5 +90,46 @@ public class MulticastClient {
         } catch (IOException e){
             e.printStackTrace();
         }
+	}
+	
+	public void shutdown()
+	{
+		try {
+			DatagramPacket packet;
+			IWrapper obj = (IWrapper) Naming.lookup("//" + "192.168.1.15" + "/getWrapper");
+			obj.removeNode(currentHash);
+			
+			socket = new DatagramSocket(2000);
+			
+			String toSend = "previous: " + previous;
+			byte[] buf = new byte[toSend.getBytes().length];
+			buf = toSend.getBytes();
+			
+            packet = new DatagramPacket(buf,buf.length,obj.getIp(next),portMulticasting);
+            socket.send(packet);
+            
+            
+            
+            
+			obj.getIp(previuos);
+			
+			String toSend = "next: " + next;
+			byte[] buf = new byte[toSend.getBytes().length];
+			buf = toSend.getBytes();
+			
+            packet = new DatagramPacket(buf,buf.length,obj.getIp(previous),portMulticasting);
+            socket.send(packet);
+			
+			
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
