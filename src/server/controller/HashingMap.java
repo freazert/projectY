@@ -129,9 +129,9 @@ public class HashingMap {
 	        }
 	    }
 	    
-	    // if fileHash is higher than highest hash, take lowest hash
-	    if(fileHash < lowestRecord.getKey()) {
-	    	record = lowestRecord;
+	    // if fileHash is lower than lowest hash, take highest hash
+	    if(fileHash == lowestRecord.getKey()) {
+	    	record = highestRecord;
 	    }
 	    
 		return record.getKey();
