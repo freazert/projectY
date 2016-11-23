@@ -93,7 +93,7 @@ public class HashingMap {
 	    }
 	    
 	    // if fileHash is higher than highest hash, take lowest hash
-	    if(fileHash > highestRecord.getKey()) {
+	    if(fileHash == highestRecord.getKey()) {
 	    	record = lowestRecord;
 	    }
 	    
@@ -122,16 +122,20 @@ public class HashingMap {
 	        		lowestRecord = pair;
 	        	}
 	        	
+	        	
 	        	//check for new record
-	        	if(fileHash > pair.getKey() && record.getKey() < pair.getKey()) {
+	        	if(fileHash >= pair.getKey())
+	        		if(fileHash <= record.getKey()){
+	        			if(pair.getKey() > record.getKey()) {
 	        		record = pair;
 	        	}
+	        		}
 	        }
 	    }
 	    
 	    // if fileHash is higher than highest hash, take lowest hash
-	    if(fileHash < lowestRecord.getKey()) {
-	    	record = lowestRecord;
+	    if(fileHash == lowestRecord.getKey()) {
+	    	record = highestRecord;
 	    }
 	    
 		return record.getKey();
