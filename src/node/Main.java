@@ -35,7 +35,8 @@ public class Main {
 		if(test) {
 			System.out.println("yowza");
 		}*/
-		MulticastClient mc = new MulticastClient();
+		Node node = new Node();
+		MulticastClient mc = new MulticastClient(node);
 
 	}
 

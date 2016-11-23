@@ -21,9 +21,12 @@ public class MulticastClient {
     private int delay = 5000;
     private DatagramSocket socketReceive;
 	private MulticastSocket multiSocket;
+	private Node node;
+	
     
-	public MulticastClient()
+	public MulticastClient(Node node)
 	{
+		this.node = node;
 		try{
 			System.out.println("Enter name of the new agent: ");
 	        Scanner sc = new Scanner(System.in);
@@ -37,10 +40,7 @@ public class MulticastClient {
             System.out.println("agent ready");
             
             String prevNode, nextNode;
-    		IInitNodes obj = (IInitNodes) Naming.lookup("//" + "192.168.1.15" + "/initNode");
-    		System.out.println(obj.getCurrent(agentName) + "n gggnad");
-    		System.out.println(obj.getPrevious(agentName) + "previous");
-    		System.out.println(obj.getNext(agentName) + "next");
+    		this.node.initNodes(agentName);
             
             System.out.println("agent ready");
             
@@ -50,7 +50,7 @@ public class MulticastClient {
             socket.close();
             multiSocket = new MulticastSocket(portMulticasting);
             
-            new MulticastRecieveThread(multiSocket, group).start();
+            new MulticastRecieveThread(multiSocket, group, this.node).start();
         }
         catch (Exception e){
             e.printStackTrace();
