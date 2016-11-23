@@ -13,11 +13,13 @@ public class MulticastRecieveThread extends Thread {
 	
 	private MulticastSocket socket;
 	private String addr;
+	private Node node;
 	
-	public MulticastRecieveThread(MulticastSocket socket, String addr)
+	public MulticastRecieveThread(MulticastSocket socket, String addr, Node node)
 	{
 		this.socket = socket;
 		this.addr = addr;
+		this.node = node;
 	}
 	
 	public void run()
@@ -40,6 +42,8 @@ public class MulticastRecieveThread extends Thread {
 				buf = dp.getData();
                 int len = dp.getLength();
                 String received = (new String(buf)).substring(0,len);
+                
+                this.node.setNodes(received);
                 
                 System.out.println("nodenaam: " + received);
                 //int newHashing = obj.getHash(received);
