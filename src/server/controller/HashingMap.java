@@ -113,15 +113,15 @@ public class HashingMap {
 	public int getPrev(Hashing hash)
 	{
 		TreeMap<Integer, String> treeMap = new TreeMap<Integer, String> (this.hashMap);
-		Integer value = hash.getHash();
+		int value = hash.getHash();
 		
 		printMap(treeMap);
 		
 		Integer[] keyArr = treeMap.keySet().toArray(new Integer[treeMap.keySet().size()]);
-		for (int i = 0; i > keyArr.length; i++) {
-			Integer record =keyArr[i];
+		for (int i = 0; i < keyArr.length; i++) {
+			int record =keyArr[i];
 			System.out.println(keyArr[i] + ", ");
-			if( value == record ) {
+			if( value == record) {
 				System.out.println(keyArr.length);
 				if(i == 0) {
 					
