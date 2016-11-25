@@ -8,6 +8,9 @@ import java.net.MulticastSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MulticastServerThread extends Thread {
 	private Wrapper wrap;
 
@@ -41,17 +44,20 @@ public class MulticastServerThread extends Thread {
             //get packet
             DatagramPacket packet;
             boolean is_true = true;
+            System.out.println("lolz");
             while (is_true){
                 byte[] buf = new byte[256];
                 packet = new DatagramPacket(buf,buf.length);
+                System.out.println("waiting...");
                 socket.receive(packet);
+                System.out.println("received!");
                 buf = packet.getData();
                 int len = packet.getLength();
                 String received = (new String(buf)).substring(0,len);
                 try{
-                	
-                	this.wrap.createNode(received, packet.getAddress().getHostAddress());
-                    System.out.println("Agent name: " + received + " (" + packet.getAddress() + ")");
+                	JSONObject jobj = new JSONObject(received);
+                	this.wrap.createNode(jobj.getString("name"), packet.getAddress().getHostAddress());
+                    System.out.println("Agent name: " + jobj.getString("name") + " (" + packet.getAddress() + ")");
                     
                     buf = new byte[256];
                     
@@ -60,7 +66,10 @@ public class MulticastServerThread extends Thread {
                     socketUni.send(packet);
                 } catch (NumberFormatException e){
                     System.out.println("cannot interpret number");
-                }
+                } catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
             socket.leaveGroup(group);
             socket.close();

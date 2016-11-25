@@ -5,23 +5,20 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.net.SocketException;
-import java.rmi.Naming;
 import java.util.Scanner;
+import org.json.*;
 
-import interfaces.IInitNodes;
 
 
 public class MulticastClient {
 	private static int portMulticasting = 4446;
 
     private DatagramSocket socket;
-    private boolean broadcast =  true;
     private String group = "230.2.2.3"; //group address
-    private int delay = 5000;
     private DatagramSocket socketReceive;
 	private MulticastSocket multiSocket;
 	private Node node;
+	
 	
     
 	public MulticastClient(Node node)
@@ -31,21 +28,29 @@ public class MulticastClient {
 			System.out.println("Enter name of the new agent: ");
 	        Scanner sc = new Scanner(System.in);
 	        String agentName = sc.nextLine();
+	        //sc.close();
+	        
+	        JSONObject jobj = new JSONObject();
+    		jobj.put("type", "new");
+    		jobj.put("name", agentName);
+    		
+    		System.out.println(jobj);
 	        
             socket = new DatagramSocket(portMulticasting);
             socketReceive = new DatagramSocket(3000);
            
-            start(agentName);
+            start(jobj.toString());
             
             System.out.println("agent ready");
             
-            String prevNode, nextNode;
-    		this.node.initNodes(agentName);
+    		this.node.initNodes(jobj.getString("name"));
+
+    		//IInitNodes obj = (IInitNodes) Naming.lookup("//" + "192.168.1.15" + "/initNode");
+    		
+    		
+    		
             
             System.out.println("agent ready");
-            
-            
-            
             
             socket.close();
             multiSocket = new MulticastSocket(portMulticasting);
@@ -64,12 +69,12 @@ public class MulticastClient {
         try{
             InetAddress address = InetAddress.getByName(group);
             //while (broadcast){
-                byte[] buf = new byte[256];
+                byte[] buf = new byte[1024];
                 buf = name.getBytes();
                 packet = new DatagramPacket(buf,buf.length,address,portMulticasting);
                 socket.send(packet);
                 
-                buf = new byte[256];
+                buf = new byte[1024];
                 packet = new DatagramPacket(buf, buf.length);
                 System.out.println("before receive");
                 socketReceive.receive(packet);
@@ -85,4 +90,45 @@ public class MulticastClient {
             e.printStackTrace();
         }
 	}
+	
+	/*public void shutdown()
+	{
+		try {
+			DatagramPacket packet;
+			IWrapper obj = (IWrapper) Naming.lookup("//" + "192.168.1.15" + "/getWrapper");
+			obj.removeNode(currentHash);
+			
+			socket = new DatagramSocket(2000);
+			
+			String toSend = "previous: " + previous;
+			byte[] buf = new byte[toSend.getBytes().length];
+			buf = toSend.getBytes();
+			
+            packet = new DatagramPacket(buf,buf.length,obj.getIp(next),portMulticasting);
+            socket.send(packet);
+            
+            
+            
+            
+			obj.getIp(previuos);
+			
+			String toSend = "next: " + next;
+			byte[] buf = new byte[toSend.getBytes().length];
+			buf = toSend.getBytes();
+			
+            packet = new DatagramPacket(buf,buf.length,obj.getIp(previous),portMulticasting);
+            socket.send(packet);
+			
+			
+		} catch (MalformedURLException e) {
+			// ODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			// ODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NotBoundException e) {
+			// ODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}*/
 }
