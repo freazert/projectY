@@ -6,6 +6,8 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.Socket;
 import java.rmi.Naming;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 import interfaces.IWrapper;
 
@@ -25,7 +27,8 @@ public class MulticastRecieveThread extends Thread {
 	public void run()
 	{
 		try{
-			byte[] buf = new byte[256];
+			byte[] buf = new byte[1024];
+			JSONObject jobj;
 			System.out.println("before join");
 			System.out.println(this.addr);
 			System.out.println(this.socket.toString());
@@ -36,16 +39,18 @@ public class MulticastRecieveThread extends Thread {
 			//IWrapper obj = (IWrapper) Naming.lookup("//" + "192.168.1.16" + "/");
 			while(true)
 			{
+				
 				socket.receive(dp);
 				System.out.print("lol");
 				
 				buf = dp.getData();
                 int len = dp.getLength();
                 String received = (new String(buf)).substring(0,len);
+                jobj = new JSONObject(received);
                 
-                this.node.setNodes(received);
+                this.node.setNodes(jobj.getString("name"));
                 
-                System.out.println("nodenaam: " + received);
+                System.out.println("nodenaam: " + jobj.getString("name"));
                 //int newHashing = obj.getHash(received);
 				
 			}
