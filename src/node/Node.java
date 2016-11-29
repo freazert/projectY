@@ -14,6 +14,7 @@ public class Node {
 	private int nextNode, prevNode, myNode;
 	private IInitNodes rmi;
 	private String name;
+	DatagramSocket socket;
 	
 	public Node()
 	{
@@ -96,11 +97,15 @@ public class Node {
 			try {
 				DatagramPacket packet;
 				IWrapper obj = (IWrapper) Naming.lookup("//" + "192.168.1.15" + "/getWrapper");
-				obj.removeNode(this.prevNode);
+				
+				
+				
+				
+				obj.removeNode(name);
 				
 				socket = new DatagramSocket(2000);
 				
-				String toSend = "previous: " + previous;
+				String toSend = "previous: " + this.prevNode;
 				byte[] buf = new byte[toSend.getBytes().length];
 				buf = toSend.getBytes();
 				
