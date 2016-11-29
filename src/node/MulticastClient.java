@@ -41,9 +41,11 @@ public class MulticastClient {
            
             start(jobj.toString());
             
+            
             System.out.println("agent ready");
             
     		this.node.initNodes(jobj.getString("name"));
+    		this.node.SearchMap();
 
     		//IInitNodes obj = (IInitNodes) Naming.lookup("//" + "192.168.1.15" + "/initNode");
     		
@@ -91,44 +93,4 @@ public class MulticastClient {
         }
 	}
 	
-	/*public void shutdown()
-	{
-		try {
-			DatagramPacket packet;
-			IWrapper obj = (IWrapper) Naming.lookup("//" + "192.168.1.15" + "/getWrapper");
-			obj.removeNode(currentHash);
-			
-			socket = new DatagramSocket(2000);
-			
-			String toSend = "previous: " + previous;
-			byte[] buf = new byte[toSend.getBytes().length];
-			buf = toSend.getBytes();
-			
-            packet = new DatagramPacket(buf,buf.length,obj.getIp(next),portMulticasting);
-            socket.send(packet);
-            
-            
-            
-            
-			obj.getIp(previuos);
-			
-			String toSend = "next: " + next;
-			byte[] buf = new byte[toSend.getBytes().length];
-			buf = toSend.getBytes();
-			
-            packet = new DatagramPacket(buf,buf.length,obj.getIp(previous),portMulticasting);
-            socket.send(packet);
-			
-			
-		} catch (MalformedURLException e) {
-			// ODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (RemoteException e) {
-			// ODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NotBoundException e) {
-			// ODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}*/
 }
