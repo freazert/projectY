@@ -1,5 +1,6 @@
 package node;
 
+import java.io.File;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.MalformedURLException;
@@ -8,6 +9,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 import interfaces.IInitNodes;
+import interfaces.IWrapper;
 
 public class Node {
 	private int nextNode, prevNode, myNode;
@@ -130,6 +132,40 @@ public class Node {
 				e.printStackTrace();
 			}
 		}
+
+	public void SearchMap() {
+		// TODO Auto-generated method stub
+		File folder = new File("your/path");
+		File[] listOfFiles = folder.listFiles();
+
+		    for (int i = 0; i < listOfFiles.length; i++) {
+		      if (listOfFiles[i].isFile()) {
+		    	  
+		        System.out.println("File " + listOfFiles[i].getName());
+				try {
+					IWrapper obj = (IWrapper) Naming.lookup("//" + "192.168.1.15" + "/getWrapper");
+					String ipFileToRep = obj.getPrevIp(listOfFiles[i].getName());
+					
+					if((obj.getHash(ipFileToRep)) == this.myNode)
+					{
+						ipFileToRep = obj.getIp(this.prevNode);
+					}
+					//int hash =  this.rmi.(obj.getHash(listOfFiles[i].getName()));
+				
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NotBoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+		      } 
+		    }
+	}
 	
 
 }
