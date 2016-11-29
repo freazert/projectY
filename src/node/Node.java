@@ -16,6 +16,7 @@ public class Node {
 	private IInitNodes rmi;
 	private String name;
 	
+	
 	public Node()
 	{
 		this.myNode = 5;
@@ -93,7 +94,7 @@ public class Node {
 	}
 	
 	 public void shutdown()
-		{
+		{/*
 			try {
 				DatagramPacket packet;
 				IWrapper obj = (IWrapper) Naming.lookup("//" + "192.168.1.15" + "/getWrapper");
@@ -130,12 +131,12 @@ public class Node {
 			} catch (NotBoundException e) {
 				// ODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
 		}
 
 	public void SearchMap() {
 		// TODO Auto-generated method stub
-		File folder = new File("your/path");
+		File folder = new File("c:\\Nieuwe map");
 		File[] listOfFiles = folder.listFiles();
 
 		    for (int i = 0; i < listOfFiles.length; i++) {
