@@ -44,9 +44,9 @@ public class Wrapper extends UnicastRemoteObject implements IWrapper{
 		return this.hmap.getNode(hash);
 	}
 	
-	public int removeNode(String name)
+	public int removeNode(int name)
 	{
-		int success = this.hmap.removeRecord(new Hashing(name));
+		int success = this.hmap.removeRecord(name);
 		try {
 			objectToXml();
 			
@@ -77,9 +77,9 @@ public class Wrapper extends UnicastRemoteObject implements IWrapper{
 		}
 	}
 	
-	public String getIp(String name)
+	public String getIp(int hash)
 	{
-		String ip = this.hmap.getIp(new Hashing(name));
+		String ip = this.hmap.getIp(hash);
 		
 		return ip;
 	}
@@ -131,6 +131,11 @@ public class Wrapper extends UnicastRemoteObject implements IWrapper{
 	public int getHash(String name)
 	{
 		return (new Hashing(name)).getHash();
+	}
+	
+	public String getPrevIp(String filename)
+	{
+		return hmap.getPrevIp(filename);
 	}
 	
 
