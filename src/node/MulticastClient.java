@@ -41,9 +41,11 @@ public class MulticastClient {
            
             start(jobj.toString());
             
+            
             System.out.println("agent ready");
             
     		this.node.initNodes(jobj.getString("name"));
+    		this.node.SearchMap();
 
     		//IInitNodes obj = (IInitNodes) Naming.lookup("//" + "192.168.1.15" + "/initNode");
     		
@@ -51,7 +53,13 @@ public class MulticastClient {
     		
             
             System.out.println("agent ready");
-            
+
+            System.out.println("to remove node: type getmeout");
+            String removecommand = sc.nextLine();
+            if (removecommand == "getmeout")
+            {
+                this.node.shutdown();
+            }
             socket.close();
             multiSocket = new MulticastSocket(portMulticasting);
             

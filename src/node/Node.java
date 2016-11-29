@@ -1,7 +1,9 @@
 package node;
 
+import java.io.File;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -14,7 +16,6 @@ public class Node {
 	private int nextNode, prevNode, myNode;
 	private IInitNodes rmi;
 	private String name;
-	DatagramSocket socket;
 	
 	public Node()
 	{
@@ -95,35 +96,35 @@ public class Node {
 	 public void shutdown()
 		{
 			try {
-				DatagramPacket packet;
+				DatagramPacket packetNext, packetPrevious;
 				IWrapper obj = (IWrapper) Naming.lookup("//" + "192.168.1.15" + "/getWrapper");
+				obj.removeNode(this.prevNode);
 				
-				
-				
-				
-				obj.removeNode(name);
-				
-				socket = new DatagramSocket(2000);
-				
-				String toSend = "previous: " + this.prevNode;
-				byte[] buf = new byte[toSend.getBytes().length];
-				buf = toSend.getBytes();
-				
-	            packet = new DatagramPacket(buf,buf.length,obj.getIp(next),portMulticasting);
-	            socket.send(packet);
-	            
-	            
-	            
-	            
-				obj.getIp(previous);
-				
-				String toSend = "next: " + next;
-				byte[] buf = new byte[toSend.getBytes().length];
-				buf = toSend.getBytes();
-				
-	            packet = new DatagramPacket(buf,buf.length,obj.getIp(previous),portMulticasting);
-	            socket.send(packet);
-				
+				try {
+                    DatagramSocket socket = new DatagramSocket(4446);
+
+                    String toSendPrev = "node gone, previous: " + this.prevNode;
+                    byte[] bufPrev = new byte[toSendPrev.getBytes().length];
+                    bufPrev = toSendPrev.getBytes();
+
+					packetNext = new DatagramPacket(bufPrev, bufPrev.length, InetAddress.getByName(obj.getIp(this.nextNode)), 4446);
+                    socket.send(packetNext);
+
+                    String toSendNext = "node gone, next: " + this.nextNode;
+                    byte[] bufNext = new byte[toSendNext.getBytes().length];
+                    bufNext = toSendNext.getBytes();
+
+					packetPrevious = new DatagramPacket(bufNext, bufNext.length, InetAddress.getByName(obj.getIp(this.prevNode)), 4446);
+                    socket.send(packetPrevious);
+                }
+				catch (java.net.SocketException e){
+                    // ODO Auto-generated catch block
+                    e.printStackTrace();
+                    }
+                catch(java.io.IOException e) {
+                    // ODO Auto-generated catch block
+                    e.printStackTrace();
+                }
 				
 			} catch (MalformedURLException e) {
 				// ODO Auto-generated catch block
@@ -136,6 +137,40 @@ public class Node {
 				e.printStackTrace();
 			}
 		}
+
+	public void SearchMap() {
+		// TODO Auto-generated method stub
+		File folder = new File("your/path");
+		File[] listOfFiles = folder.listFiles();
+
+		    for (int i = 0; i < listOfFiles.length; i++) {
+		      if (listOfFiles[i].isFile()) {
+		    	  
+		        System.out.println("File " + listOfFiles[i].getName());
+				try {
+					IWrapper obj = (IWrapper) Naming.lookup("//" + "192.168.1.15" + "/getWrapper");
+					String ipFileToRep = obj.getPrevIp(listOfFiles[i].getName());
+					
+					if((obj.getHash(ipFileToRep)) == this.myNode)
+					{
+						ipFileToRep = obj.getIp(this.prevNode);
+					}
+					//int hash =  this.rmi.(obj.getHash(listOfFiles[i].getName()));
+				
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NotBoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+		      } 
+		    }
+	}
 	
 
 }
