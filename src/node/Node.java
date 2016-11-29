@@ -8,6 +8,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 import interfaces.IInitNodes;
+import interfaces.IWrapper;
 
 public class Node {
 	private int nextNode, prevNode, myNode;
@@ -109,7 +110,7 @@ public class Node {
 	            
 	            
 	            
-				obj.getIp(previuos);
+				obj.getIp(previous);
 				
 				String toSend = "next: " + next;
 				byte[] buf = new byte[toSend.getBytes().length];
