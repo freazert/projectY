@@ -61,7 +61,7 @@ public class MulticastServerThread extends Thread {
                     
                     buf = new byte[256];
                     
-                    buf = String.valueOf(wrap.getCount()).getBytes();
+                    buf = String.valueOf(wrap.getHashMap().getCount()).getBytes();
                     packet = new DatagramPacket(buf , buf.length, packet.getAddress(), 3000);
                     socketUni.send(packet);
                 } catch (NumberFormatException e){

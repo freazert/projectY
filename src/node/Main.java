@@ -4,14 +4,8 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.Scanner;
-
-import interfaces.IInitNodes;
-import interfaces.IWrapper;
-import sun.misc.IOUtils;
 
 public class Main {
 
@@ -36,7 +30,7 @@ public class Main {
 			System.out.println("yowza");
 		}*/
 		Node node = new Node();
-		MulticastClient mc = new MulticastClient(node);
+		//MulticastClient mc = new MulticastClient(node);
 
 	}
 
