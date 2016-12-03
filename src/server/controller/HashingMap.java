@@ -29,10 +29,9 @@ public class HashingMap {
 	{
 		try {
 			String isFree = this.hashMap.get(hash.getHash());
-			System.out.println(isFree);
+			
 			if(isFree == null) {
 				this.hashMap.put(hash.getHash(), ip);
-				System.out.println("toch ni null, ofwel ofni");
 				return 1;
 			}
 			
@@ -135,66 +134,6 @@ public class HashingMap {
 		}
 		
 		return value;
-		
-		
-		/*ListIterator<Integer> it = (ListIterator<Integer>)treeMap.keySet().iterator();
-		while(it.hasNext()) {
-			Integer record = it.next();
-			if(record == value) {
-				if(it.hasPrevious()) {
-					return it.previous();
-				} else {
-					return treeMap.lastKey();
-				}
-				
-			}
-		}
-		
-		return value;*/
-		//treeMap.get(hash.getHash());//(hash.getHash());
-		/*Map.Entry<Integer, String> record = null;
-		Map.Entry<Integer, String> highestRecord = null;
-		Map.Entry<Integer, String> lowestRecord = null;
-		int fileHash = hash.getHash();
-		
-		Iterator it = this.hashMap.entrySet().iterator();
-	    while (it.hasNext()) {
-	        Map.Entry<Integer, String> pair = (Map.Entry)it.next();
-	        if( record == null) {
-	        	record = pair;
-	        	highestRecord = pair;
-	        	lowestRecord = pair;
-	        } else {	        	
-	        	//set lowest and highest hashes
-	        	if(highestRecord.getKey() < pair.getKey()) {
-	        		highestRecord = pair;
-	        	} else if(lowestRecord.getKey() > pair.getKey()) {
-	        		lowestRecord = pair;
-	        	}
-	        	
-	        	
-	        	//check for new record
-	        	//if(fileHash >= pair.getKey())
-	        		//if(fileHash <= record.getKey()){
-	        			//if(pair.getKey() > record.getKey()) {
-	        		//record = pair;
-	        	//}
-	        	//	}
-	        	
-	        	//check for new record
-	        	if(fileHash > pair.getKey() && record.getKey() < pair.getKey()) {
-	        		record = pair;
-	        	}
-	        }
-	    }
-
-	    // if fileHash is lower than lowest hash, take highest hash
-
-	    if(fileHash == lowestRecord.getKey()) {
-	    	record = highestRecord;
-	    }*/
-	    
-		//return 5;//record.getKey();
 	}
 	
 	public String getPrevIp(String filename)
@@ -327,9 +266,12 @@ public class HashingMap {
 	    
 		return record.getValue();
 	}
+	
     public int getCount()
     {
     	return this.hashMap.size();
     }
+    
+    
     
 }

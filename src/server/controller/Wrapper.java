@@ -13,18 +13,14 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import interfaces.IWrapper;
+public class Wrapper{
 
-public class Wrapper extends UnicastRemoteObject implements IWrapper{
-	
-	private static final long serialVersionUID = 1L;
-	
 	private HashingMap hmap;
 	
-	public Wrapper() throws RemoteException
+	public Wrapper()
 	{
-		super();
 		try {
+			hmap = new HashingMap();
 			this.hmap = xmlToObject();
 			System.out.println("start up");
 			
@@ -32,17 +28,8 @@ public class Wrapper extends UnicastRemoteObject implements IWrapper{
 			e.printStackTrace();
 		}
 	}
-	public HashingMap getHashingMap()
-	{
-		return this.hmap;
-	}
-	public String getFileNode(String name)
-	{
-		Hashing hash = new Hashing(name);
-		System.out.println(hash.getHash());
-		
-		return this.hmap.getNode(hash);
-	}
+	
+	
 	
 	public int removeNode(String name)
 	{
@@ -77,12 +64,6 @@ public class Wrapper extends UnicastRemoteObject implements IWrapper{
 		}
 	}
 	
-	public String getIp(int hash)
-	{
-		String ip = this.hmap.getIp(hash);
-		
-		return ip;
-	}
 	
 	public int createNode(String name, String ip)
 	{
@@ -122,21 +103,12 @@ public class Wrapper extends UnicastRemoteObject implements IWrapper{
 		return (HashingMap) u.unmarshal(new File("hashMap.xml"));
 
 	}
-	
-	public int getCount()
-	{
-		return hmap.getCount();
+
+
+
+	public HashingMap getHashMap() {
+		// TODO Auto-generated method stub
+		return this.hmap;
 	}
-	
-	public int getHash(String name)
-	{
-		return (new Hashing(name)).getHash();
-	}
-	
-	public String getPrevIp(String filename)
-	{
-		return hmap.getPrevIp(filename);
-	}
-	
 
 }
