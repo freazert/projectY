@@ -9,7 +9,7 @@ import java.rmi.Naming;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
-import interfaces.IWrapper;
+import interfaces.INodeRMI;
 
 public class MulticastRecieveThread extends Thread {
 	
@@ -36,7 +36,7 @@ public class MulticastRecieveThread extends Thread {
 			System.out.println("joined group");
 			DatagramPacket dp = new DatagramPacket(buf, buf.length);
 			
-			//IWrapper obj = (IWrapper) Naming.lookup("//" + "192.168.1.16" + "/");
+			INodeRMI obj = (INodeRMI) Naming.lookup("//" + "192.168.1.16" + "/");
 			while(true)
 			{
 				
@@ -49,6 +49,11 @@ public class MulticastRecieveThread extends Thread {
                 jobj = new JSONObject(received);
                 
                 this.node.setNodes(jobj.getString("name"));
+                
+                if(received.equals("next"))
+                {
+                	node.controlFiles();
+                }
                 
                 System.out.println("nodenaam: " + jobj.getString("name"));
                 //int newHashing = obj.getHash(received);
