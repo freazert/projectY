@@ -9,9 +9,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-/**
- * Trivial client for the date server.
- */
 public class TCPReceive {
 	private String filePath;
 	private int socketPort;
