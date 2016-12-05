@@ -17,25 +17,24 @@ public class Node {
 	private int nextNode, prevNode, myNode;
 	private INodeRMI rmi;
 	private String name;
-	private List<String> eigenaarLijst;
+	private List<String> OwnerList;
 	private List<String> localList;
 
 	public List<String> getLocalList() {
 		return localList;
 	}
 
-	public Node() {
-		// this.myNode = 5;
-		// this.nextNode = 3;
-		// this.prevNode = 8;
+	/**
+	 * The constructor method node.
+	 * 
+	 * @param name the agentname of the node.
+	 */
+	public Node(String name) {
+		this.OwnerList = new ArrayList<String>();
+		this.localList = new ArrayList<String>();
+		this.name = name;
 
-		eigenaarLijst = new ArrayList<String>();
-		localList = new ArrayList<String>();
 		MulticastClient mc = new MulticastClient(this);
-
-		System.out.println("Enter name of the new agent: ");
-		Scanner sc = new Scanner(System.in);
-		name = sc.nextLine();
 
 		mc.multicastStart(name);
 
@@ -51,7 +50,10 @@ public class Node {
 		}
 	}
 
-	public void initNodes() {
+	/**
+	 * Initialize nodes on startup.
+	 */
+	private void initNodes() {
 		try {
 			this.myNode = this.rmi.getCurrent(name);
 			this.prevNode = this.rmi.getPrevious(name);
@@ -62,10 +64,12 @@ public class Node {
 		}
 	}
 
+	/**
+	 * set previous and next node when a new connection is made, using the name of the new node.
+	 * 
+	 * @param name the name of the new node
+	 */
 	public void setNodes(String name) {
-		System.out.println("");
-		System.out.println("node name: " + name);
-		System.out.println("my name: " + this.name);
 		int hash;
 		try {
 			hash = rmi.getCurrent(name);
@@ -80,6 +84,11 @@ public class Node {
 		printNodes();
 	}
 
+	/**
+	 * Set new previous node.
+	 * 
+	 * @param hash the hash of the new node
+	 */
 	private void setPrev(int hash) {
 		if ((hash > this.prevNode && hash < this.myNode) || (this.myNode < this.prevNode && hash > this.prevNode)
 				|| this.prevNode == this.myNode) {
@@ -88,6 +97,11 @@ public class Node {
 
 	}
 
+	/**
+	 * Set new next node.
+	 * 
+	 * @param hash the hash of the new node
+	 */
 	private void setNext(int hash) {
 		if ((hash < this.nextNode && hash > this.myNode) || (this.myNode > this.nextNode && hash < this.nextNode)
 				|| this.myNode == this.nextNode) {
@@ -95,7 +109,10 @@ public class Node {
 		}
 	}
 
-	public void printNodes() {
+	/**
+	 * Print out the current nodes.
+	 */
+	private void printNodes() {
 		System.out.println("my node: " + this.myNode);
 		System.out.println("next node: " + this.nextNode);
 		System.out.println("previous node: " + this.prevNode);
@@ -139,7 +156,10 @@ public class Node {
 							 */
 	}
 
-	public void SearchMap() {
+	/**
+	 * Get list of files in map.
+	 */
+	private void SearchMap() {
 		// TODO Auto-generated method stub
 		File folder = new File("c:\\Nieuwe map");
 		File[] listOfFiles = folder.listFiles();
@@ -151,21 +171,35 @@ public class Node {
 		}
 	}
 
+	/**
+	 * Get previous node.
+	 * 
+	 * @return the previous node hash
+	 */
 	public int getPrev() {
 		return this.prevNode;
 	}
 
+	/**
+	 * Get next node.
+	 * 
+	 * @return the next node hash
+	 */
 	public int getNext() {
 		return this.nextNode;
 	}
 
+	/**
+	 * get own node.
+	 * 
+	 * @return the local node hash
+	 */
 	public int getCurrent() {
 		return this.myNode;
 	}
 
 	public void controlFiles() {
 		// TODO Auto-generated method stub
-		int node = 1;
 		String[] eigenaarBestand = new String[] { "lol", "lp" };
 
 		for (String bestand : eigenaarBestand) {
@@ -180,16 +214,23 @@ public class Node {
 		}
 	}
 
+	/**
+	 * Get the owner of the file.
+	 * 
+	 * @param file the file that needs to be sent
+	 */
 	public void newFile(File file) {
 		// TODO Auto-generated method stub
 		try {
-			
+
 			String ipFileToRep = rmi.getPrevIp(file.getName());
 
 			if ((rmi.getHash(ipFileToRep)) == this.myNode) {
 				ipFileToRep = rmi.getIp(this.prevNode);
 			}
 			// int hash = this.rmi.(obj.getHash(listOfFiles[i].getName()));
+			SendFileThread sft = new SendFileThread(ipFileToRep, file);
+			sft.start();
 
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
