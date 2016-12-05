@@ -1,4 +1,4 @@
-package node;
+package TCP;
 
 import java.io.BufferedInputStream;
 import java.io.DataOutputStream;
