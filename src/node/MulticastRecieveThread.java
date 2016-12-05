@@ -34,11 +34,11 @@ public class MulticastRecieveThread extends Thread {
 			System.out.println("joined group");
 			DatagramPacket dp = new DatagramPacket(buf, buf.length);
 
-			INodeRMI obj = (INodeRMI) Naming.lookup("//" + "192.168.1.16" + "/");
+			INodeRMI obj = (INodeRMI) Naming.lookup("//" + "192.168.1.16" + "/nodeRMI");
 			while (true) {
 
 				socket.receive(dp);
-				System.out.print("lol");
+				System.out.println("lol");
 
 				buf = dp.getData();
 				int len = dp.getLength();
