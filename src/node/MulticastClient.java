@@ -22,7 +22,7 @@ public class MulticastClient {
 
 			multiSocket = new MulticastSocket(portMulticasting);
 
-			new MulticastRecieveThread(multiSocket, group, this.node).start();
+			//new MulticastRecieveThread(multiSocket, group, this.node).start();
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -50,7 +50,7 @@ public class MulticastClient {
 			System.out.print(countNodes);
 
 			// }
-			socket.close();
+			//socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -66,14 +66,14 @@ public class MulticastClient {
 
 			System.out.println(jobj);
 
-			socket = new DatagramSocket(portMulticasting);
+			socket = this.multiSocket;
 			socketReceive = new DatagramSocket(3000);
 
 			start(jobj.toString());
 
-			socket.close();
+			//socket.close();
 
-			multiSocket = new MulticastSocket(portMulticasting);
+			//multiSocket = new MulticastSocket(portMulticasting);
 
 			new MulticastRecieveThread(multiSocket, group, this.node).start();
 		} catch (Exception e) {
