@@ -27,7 +27,8 @@ public class Node {
 	/**
 	 * The constructor method node.
 	 * 
-	 * @param name the agentname of the node.
+	 * @param name
+	 *            the agentname of the node.
 	 */
 	public Node(String name) {
 		this.OwnerList = new ArrayList<String>();
@@ -38,16 +39,18 @@ public class Node {
 
 		mc.multicastStart(name);
 
-		this.initNodes();
-		this.SearchMap();
-		new CheckFolderThread(this, 400).start();
-
 		try {
-			this.rmi = (INodeRMI) Naming.lookup("//" + "192.168.1.15" + "/nodeRMI");
+			this.rmi = (INodeRMI) Naming.lookup("//" + "192.168.1.16" + "/nodeRMI");
 		} catch (MalformedURLException | RemoteException | NotBoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		this.initNodes();
+		if(this.myNode != this.prevNode) {
+			this.SearchMap();
+		}
+		new CheckFolderThread(this, 400).start();
 	}
 
 	/**
@@ -65,17 +68,22 @@ public class Node {
 	}
 
 	/**
-	 * set previous and next node when a new connection is made, using the name of the new node.
+	 * set previous and next node when a new connection is made, using the name
+	 * of the new node.
 	 * 
-	 * @param name the name of the new node
+	 * @param name
+	 *            the name of the new node
 	 */
 	public void setNodes(String name) {
 		int hash;
 		try {
-			hash = rmi.getCurrent(name);
+			System.out.println(name);
+
+			hash = this.rmi.getCurrent(name);
 
 			setPrev(hash);
 			setNext(hash);
+
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -87,7 +95,8 @@ public class Node {
 	/**
 	 * Set new previous node.
 	 * 
-	 * @param hash the hash of the new node
+	 * @param hash
+	 *            the hash of the new node
 	 */
 	private void setPrev(int hash) {
 		if ((hash > this.prevNode && hash < this.myNode) || (this.myNode < this.prevNode && hash > this.prevNode)
@@ -100,7 +109,8 @@ public class Node {
 	/**
 	 * Set new next node.
 	 * 
-	 * @param hash the hash of the new node
+	 * @param hash
+	 *            the hash of the new node
 	 */
 	private void setNext(int hash) {
 		if ((hash < this.nextNode && hash > this.myNode) || (this.myNode > this.nextNode && hash < this.nextNode)
@@ -163,12 +173,17 @@ public class Node {
 		// TODO Auto-generated method stub
 		File folder = new File("c:\\Nieuwe map");
 		File[] listOfFiles = folder.listFiles();
+		List<File> listOfValidFiles = new ArrayList<File>();
+		
 
 		for (int i = 0; i < listOfFiles.length; i++) {
 			if (listOfFiles[i].isFile()) {
-				this.newFile(listOfFiles[i]);
+				//this.newFile(listOfFiles[i]);
+				listOfValidFiles.add(listOfFiles[i]);
 			}
 		}
+		
+		this.sendFiles(listOfValidFiles);
 	}
 
 	/**
@@ -217,24 +232,21 @@ public class Node {
 	/**
 	 * Get the owner of the file.
 	 * 
-	 * @param file the file that needs to be sent
+	 * @param file
+	 *            the file that needs to be sent
 	 */
-	public void newFile(File file) {
+	public void sendFiles(List<File> files) {
 		// TODO Auto-generated method stub
-		try {
+		//try {
 
-			String ipFileToRep = rmi.getPrevIp(file.getName());
-
-			if ((rmi.getHash(ipFileToRep)) == this.myNode) {
-				ipFileToRep = rmi.getIp(this.prevNode);
-			}
 			// int hash = this.rmi.(obj.getHash(listOfFiles[i].getName()));
-			SendFileThread sft = new SendFileThread(ipFileToRep, file);
+			SendFileThread sft = new SendFileThread(files, this.rmi, this);
 			sft.start();
+			//sft.
 
-		} catch (RemoteException e) {
+		//} catch (RemoteException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			//e.printStackTrace();
+		//}
 	}
 }
