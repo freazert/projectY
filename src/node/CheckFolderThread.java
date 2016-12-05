@@ -20,7 +20,7 @@ public class CheckFolderThread extends Thread {
 
 			for (int i = 0; i < listOfFiles.length; i++) {
 				if (listOfFiles[i].isFile() && !node.getLocalList().contains(listOfFiles[i].getName())) {
-					node.newFile(listOfFiles[i]);
+					//node.newFile(listOfFiles[i]);
 				}
 			}
 
