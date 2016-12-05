@@ -42,10 +42,7 @@ public class NodeRMI extends UnicastRemoteObject implements INodeRMI{
 	@Override
 	public String getFileNode(String name) throws RemoteException {
 		// TODO Auto-generated method stub
-		Hashing hash = new Hashing(name);
-		System.out.println(hash.getHash());
-		
-		return this.hashmap.getNode(hash);
+		return this.hashmap.getNode(new Hashing(name));
 
 	}
 
