@@ -24,11 +24,16 @@ public class Node {
 		return localList;
 	}
 
+	/**
+	 * The constructor method node.
+	 * 
+	 * @param name the agentname of the node.
+	 */
 	public Node(String name) {
 		this.OwnerList = new ArrayList<String>();
 		this.localList = new ArrayList<String>();
 		this.name = name;
-		
+
 		MulticastClient mc = new MulticastClient(this);
 
 		mc.multicastStart(name);
@@ -60,9 +65,9 @@ public class Node {
 	}
 
 	/**
-	 * set nodes.
+	 * set previous and next node when a new connection is made, using the name of the new node.
 	 * 
-	 * @param name
+	 * @param name the name of the new node
 	 */
 	public void setNodes(String name) {
 		int hash;
@@ -80,9 +85,9 @@ public class Node {
 	}
 
 	/**
-	 * Set previous node.
+	 * Set new previous node.
 	 * 
-	 * @param hash
+	 * @param hash the hash of the new node
 	 */
 	private void setPrev(int hash) {
 		if ((hash > this.prevNode && hash < this.myNode) || (this.myNode < this.prevNode && hash > this.prevNode)
@@ -93,9 +98,9 @@ public class Node {
 	}
 
 	/**
-	 * Set next node.
+	 * Set new next node.
 	 * 
-	 * @param hash
+	 * @param hash the hash of the new node
 	 */
 	private void setNext(int hash) {
 		if ((hash < this.nextNode && hash > this.myNode) || (this.myNode > this.nextNode && hash < this.nextNode)
@@ -105,7 +110,7 @@ public class Node {
 	}
 
 	/**
-	 * Print out the nodes.
+	 * Print out the current nodes.
 	 */
 	private void printNodes() {
 		System.out.println("my node: " + this.myNode);
@@ -165,13 +170,11 @@ public class Node {
 			}
 		}
 	}
-	
-	
 
 	/**
 	 * Get previous node.
 	 * 
-	 * @return
+	 * @return the previous node hash
 	 */
 	public int getPrev() {
 		return this.prevNode;
@@ -180,7 +183,7 @@ public class Node {
 	/**
 	 * Get next node.
 	 * 
-	 * @return
+	 * @return the next node hash
 	 */
 	public int getNext() {
 		return this.nextNode;
@@ -189,7 +192,7 @@ public class Node {
 	/**
 	 * get own node.
 	 * 
-	 * @return
+	 * @return the local node hash
 	 */
 	public int getCurrent() {
 		return this.myNode;
@@ -211,16 +214,23 @@ public class Node {
 		}
 	}
 
+	/**
+	 * Get the owner of the file.
+	 * 
+	 * @param file the file that needs to be sent
+	 */
 	public void newFile(File file) {
 		// TODO Auto-generated method stub
 		try {
-			
+
 			String ipFileToRep = rmi.getPrevIp(file.getName());
 
 			if ((rmi.getHash(ipFileToRep)) == this.myNode) {
 				ipFileToRep = rmi.getIp(this.prevNode);
 			}
 			// int hash = this.rmi.(obj.getHash(listOfFiles[i].getName()));
+			SendFileThread sft = new SendFileThread(ipFileToRep, file);
+			sft.start();
 
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block

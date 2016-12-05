@@ -15,6 +15,14 @@ public class SendFileThread extends Thread {
 	private String ip;
 	private File file;
 
+	/**
+	 * The constructor method for the SendFileThread?
+	 * 
+	 * @param ip
+	 *            ip of the node to send to.
+	 * @param file
+	 *            the file that needs to be sent.
+	 */
 	public SendFileThread(String ip, File file) {
 		this.ip = ip;
 		this.file = file;
@@ -23,33 +31,54 @@ public class SendFileThread extends Thread {
 	@Override
 	public void run() {
 		try {
-
-			DatagramSocket clientSocket = new DatagramSocket();
 			InetAddress IPAddress = InetAddress.getByName(this.ip);
-			byte[] sendData = new byte[1024];
-			byte[] receiveData = new byte[1024];
 
+			String jsonString = createJsonString();
+			sendUdp(jsonString, IPAddress);
+			
+			TCPSend sendFile = new TCPSend(5555);
+			sendFile.sendFile(this.file.getName());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private String createJsonString() {
+		try {
 			JSONObject jobj = new JSONObject();
 			jobj.put("type", "send");
 			jobj.put("name", "lel");
 
-			System.out.println(jobj);
+			return jobj.toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 
-			sendData = jobj.toString().getBytes();
-			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 6789);
+		return "";
+	}
+
+	private void sendUdp(String data, InetAddress ip) {
+		byte[] sendData = new byte[1024];
+		byte[] receiveData = new byte[1024];
+		
+		try {
+			DatagramSocket clientSocket = new DatagramSocket();
+			
+			sendData = data.toString().getBytes();
+			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ip, 6789);
+			
 			clientSocket.send(sendPacket);
+			
 			/*
 			 * DatagramPacket receivePacket = new DatagramPacket(receiveData,
 			 * receiveData.length); clientSocket.receive(receivePacket); String
 			 * modifiedSentence = new String(receivePacket.getData());
 			 * System.out.println("FROM SERVER:" + modifiedSentence);
 			 */
-			TCPSend sendFile = new TCPSend(5555);
-			sendFile.sendFile(this.file.getName());
+			
 			clientSocket.close();
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
