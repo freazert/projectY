@@ -38,19 +38,24 @@ public class Node {
 		MulticastClient mc = new MulticastClient(this);
 
 		mc.multicastStart(name);
-
+		
 		try {
 			this.rmi = (INodeRMI) Naming.lookup("//" + "192.168.1.16" + "/nodeRMI");
 		} catch (MalformedURLException | RemoteException | NotBoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		printNodes();
 		this.initNodes();
 		if(this.myNode != this.prevNode) {
 			this.SearchMap();
+		} else {
+			ReceiveFileThread rft = new ReceiveFileThread();
+			rft.start();
 		}
 		new CheckFolderThread(this, 400).start();
+		
+		
 	}
 
 	/**

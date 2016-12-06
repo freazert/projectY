@@ -16,8 +16,9 @@ public class ReceiveFileThread extends Thread {
 	public void run() {
 		DatagramSocket serverSocket;
 		try {
-			serverSocket = new DatagramSocket(9876);
+			serverSocket = new DatagramSocket(6789);
 			while (true) {
+				System.out.println("rft run");
 				receiveUDP(serverSocket);
 			}
 		} catch (SocketException e) {
@@ -33,9 +34,13 @@ public class ReceiveFileThread extends Thread {
 		byte[] receiveData = new byte[1024];
 		byte[] sendData = new byte[1024];
 		
+		System.out.println("rft receiveUDP");
+		
 		try {
 		DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+		System.out.println("waiting for udp receive");
 		socket.receive(receivePacket);
+		System.out.println("UDP received");
 		String sentence = new String(receivePacket.getData());
 		System.out.println("RECEIVED: " + sentence);
 		InetAddress IPAddress = receivePacket.getAddress();

@@ -86,7 +86,7 @@ public class TCPReceive {
 		System.out.println("bytes: " + bytesRead);
 		System.out.println(new String(bytearray));
 
-		bos.write(bytearray, 0, currentTot);
+		bos.write(bytearray, 0, bytearray.length);
 		bos.flush();
 		bos.close();
 	}
