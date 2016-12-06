@@ -18,6 +18,7 @@ public class MulticastClient {
 
 	public MulticastClient(Node node) {
 		this.node = node;
+//<<<<<<< HEAD
 		try {
 
 			multiSocket = new MulticastSocket(portMulticasting);
@@ -27,6 +28,55 @@ public class MulticastClient {
 			e.printStackTrace();
 			System.exit(1);
 		}
+/*=======
+		try{
+			System.out.println("Enter name of the new agent: ");
+	        Scanner sc = new Scanner(System.in);
+	        String agentName = sc.nextLine();
+	        //sc.close();
+	        
+	        JSONObject jobj = new JSONObject();
+    		jobj.put("type", "new");
+    		jobj.put("name", agentName);
+    		
+    		System.out.println(jobj);
+	        
+            socket = new DatagramSocket(portMulticasting);
+            socketReceive = new DatagramSocket(3000);
+           
+            start(jobj.toString());
+            
+            
+            System.out.println("agent ready");
+            
+    		this.node.initNodes(jobj.getString("name"));
+    		//this.node.SearchMap();
+
+    		//IInitNodes obj = (IInitNodes) Naming.lookup("//" + "192.168.1.15" + "/initNode");
+    		
+    		
+    		
+            
+            System.out.println("agent ready");
+
+            
+            socket.close();
+            multiSocket = new MulticastSocket(portMulticasting);
+            
+            new MulticastRecieveThread(multiSocket, group, this.node).start();
+            System.out.println("to remove node: type getmeout");
+            String removecommand = sc.nextLine();
+            System.out.println(removecommand);
+            if (removecommand.equals( "getmeout" ))
+            {
+                this.node.shutdown();
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            System.exit(1);
+        }
+>>>>>>> origin/feature/shutdown*/
 	}
 
 	public void start(String name) {

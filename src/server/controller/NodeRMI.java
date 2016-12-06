@@ -61,9 +61,9 @@ public class NodeRMI extends UnicastRemoteObject implements INodeRMI{
 	}
 
 	@Override
-	public int removeNode(String name) throws RemoteException {
+	public int removeNode(int hash) throws RemoteException {
 		// TODO Auto-generated method stub
-		return wrap.removeNode(name);
+		return wrap.removeNode(hash);
 	}
 
 	@Override

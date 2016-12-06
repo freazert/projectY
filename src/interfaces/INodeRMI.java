@@ -13,7 +13,7 @@ public interface INodeRMI extends Remote{
 	String getIp(int hash) throws RemoteException;
 	
 	int createNode(String name, String ip) throws RemoteException;
-	int removeNode(String name) throws RemoteException;
+	int removeNode(int name) throws RemoteException;
 	int getHash(String name) throws RemoteException;
 	String getPrevIp(String filename) throws RemoteException;
 	
