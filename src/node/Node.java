@@ -45,7 +45,7 @@ public class Node {
 		}
 		
 		printNodes();
-	}
+	} 
 		
 	
 	public void setNodes(String name)
@@ -97,24 +97,24 @@ public class Node {
 		{
 			try {
 				DatagramPacket packetNext, packetPrevious;
-				IWrapper obj = (IWrapper) Naming.lookup("//" + "192.168.1.15" + "/getWrapper");
-				obj.removeNode(this.prevNode);
+				IWrapper obj = (IWrapper) Naming.lookup("//" + "192.168.1.15" + "/hash");
+				obj.removeNode(this.myNode);
 				
 				try {
-                    DatagramSocket socket = new DatagramSocket(4446);
+                    DatagramSocket socket = new DatagramSocket(4448);
 
                     String toSendPrev = "node gone, previous: " + this.prevNode;
                     byte[] bufPrev = new byte[toSendPrev.getBytes().length];
                     bufPrev = toSendPrev.getBytes();
 
-					packetNext = new DatagramPacket(bufPrev, bufPrev.length, InetAddress.getByName(obj.getIp(this.nextNode)), 4446);
+					packetNext = new DatagramPacket(bufPrev, bufPrev.length, InetAddress.getByName(obj.getIp(this.nextNode)), 4448);
                     socket.send(packetNext);
 
                     String toSendNext = "node gone, next: " + this.nextNode;
                     byte[] bufNext = new byte[toSendNext.getBytes().length];
                     bufNext = toSendNext.getBytes();
 
-					packetPrevious = new DatagramPacket(bufNext, bufNext.length, InetAddress.getByName(obj.getIp(this.prevNode)), 4446);
+					packetPrevious = new DatagramPacket(bufNext, bufNext.length, InetAddress.getByName(obj.getIp(this.prevNode)), 4448);
                     socket.send(packetPrevious);
                 }
 				catch (java.net.SocketException e){
