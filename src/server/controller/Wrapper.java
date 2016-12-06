@@ -31,9 +31,9 @@ public class Wrapper{
 	
 	
 	
-	public int removeNode(String name)
+	public int removeNode(int name)
 	{
-		int success = this.hmap.removeRecord(new Hashing(name));
+		int success = this.hmap.removeRecord(name);
 		try {
 			objectToXml();
 			
@@ -64,6 +64,15 @@ public class Wrapper{
 		}
 	}
 	
+//<<<<<<< HEAD
+/*=======
+	public String getIp(int hash)
+	{
+		String ip = this.hmap.getIp(hash);
+		
+		return ip;
+	}
+>>>>>>> origin/feature/shutdown*/
 	
 	public int createNode(String name, String ip)
 	{
@@ -110,5 +119,14 @@ public class Wrapper{
 		// TODO Auto-generated method stub
 		return this.hmap;
 	}
+/*<<<<<<< HEAD
+=======
+	
+	public String getPrevIp(String filename)
+	{
+		return hmap.getPrevIp(filename);
+	}
+	
+>>>>>>> origin/feature/shutdown*/
 
 }
