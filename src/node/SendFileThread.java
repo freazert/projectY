@@ -48,6 +48,9 @@ public class SendFileThread extends Thread {
 				//receive
 				TCPSend sendFile = new TCPSend(5555);
 				sendFile.sendFile(file.getName());
+				
+				ReceiveFileThread rft = new ReceiveFileThread();
+				rft.start();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
