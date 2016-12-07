@@ -47,8 +47,8 @@ public class SendFileThread extends Thread {
 				sendFile.send(file.getName());
 			}
 
-			ReceiveUDPThread rft = new ReceiveUDPThread(this.node);
-			rft.start();
+			/*ReceiveUDPThread rft = new ReceiveUDPThread(this.node);
+			rft.start();*/
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
