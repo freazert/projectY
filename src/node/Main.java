@@ -27,7 +27,8 @@ public class Main {
 		String name = sc.nextLine();
 		sc.close();
 
-		Node node = new Node(name);
+		//Node node = 
+		new Node(name);
 		// MulticastClient mc = new MulticastClient(node);
 
 	}
