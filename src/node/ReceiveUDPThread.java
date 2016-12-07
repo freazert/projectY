@@ -12,6 +12,12 @@ public class ReceiveUDPThread extends Thread {
 	private DatagramSocket serverSocket;
 	private Node node;
 
+	/**
+	 * The constructor method for the ReceiveUDPThread
+	 * 
+	 * @param node
+	 *            The node that receives the data.
+	 */
 	public ReceiveUDPThread(Node node) {
 		try {
 			this.node = node;
@@ -29,7 +35,7 @@ public class ReceiveUDPThread extends Thread {
 				System.out.println("receiveUDPThread run");
 				DatagramPacket data = getData(serverSocket);
 				String ip = data.getAddress().getHostAddress();
-				
+
 				handleData(new String(data.getData()), ip);
 			}
 		} catch (IOException e) {
@@ -39,6 +45,14 @@ public class ReceiveUDPThread extends Thread {
 		}
 	}
 
+	/**
+	 * receive data from the socket.
+	 * 
+	 * @param socket
+	 *            the socket over which the data comes.
+	 * @return the received data
+	 * @throws IOException
+	 */
 	private DatagramPacket getData(DatagramSocket socket) throws IOException {
 		byte[] receiveData = new byte[1024];
 
@@ -50,32 +64,32 @@ public class ReceiveUDPThread extends Thread {
 		System.out.println("UDP received");
 
 		return receivePacket;
-		/*
-		 * System.out.println("RECEIVED: " + sentence); 
-		 * 
-		 * 
-		 */
-
-		/*
-		 * int port = receivePacket.getPort(); String capitalizedSentence =
-		 * sentence.toUpperCase(); sendData = capitalizedSentence.getBytes();
-		 * DatagramPacket sendPacket = new DatagramPacket(sendData,
-		 * sendData.length, IPAddress, port); serverSocket.send(sendPacket);
-		 */
 	}
 
+	/**
+	 * Handle JSON data on type. handleData checks for the given type in the
+	 * JSON message. starts the TCP receiveThread when it gets file, start the
+	 * control files method when the type is next.
+	 * 
+	 * @param data
+	 *            the unparsed JSON string
+	 * @param ip
+	 *            the ip of the UDP sender
+	 * @throws JSONException
+	 * @throws IOException
+	 */
 	private void handleData(String data, String ip) throws JSONException, IOException {
 		JSONObject jobj = new JSONObject(data);
-		
+
 		String type = jobj.getString("type");
-		switch(type) {
-			case "file":
-				TCPReceive receive = new TCPReceive(5555);
-				receive.receiveFile(ip);
-				break;
-			case "next":
-				this.node.controlFiles();
-				break;
+		switch (type) {
+		case "file":
+			TCPReceive receive = new TCPReceive(5555);
+			receive.receiveFile(ip);
+			break;
+		case "next":
+			this.node.controlFiles();
+			break;
 		}
 
 	}

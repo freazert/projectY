@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.rmi.RemoteException;
 import java.util.List;
 
 import org.json.JSONException;
@@ -18,7 +19,7 @@ public class SendFileThread extends Thread {
 	private Node node;
 
 	/**
-	 * The constructor method for the SendFileThread?
+	 * The constructor method for the SendFileThread.
 	 * 
 	 * @param files
 	 *            List of files to be sent
@@ -47,8 +48,6 @@ public class SendFileThread extends Thread {
 				sendFile.send(file.getName());
 			}
 
-			/*ReceiveUDPThread rft = new ReceiveUDPThread(this.node);
-			rft.start();*/
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -56,26 +55,21 @@ public class SendFileThread extends Thread {
 
 	/**
 	 * Send server a message with the name of a file, requesting the ip of the
-	 * node that needs to be sent to.
+	 * node that needs to be sent to. return null if
 	 * 
 	 * @param name
 	 *            the name of file
 	 * @return the ip of the client node.
 	 */
-	private String getIP(String name) {
-		try {
-			String ip = rmi.getPrevIp(name);
+	private String getIP(String name) throws RemoteException {
 
-			if ((rmi.getHash(ip)) == this.node.getCurrent()) {
-				ip = rmi.getIp(this.node.getPrev());
-			}
+		String ip = rmi.getPrevIp(name);
 
-			return ip;
-		} catch (Exception e) {
-			e.printStackTrace();
+		if ((rmi.getHash(ip)) == this.node.getCurrent()) {
+			ip = rmi.getIp(this.node.getPrev());
 		}
 
-		return null;
+		return ip;
 	}
 
 	/**
