@@ -12,22 +12,16 @@ public class TCPSend {
 	Socket connectedSocket = null;
 	// private int socketPort;
 	private ServerSocket welcomeSocket;
-	public final static String FILE_PATH_TO_SEND = "D:\\school\\";
+	public final static String FILE_PATH_TO_SEND = "c:\\Nieuwe map\\";
 	public final static String FILE_NAME_TO_SEND = "scwcsc.txt";
 
-	TCPSend(int socketPort) {
+	TCPSend(ServerSocket welcomeSocket) {
 		// this.connectedSocket = new Socket(6789);
 		System.out.println("creating");
-		try {
-			this.welcomeSocket = new ServerSocket(socketPort);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.welcomeSocket = welcomeSocket;
 		}
-	}
 
 	public void sendFile(String fileName) {
-		while (true) {
 			Socket socket;
 			try {
 				System.out.println("waiting for accept");
@@ -54,6 +48,7 @@ public class TCPSend {
 					outToClient.write(bytearray, 0, bytearray.length);
 					outToClient.flush();
 					bin.close();
+					fin.close();
 					socket.close();
 					System.out.println("File transfer complete");
 				} else {
@@ -67,4 +62,3 @@ public class TCPSend {
 			}
 		}
 	}
-}

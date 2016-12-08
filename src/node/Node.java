@@ -59,7 +59,7 @@ public class Node {
 			ReceiveFileThread rft = new ReceiveFileThread();
 			rft.start();
 		}
-		new CheckFolderThread(this, 400).start();
+//		new CheckFolderThread(this, 400).start();
 		
 		
 	}
@@ -77,6 +77,8 @@ public class Node {
 			e.printStackTrace();
 		}
 	}
+	
+	
 
 	/**
 	 * set previous and next node when a new connection is made, using the name
@@ -334,4 +336,6 @@ public class Node {
 			//e.printStackTrace();
 		//}
 	}
+
+	
 }
