@@ -50,7 +50,8 @@ public class SendFileThread extends Thread {
 
 				InetAddress IPAddress = InetAddress.getByName(getIP(file.getName()));
 
-				String jsonString = createJsonString();
+				String jsonString = createJsonString(file.getName(),file.length());
+				System.out.print(jsonString);
 				sendUdp(jsonString, IPAddress);
 
 				//receive
@@ -76,7 +77,8 @@ public class SendFileThread extends Thread {
 	private String getIP(String name) throws RemoteException {
 		String ip = rmi.getPrevIp(name);
 
-		if ((rmi.getHash(ip)) == this.node.getCurrent()) {
+		int hash = rmi.getHash(name);
+		if (ip.equals(rmi.getIp(this.node.getCurrent()))){
 			ip = rmi.getIp(this.node.getPrev());
 		}
 
@@ -88,11 +90,12 @@ public class SendFileThread extends Thread {
 	 * 
 	 * @return the string for the user, on failure returns an empty string.
 	 */
-	private String createJsonString() {
+	private String createJsonString(String name, long size) {
 		try {
 			JSONObject jobj = new JSONObject();
 			jobj.put("type", "file");
-			jobj.put("name", "lel");
+			jobj.put("data", name);
+			jobj.put("size", size);
 
 			return jobj.toString();
 		} catch (JSONException e) {

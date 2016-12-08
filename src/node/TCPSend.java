@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -20,7 +21,7 @@ public class TCPSend {
 	 */
 	TCPSend(ServerSocket welcomeSocket) {
 		// this.connectedSocket = new Socket(6789);
-		this.filePath = "D:" + File.separator + "school" + File.separator;
+		this.filePath = "C:" + File.separator + "nieuwe map" + File.separator;
 		System.out.println("creating");
 			this.welcomeSocket = welcomeSocket;
 		}
@@ -49,18 +50,23 @@ public class TCPSend {
 	 */
 	public void send(String fileName) {
 		String fullName = this.filePath + fileName;
+		System.out.print(fullName);
 		DataOutputStream outToClient;
 		Socket socket;
 		try {
 			System.out.println("waiting for accept");
 			socket = this.welcomeSocket.accept();
-
+			
+			byte[] b = new byte[250];
+			
+			InputStream is = socket.getInputStream();
+			
 			File transferFile = new File(fullName);
 			System.out.println("Received: " + fullName);
 
 			if (transferFile.exists()) {
 				outToClient = new DataOutputStream(socket.getOutputStream());
-				sendName(fileName, outToClient);
+				//sendName(fileName, outToClient);	
 				sendFile(transferFile, outToClient);
 			} else {
 				System.out.println("file not found");
