@@ -6,15 +6,17 @@ import java.net.Socket;
 public class TCPReceive {
 	private String filePath;
 	private int socketPort;
+	private Node node;
 
 	public final static int FILE_SIZE = 6022386; // file size temporary hard
 													// coded
 													// should bigger than the
 													// file to be downloaded
 
-	public TCPReceive(int socketPort) {
+	public TCPReceive(Node node, int socketPort) {
 		this.filePath = "D:" + File.separator + "school"+ File.separator + "SCH-IW_EI" + File.separator + "shared" + File.separator + "receive" + File.separator;
 		this.socketPort = socketPort;
+		this.node = node;
 	}
 
 	/**
@@ -27,7 +29,6 @@ public class TCPReceive {
 	public void receiveFile(String ip, String name, int size) throws IOException {
 		System.out.println("receive file started.");
 		Socket socket = new Socket(ip, this.socketPort);
-
 		try {
 			//String name = connect(socket);
 			getFile(socket, name, size);
@@ -86,6 +87,9 @@ public class TCPReceive {
 		System.out.println(new String(bytearray));
 
 		bos.write(bytearray, 0, bytearray.length - 1);
+		
+		node.addOwnerList(name);
+		
 		bos.flush();
 		bos.close();
 	}

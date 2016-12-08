@@ -28,6 +28,11 @@ public class Node {
 	public List<String> getLocalList() {
 		return localList;
 	}
+	
+	public void addLocalList(String fileName)
+	{
+		localList.add(fileName);
+	}
 
 	/**
 	 * The constructor method node.
@@ -53,13 +58,11 @@ public class Node {
 		printNodes();
 		this.initNodes();
 		if (this.myNode != this.prevNode) {
-			this.SearchMap();
+			new CheckFolderThread(this, 4000);
 		} else {
 			ReceiveUDPThread rft = new ReceiveUDPThread(this);
 			rft.start();
 		}
-
-		//new CheckFolderThread(this, 400).start();
 	}
 
 	/**
@@ -214,22 +217,7 @@ public class Node {
 
 	/**
 	 */
-	private void SearchMap() {
-		// TODO Auto-generated method stub
-		File folder = new File("c:" + File.separator + "Nieuwe map");
-		File[] listOfFiles = folder.listFiles();
-		List<File> listOfValidFiles = new ArrayList<File>();
 
-		for (int i = 0; i < listOfFiles.length; i++) {
-			if (listOfFiles[i].isFile()) {
-				// this.newFile(listOfFiles[i]);
-				listOfValidFiles.add(listOfFiles[i]);
-				this.localList.add(listOfFiles[i].getName());
-			}
-		}
-
-		this.sendFiles(listOfValidFiles);
-	}
 
 	/**
 	 * Get previous node.
@@ -260,12 +248,11 @@ public class Node {
 
 	public void controlFiles() {
 		// TODO Auto-generated method stub
-
 		for (String bestand : this.localList) {
 			try {
 				// <<<<<<< HEAD
 				if (this.rmi.getHash(this.rmi.getPrevIp(bestand)) == this.prevNode) {
-					// send file
+					
 				}
 				/*
 				 * ======= DatagramPacket packetNext, packetPrevious; IWrapper
@@ -360,6 +347,12 @@ public class Node {
 		// TODO Auto-generated catch block
 		// e.printStackTrace();
 		// }
+	}
+
+	public void addOwnerList(String name) {
+		// TODO Auto-generated method stub
+		this.localList.add(name);
+		this.OwnerList.add(name);
 	}
 
 	
