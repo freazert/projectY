@@ -44,6 +44,9 @@ public class Node {
 		this.OwnerList = new ArrayList<String>();
 		this.localList = new ArrayList<String>();
 		this.name = name;
+		
+		/*ListenToCmdThread cmd = new ListenToCmdThread(this);
+		cmd.start();*/
 
 		MulticastClient mc = new MulticastClient(this);
 
@@ -142,22 +145,23 @@ public class Node {
 
 	public void shutdown() {
 		try {
+			System.out.println("shutting down");
 			DatagramPacket packetNext, packetPrevious;
-			INodeRMI obj = (INodeRMI) Naming.lookup("//" + "192.168.1.15" + "/hash");
-			obj.removeNode(this.myNode);
+			
+			rmi.removeNode(this.myNode);
 
 			DatagramSocket socket = new DatagramSocket(4448);
 			String toSendPrev = "node gone, previous: " + this.prevNode;
 			byte[] bufPrev = new byte[toSendPrev.getBytes().length];
 			bufPrev = toSendPrev.getBytes();
-			packetNext = new DatagramPacket(bufPrev, bufPrev.length, InetAddress.getByName(obj.getIp(this.nextNode)),
+			packetNext = new DatagramPacket(bufPrev, bufPrev.length, InetAddress.getByName(rmi.getIp(this.nextNode)),
 					4448);
 			socket.send(packetNext);
 			String toSendNext = "node gone, next: " + this.nextNode;
 			byte[] bufNext = new byte[toSendNext.getBytes().length];
 			bufNext = toSendNext.getBytes();
 			packetPrevious = new DatagramPacket(bufNext, bufNext.length,
-					InetAddress.getByName(obj.getIp(this.prevNode)), 4448);
+					InetAddress.getByName(rmi.getIp(this.prevNode)), 4448);
 			socket.send(packetPrevious);
 			socket.close();
 
