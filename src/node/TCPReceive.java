@@ -80,6 +80,7 @@ public class TCPReceive {
 		int currentTot = 0;
 		int filesize = 2022386;
 
+		
 		byte[] bytearray = new byte[filesize];
 		InputStream is = socket.getInputStream();
 		FileOutputStream fos = new FileOutputStream(filePath + name);
