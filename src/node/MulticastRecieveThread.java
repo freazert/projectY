@@ -78,7 +78,7 @@ public class MulticastRecieveThread extends Thread {
 			this.node.setNodes(name);
 		}
 
-		System.out.println("nodenaam: " + jobj.getString("name"));
+		System.out.println("nodenaam: " + jobj.getString("data"));
 
 	}
 
