@@ -23,6 +23,7 @@ public class CheckFolderThread extends Thread {
 			for (int i = 0; i < listOfFiles.length; i++) {
 				if (listOfFiles[i].isFile() && !node.getLocalList().contains(listOfFiles[i].getName())) {
 					newFiles.add(listOfFiles[i]);
+					node.addLocalList(listOfFiles[i].getName());
 				}
 			}
 			if(newFiles.size() != 0)

@@ -58,7 +58,7 @@ public class Node {
 		printNodes();
 		this.initNodes();
 		if (this.myNode != this.prevNode) {
-			new CheckFolderThread(this, 4000);
+			new CheckFolderThread(this, 10000).start();;
 		} else {
 			ReceiveUDPThread rft = new ReceiveUDPThread(this);
 			rft.start();

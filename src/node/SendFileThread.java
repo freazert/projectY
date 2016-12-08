@@ -58,7 +58,7 @@ public class SendFileThread extends Thread {
 				TCPSend sendFile = new TCPSend(serverSocket);
 				sendFile.send(file.getName());
 				
-				
+				serverSocket.close();
 				
 		}
 		} catch (IOException e) {
