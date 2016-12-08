@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class SendFileThread extends Thread {
 	private List<File> files;
 	private INodeRMI rmi;
 	private Node node;
-
+	ServerSocket serverSocket;
 	/**
 	 * The constructor method for the SendFileThread?
 	 * 
@@ -30,6 +31,14 @@ public class SendFileThread extends Thread {
 	 *            the file that needs to be sent.
 	 */
 	public SendFileThread(List<File> files, INodeRMI rmi, Node node) {
+
+		try {
+			this.serverSocket = new ServerSocket(5555);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		this.ip = ip;
 		this.files = files;
 		this.rmi = rmi;
@@ -40,18 +49,23 @@ public class SendFileThread extends Thread {
 	public void run() {
 		try {
 			for (File file : files) {
+
 				InetAddress IPAddress = InetAddress.getByName(getIP(file.getName()));
 
 				String jsonString = createJsonString();
 				sendUdp(jsonString, IPAddress);
 
 				//receive
-				TCPSend sendFile = new TCPSend(5555);
+				TCPSend sendFile = new TCPSend(serverSocket);
 				sendFile.sendFile(file.getName());
 				
-				ReceiveFileThread rft = new ReceiveFileThread();
-				rft.start();
+				
+				
 			}
+			new CheckFolderThread(node, 400).start();
+			
+			ReceiveFileThread rft = new ReceiveFileThread();
+			rft.start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
