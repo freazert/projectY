@@ -25,7 +25,7 @@ public class SendFileThread extends Thread {
 	 * @param files
 	 *            List of files to be sent
 	 * @param rmi
-	 *            the rmi object used to communicate with the nameServer.
+	 *            the remote method invocation object used to communicate with the nameServer.
 	 * @param node
 	 *            the node that sends the files.
 	 */
@@ -75,7 +75,6 @@ public class SendFileThread extends Thread {
 	 * @return the ip of the client node.
 	 */
 	private String getIP(String name) throws RemoteException {
-
 		String ip = rmi.getPrevIp(name);
 
 		int hash = rmi.getHash(name);

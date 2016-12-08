@@ -1,12 +1,6 @@
 package node;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
 
 public class TCPReceive {
@@ -19,7 +13,7 @@ public class TCPReceive {
 													// file to be downloaded
 
 	public TCPReceive(int socketPort) {
-		this.filePath = "D:\\school\\SCH-IW_EI\\shared\\receive\\";
+		this.filePath = "D:" + File.separator + "school"+ File.separator + "SCH-IW_EI" + File.separator + "shared" + File.separator + "receive" + File.separator;
 		this.socketPort = socketPort;
 	}
 
@@ -30,12 +24,13 @@ public class TCPReceive {
 	 *            the IP of the TCP sender.
 	 * @throws Exception
 	 */
-	public void receiveFile(String ip) throws IOException {
+	public void receiveFile(String ip, String name, int size) throws IOException {
+		System.out.println("receive file started.");
 		Socket socket = new Socket(ip, this.socketPort);
 
 		try {
-			String name = connect(socket);
-			getFile(socket, name);
+			//String name = connect(socket);
+			getFile(socket, name, size);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -44,13 +39,6 @@ public class TCPReceive {
 		socket.close();
 	}
 
-	/**
-	 
-	 * 
-	 * @param socket 
-	 * @return String
-	 * @throws Exception
-	 */
 	
 	/**
 	 * Create connection and receive filename.
@@ -64,6 +52,7 @@ public class TCPReceive {
 		BufferedReader inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
 		outToServer.writeBytes("listening" + '\n');
+		outToServer.flush();
 
 		return inFromServer.readLine();
 	}
@@ -75,16 +64,17 @@ public class TCPReceive {
 	 * @param name
 	 * @throws Exception
 	 */
-	private void getFile(Socket socket, String name) throws Exception {
+	private void getFile(Socket socket, String name, int size) throws Exception {
 		int bytesRead;
 		int currentTot = 0;
-		int filesize = 2022386;
+		int filesize = size + 1;
 
 		
 		byte[] bytearray = new byte[filesize];
 		InputStream is = socket.getInputStream();
 		FileOutputStream fos = new FileOutputStream(filePath + name);
 		BufferedOutputStream bos = new BufferedOutputStream(fos);
+		System.out.println("bytearray length: " + bytearray.length);
 		bytesRead = is.read(bytearray, 0, bytearray.length);
 		currentTot = bytesRead;
 		do {
@@ -92,10 +82,10 @@ public class TCPReceive {
 			if (bytesRead >= 0)
 				currentTot += bytesRead;
 		} while (bytesRead > -1);
-		System.out.println("bytes: " + bytesRead);
+		System.out.println("bytes: " + currentTot);
 		System.out.println(new String(bytearray));
 
-		bos.write(bytearray, 0, bytearray.length);
+		bos.write(bytearray, 0, bytearray.length - 1);
 		bos.flush();
 		bos.close();
 	}

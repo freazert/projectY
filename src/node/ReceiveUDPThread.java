@@ -54,7 +54,8 @@ public class ReceiveUDPThread extends Thread {
 	 * @throws IOException
 	 */
 	private DatagramPacket getData(DatagramSocket socket) throws IOException {
-		byte[] receiveData = new byte[1024];
+		byte[] receiveData = new byte[10240];
+		byte[] sendData = new byte[1024];
 
 		System.out.println("rft receiveUDP");
 
@@ -62,6 +63,8 @@ public class ReceiveUDPThread extends Thread {
 		System.out.println("waiting for udp receive");
 		socket.receive(receivePacket);
 		System.out.println("UDP received");
+		
+		//reply();
 
 		return receivePacket;
 	}
@@ -82,10 +85,15 @@ public class ReceiveUDPThread extends Thread {
 		JSONObject jobj = new JSONObject(data);
 
 		String type = jobj.getString("type");
+		System.out.println("type: "  + type);
 		switch (type) {
 		case "file":
+			System.out.println("receive file");
 			TCPReceive receive = new TCPReceive(5555);
-			receive.receiveFile(ip);
+			String name = jobj.getString("data");
+			int size = (int) jobj.getLong("size");
+			System.out.println("the name is: " + name);
+			receive.receiveFile(ip, name, size);
 			break;
 		case "next":
 			this.node.controlFiles();
