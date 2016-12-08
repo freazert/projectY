@@ -27,7 +27,6 @@ public class CheckFolderThread extends Thread {
 			}
 			if(newFiles.size() != 0)
 				node.sendFiles(newFiles);
-
 			try {
 				Thread.sleep(this.refreshMs);
 			} catch (InterruptedException e) {

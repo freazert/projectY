@@ -89,7 +89,7 @@ public class ReceiveUDPThread extends Thread {
 		switch (type) {
 		case "file":
 			System.out.println("receive file");
-			TCPReceive receive = new TCPReceive(5555);
+			TCPReceive receive = new TCPReceive(node, 5555);
 			String name = jobj.getString("data");
 			int size = (int) jobj.getLong("size");
 			System.out.println("the name is: " + name);
