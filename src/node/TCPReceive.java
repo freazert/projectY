@@ -26,8 +26,8 @@ public class TCPReceive {
 	/**
 	 * Receive a file from the given ip over the given socket
 	 * 
-	 * @param String
-	 * @param int
+	 * @param ip
+	 *            the IP of the TCP sender.
 	 * @throws Exception
 	 */
 	public void receiveFile(String ip) throws IOException {
@@ -45,10 +45,18 @@ public class TCPReceive {
 	}
 
 	/**
+	 
+	 * 
+	 * @param socket 
+	 * @return String
+	 * @throws Exception
+	 */
+	
+	/**
 	 * Create connection and receive filename.
 	 * 
 	 * @param socket
-	 * @return String
+	 * @return
 	 * @throws Exception
 	 */
 	private String connect(Socket socket) throws Exception {

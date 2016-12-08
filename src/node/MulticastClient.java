@@ -112,7 +112,7 @@ public class MulticastClient {
 
 			JSONObject jobj = new JSONObject();
 			jobj.put("type", "new");
-			jobj.put("name", name);
+			jobj.put("data", name);
 
 			System.out.println(jobj);
 
