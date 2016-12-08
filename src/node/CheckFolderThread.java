@@ -1,6 +1,8 @@
 package node;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CheckFolderThread extends Thread {
 
@@ -15,14 +17,16 @@ public class CheckFolderThread extends Thread {
 	@Override
 	public void run() {
 		while (true) {
-			File folder = new File("c:\\Nieuwe map");
+			File folder = new File("c:" + File.separator + "Nieuwe map");
 			File[] listOfFiles = folder.listFiles();
-
+			List<File> newFiles = new ArrayList<File>();
 			for (int i = 0; i < listOfFiles.length; i++) {
 				if (listOfFiles[i].isFile() && !node.getLocalList().contains(listOfFiles[i].getName())) {
-					//node.newFile(listOfFiles[i]);
+					newFiles.add(listOfFiles[i]);
 				}
 			}
+			if(newFiles.size() != 0)
+				node.sendFiles(newFiles);
 
 			try {
 				Thread.sleep(this.refreshMs);

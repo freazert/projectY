@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class SendFileThread extends Thread {
 	private List<File> files;
 	private INodeRMI rmi;
 	private Node node;
-
+	ServerSocket serverSocket;
 	/**
 	 * The constructor method for the SendFileThread.
 	 * 
@@ -29,6 +30,14 @@ public class SendFileThread extends Thread {
 	 *            the node that sends the files.
 	 */
 	public SendFileThread(List<File> files, INodeRMI rmi, Node node) {
+
+		try {
+			this.serverSocket = new ServerSocket(5555);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		this.files = files;
 		this.rmi = rmi;
 		this.node = node;
@@ -38,16 +47,19 @@ public class SendFileThread extends Thread {
 	public void run() {
 		try {
 			for (File file : files) {
+
 				InetAddress IPAddress = InetAddress.getByName(getIP(file.getName()));
 
 				String jsonString = createJsonString();
 				sendUdp(jsonString, IPAddress);
 
-				// receive
-				TCPSend sendFile = new TCPSend(5555);
+				//receive
+				TCPSend sendFile = new TCPSend(serverSocket);
 				sendFile.send(file.getName());
-			}
-
+				
+				
+				
+		}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

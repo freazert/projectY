@@ -9,25 +9,21 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class TCPSend {
+
 	private ServerSocket welcomeSocket;
 	private String filePath;
-	
+
 	/**
 	 * The constructor method for TCPSend
 	 * 
 	 * @param socketPort the port over which the TCP connection will be made.
 	 */
-	TCPSend(int socketPort) {
+	TCPSend(ServerSocket welcomeSocket) {
 		// this.connectedSocket = new Socket(6789);
 		this.filePath = "D:" + File.separator + "school" + File.separator;
 		System.out.println("creating");
-		try {
-			this.welcomeSocket = new ServerSocket(socketPort);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.welcomeSocket = welcomeSocket;
 		}
-	}
 
 	/**
 	 * The constructor method for TCPSend
@@ -48,7 +44,8 @@ public class TCPSend {
 	/**
 	 * send a file over the TCP connection
 	 * 
-	 * @param fileName the name of the file that needs to be sent.
+	 * @param fileName
+	 *            the name of the file that needs to be sent.
 	 */
 	public void send(String fileName) {
 		String fullName = this.filePath + fileName;
@@ -60,7 +57,6 @@ public class TCPSend {
 
 			File transferFile = new File(fullName);
 			System.out.println("Received: " + fullName);
-			
 
 			if (transferFile.exists()) {
 				outToClient = new DataOutputStream(socket.getOutputStream());
@@ -82,8 +78,10 @@ public class TCPSend {
 	/**
 	 * Send the name of the file to the receiver.
 	 * 
-	 * @param name The name of the file.
-	 * @param outToClient  The output stream to the receiver.
+	 * @param name
+	 *            The name of the file.
+	 * @param outToClient
+	 *            The output stream to the receiver.
 	 * @throws IOException
 	 */
 	private void sendName(String name, DataOutputStream outToClient) throws IOException {

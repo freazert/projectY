@@ -18,10 +18,10 @@ public class Main {
 			
 			new MulticastServerThread(wrap).start();
 			
-			
+			NodeRMI nodeRMI = new NodeRMI(wrap);
 			//InitNodes newNode = new InitNodes(wrap.getHashingMap());
 			registry = LocateRegistry.createRegistry(1099);
-			registry.bind("nodeRMI", (Remote)new NodeRMI(wrap));
+			registry.bind("nodeRMI", (Remote)nodeRMI);
 			
 			//registry = LocateRegistry.createRegistry(1099);
 			//registry.bind("hash", (Remote)wrap);
