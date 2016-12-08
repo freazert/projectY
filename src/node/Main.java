@@ -27,11 +27,27 @@ public class Main {
 		System.out.println("Enter name of the new agent: ");
 		Scanner sc = new Scanner(System.in);
 		String name = sc.nextLine();
-		sc.close();
+		
 
-		//Node node = 
-		new Node(name);
+		Node node = new Node(name);
 		// MulticastClient mc = new MulticastClient(node);
+		while (true) {
+			String cmd;
+			//System.out.println("waiting for the cmd...");
+			while (!sc.hasNextLine()) {
+				//System.out.println("noooooz");
+			}
+			
+			cmd = sc.nextLine();
+			System.out.println("ciao bello");
+			node.shutdown();
+			
+			// } catch (Exception e) {
+			// e.printStackTrace(arg0);
+			// }
+		}
+		
+		
 
 	}
 
