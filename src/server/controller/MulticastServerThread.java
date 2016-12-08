@@ -56,8 +56,8 @@ public class MulticastServerThread extends Thread {
                 String received = (new String(buf)).substring(0,len);
                 try{
                 	JSONObject jobj = new JSONObject(received);
-                	this.wrap.createNode(jobj.getString("name"), packet.getAddress().getHostAddress());
-                    System.out.println("Agent name: " + jobj.getString("name") + " (" + packet.getAddress() + ")");
+                	this.wrap.createNode(jobj.getString("data"), packet.getAddress().getHostAddress());
+                    System.out.println("Agent name: " + jobj.getString("data") + " (" + packet.getAddress() + ")");
                     
                     buf = new byte[256];
                     
