@@ -58,8 +58,8 @@ public class Node {
 			ReceiveUDPThread rft = new ReceiveUDPThread(this);
 			rft.start();
 		}
-		new CheckFolderThread(this, 400).start();
 
+		//new CheckFolderThread(this, 400).start();
 	}
 
 	/**
@@ -75,6 +75,8 @@ public class Node {
 			e.printStackTrace();
 		}
 	}
+	
+	
 
 	/**
 	 * set previous and next node when a new connection is made, using the name
@@ -214,7 +216,7 @@ public class Node {
 	 */
 	private void SearchMap() {
 		// TODO Auto-generated method stub
-		File folder = new File("c:\\Nieuwe map");
+		File folder = new File("c:" + File.separator + "Nieuwe map");
 		File[] listOfFiles = folder.listFiles();
 		List<File> listOfValidFiles = new ArrayList<File>();
 
@@ -306,8 +308,8 @@ public class Node {
 	/**
 	 * Get the owner of the file.
 	 * 
-	 * @param file
-	 *            the file that needs to be sent
+	 * @param files
+	 *            the files that needs to be sent
 	 */
 	public void sendFiles(List<File> files) {
 		// TODO Auto-generated method stub
@@ -359,4 +361,6 @@ public class Node {
 		// e.printStackTrace();
 		// }
 	}
+
+	
 }

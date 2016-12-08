@@ -12,6 +12,8 @@ public class Main {
 
 	public static void main(String args[]) throws MalformedURLException, RemoteException, NotBoundException {
 
+		System.setProperty("java.net.preferIPv4Stack" , "true");
+
 		/*
 		 * String name; if(args.length > 0) { name = args[0]; } else { name =
 		 * "noName"; } IWrapper obj = (IWrapper) Naming.lookup("//" +
