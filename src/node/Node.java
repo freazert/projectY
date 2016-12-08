@@ -216,7 +216,7 @@ public class Node {
 	 */
 	private void SearchMap() {
 		// TODO Auto-generated method stub
-		File folder = new File("c:\\Nieuwe map");
+		File folder = new File("c:" + File.separator + "Nieuwe map");
 		File[] listOfFiles = folder.listFiles();
 		List<File> listOfValidFiles = new ArrayList<File>();
 
@@ -308,8 +308,8 @@ public class Node {
 	/**
 	 * Get the owner of the file.
 	 * 
-	 * @param file
-	 *            the file that needs to be sent
+	 * @param files
+	 *            the files that needs to be sent
 	 */
 	public void sendFiles(List<File> files) {
 		// TODO Auto-generated method stub

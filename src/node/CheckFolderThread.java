@@ -17,7 +17,7 @@ public class CheckFolderThread extends Thread {
 	@Override
 	public void run() {
 		while (true) {
-			File folder = new File("c:\\Nieuwe map");
+			File folder = new File("c:" + File.separator + "Nieuwe map");
 			File[] listOfFiles = folder.listFiles();
 			List<File> newFiles = new ArrayList<File>();
 			for (int i = 0; i < listOfFiles.length; i++) {

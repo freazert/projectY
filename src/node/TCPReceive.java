@@ -1,12 +1,6 @@
 package node;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
 
 public class TCPReceive {
@@ -19,7 +13,7 @@ public class TCPReceive {
 													// file to be downloaded
 
 	public TCPReceive(int socketPort) {
-		this.filePath = "D:\\school\\SCH-IW_EI\\shared\\receive\\";
+		this.filePath = "D:" + File.separator + "school"+ File.separator + "SCH-IW_EI" + File.separator + "shared" + File.separator + "receive" + File.separator;
 		this.socketPort = socketPort;
 	}
 
