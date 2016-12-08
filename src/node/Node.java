@@ -224,6 +224,7 @@ public class Node {
 			if (listOfFiles[i].isFile()) {
 				// this.newFile(listOfFiles[i]);
 				listOfValidFiles.add(listOfFiles[i]);
+				this.localList.add(listOfFiles[i].getName());
 			}
 		}
 
@@ -259,9 +260,8 @@ public class Node {
 
 	public void controlFiles() {
 		// TODO Auto-generated method stub
-		String[] eigenaarBestand = new String[] { "lol", "lp" };
 
-		for (String bestand : eigenaarBestand) {
+		for (String bestand : this.localList) {
 			try {
 				// <<<<<<< HEAD
 				if (this.rmi.getHash(this.rmi.getPrevIp(bestand)) == this.prevNode) {
