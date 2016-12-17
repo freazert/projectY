@@ -14,17 +14,27 @@ public class HashingMap {
 	@XmlElement
 	public HashMap<Integer, String> hashMap;
 
-	public HashingMap(Hashing hash) 
+	/*public HashingMap(Hashing hash) 
 	{
 		this.hashMap = new HashMap<Integer, String>();
 		addRecord(hash, "192.168.1.1");
-	}
+	}*/
 
+	/**
+	 * The constructor method for the hashing map.
+	 */
 	public HashingMap() 
 	{
 		this.hashMap = new HashMap<Integer, String>();
 	}
 
+	/**
+	 * Add new node to the hashing map.
+	 * 
+	 * @param hash The hash that needs to be inserted in the hashingmap
+	 * @param ip the ip of the new node.
+	 * @return boolean, 1 on success. 0 on failure.
+	 */
 	public int addRecord(Hashing hash, String ip) 
 	{
 		try {
@@ -45,6 +55,12 @@ public class HashingMap {
 		
 	}
 
+	/**
+	 * Delete record from the hashingmap.
+	 * 
+	 * @param hash the hash of the node that needs to be removed.
+	 * @return boolean. 1 on success, 0 on failure.
+	 */
 	public int removeRecord(int hash)
 	{
 		try {
@@ -59,11 +75,23 @@ public class HashingMap {
 		
 	}
 
+	/**
+	 * Get ip from the node with a certain hash.
+	 * 
+	 * @param hash hashed value of the name.
+	 * @return the ip of the node.
+	 */
 	public String getIp(int hash) 
 	{
 		return this.hashMap.get(hash).toString();
 	}
 
+	/**
+	 * Get the next hash
+	 * 
+	 * @param hash the current hash
+	 * @return The next hash.
+	 */
 	public int getNext(Hashing hash)
 	{
 		Map.Entry<Integer, String> record = null;
@@ -101,6 +129,11 @@ public class HashingMap {
 		return record.getKey();
 	}
 	
+	/**
+	 * Print the complete hashmap
+	 * 
+	 * @param map
+	 */
 	public  <K, V> void printMap (Map<K,V> map) {
 		for (Map.Entry<K,V> entry: map.entrySet()) {
 			System.out.println("Key: " + entry.getKey() + " value : " + entry.getValue());
@@ -108,7 +141,12 @@ public class HashingMap {
 	}
 	
 	
-	
+	/**
+	 * Get the previous hash
+	 * 
+	 * @param hash the current hash.
+	 * @return the previous hash.
+	 */
 	public int getPrev(Hashing hash)
 	{
 		TreeMap<Integer, String> treeMap = new TreeMap<Integer, String> (this.hashMap);
@@ -136,6 +174,12 @@ public class HashingMap {
 		return value;
 	}
 	
+	/**
+	 * Get ip of the owner of the file.
+	 * 
+	 * @param filename The name of the file that needs to be found.
+	 * @return the ip of the owner of the file.
+	 */
 	public String getPrevIp(String filename)
 	{
 		Map.Entry<Integer, String> record = null;
@@ -314,6 +358,11 @@ public class HashingMap {
 		return record.getValue();
 	}
 	
+	/**
+	 * Get size of the hashmap
+	 * 
+	 * @return size of the hashmap.
+	 */
     public int getCount()
     {
     	return this.hashMap.size();
