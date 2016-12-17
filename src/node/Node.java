@@ -1,15 +1,20 @@
 package node;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.SocketException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 //<<<<<<< HEAD
 import interfaces.INodeRMI;
@@ -24,13 +29,13 @@ public class Node {
 	private String name;
 	private List<String> OwnerList;
 	private List<String> localList;
+	private String serverIP = "192.168.1.16";
 
 	public List<String> getLocalList() {
 		return localList;
 	}
-	
-	public void addLocalList(String fileName)
-	{
+
+	public void addLocalList(String fileName) {
 		localList.add(fileName);
 	}
 
@@ -44,16 +49,17 @@ public class Node {
 		this.OwnerList = new ArrayList<String>();
 		this.localList = new ArrayList<String>();
 		this.name = name;
-		
-		/*ListenToCmdThread cmd = new ListenToCmdThread(this);
-		cmd.start();*/
+
+		/*
+		 * ListenToCmdThread cmd = new ListenToCmdThread(this); cmd.start();
+		 */
 
 		MulticastClient mc = new MulticastClient(this);
 
 		mc.multicastStart(name);
 
 		try {
-			this.rmi = (INodeRMI) Naming.lookup("//" + "192.168.1.16" + "/nodeRMI");
+			this.rmi = (INodeRMI) Naming.lookup("//" + this.serverIP + "/nodeRMI");
 		} catch (MalformedURLException | RemoteException | NotBoundException e) {
 			failure();
 			e.printStackTrace();
@@ -61,7 +67,8 @@ public class Node {
 		printNodes();
 		this.initNodes();
 		if (this.myNode != this.prevNode) {
-			new CheckFolderThread(this, 10000).start();;
+			new CheckFolderThread(this, 10000).start();
+			;
 		} else {
 			ReceiveUDPThread rft = new ReceiveUDPThread(this);
 			rft.start();
@@ -81,8 +88,6 @@ public class Node {
 			e.printStackTrace();
 		}
 	}
-	
-	
 
 	/**
 	 * set previous and next node when a new connection is made, using the name
@@ -146,31 +151,58 @@ public class Node {
 	public void shutdown() {
 		try {
 			System.out.println("shutting down");
-			DatagramPacket packetNext, packetPrevious;
-			
+
 			rmi.removeNode(this.myNode);
 
 			DatagramSocket socket = new DatagramSocket(4448);
-			String toSendPrev = "node gone, previous: " + this.prevNode;
-			byte[] bufPrev = new byte[toSendPrev.getBytes().length];
-			bufPrev = toSendPrev.getBytes();
-			packetNext = new DatagramPacket(bufPrev, bufPrev.length, InetAddress.getByName(rmi.getIp(this.nextNode)),
-					4448);
-			socket.send(packetNext);
-			String toSendNext = "node gone, next: " + this.nextNode;
-			byte[] bufNext = new byte[toSendNext.getBytes().length];
-			bufNext = toSendNext.getBytes();
-			packetPrevious = new DatagramPacket(bufNext, bufNext.length,
-					InetAddress.getByName(rmi.getIp(this.prevNode)), 4448);
-			socket.send(packetPrevious);
+			String toSendPrev = createJSONObject("previous", this.prevNode);
+			sendUDP(socket, rmi.getIp(this.nextNode), toSendPrev);
+			
+			String toSendNext = createJSONObject("next", this.nextNode);
+			sendUDP(socket, rmi.getIp(this.prevNode), toSendNext);
+			
 			socket.close();
+			
+			shutdownLocalFiles();
 
-		} catch (Exception e) {
+		} catch (Exception e ) {
 			failure();
 			e.printStackTrace();
 		} finally {
 			System.exit(0);
 		}
+	}
+
+	private void shutdownLocalFiles() {
+		for (String file : this.localList) {
+			try {
+				String ip = this.rmi.getFileNode(file);
+				DatagramSocket socket = new DatagramSocket(4448);
+				String json = createJSONObject("remove", file);
+				
+				sendUDP(socket, ip, json);
+
+			} catch (RemoteException | SocketException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void sendUDP(DatagramSocket socket, String ip, String data) throws IOException {
+		DatagramPacket packet;
+		byte[] buf = new byte[data.getBytes().length];
+		
+		buf = data.getBytes();
+		packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(ip),
+				4448);
+		socket.send(packet);
 	}
 
 	public void failure() {
@@ -180,25 +212,29 @@ public class Node {
 			this.prevNode = this.rmi.getPrevious(name);
 			this.nextNode = this.rmi.getNext(name);
 
-			INodeRMI obj = (INodeRMI) Naming.lookup("//" + "192.168.1.15" + "/hash");
+			//INodeRMI obj = (INodeRMI) Naming.lookup("//" + serverIP + "/hash");
 
 			DatagramSocket socket = new DatagramSocket(4448);
 
-			String toSendPrev = "node failed, previous: " + this.prevNode;
+			String prev = createJSONObject("previous", this.prevNode);
+			sendUDP(socket, this.rmi.getIp(this.nextNode), prev);
+			/*String toSendPrev = "node failed, previous: " + this.prevNode;
 			byte[] bufPrev = new byte[toSendPrev.getBytes().length];
 			bufPrev = toSendPrev.getBytes();
 			packetNext = new DatagramPacket(bufPrev, bufPrev.length, InetAddress.getByName(obj.getIp(this.nextNode)),
 					4448);
-			socket.send(packetNext);
+			socket.send(packetNext);*/
 
-			String toSendNext = "node failed, next: " + this.nextNode;
+			String next = createJSONObject("next", this.nextNode);
+			sendUDP(socket, this.rmi.getIp(this.prevNode), next);
+			/*String toSendNext = "node failed, next: " + this.nextNode;
 			byte[] bufNext = new byte[toSendNext.getBytes().length];
 			bufNext = toSendNext.getBytes();
 			packetPrevious = new DatagramPacket(bufNext, bufNext.length,
 					InetAddress.getByName(obj.getIp(this.prevNode)), 4448);
-			socket.send(packetPrevious);
+			socket.send(packetPrevious);*/
 
-			obj.removeNode(this.myNode);
+			this.rmi.removeNode(this.myNode);
 
 		} catch (MalformedURLException e) {
 			System.out.println("FAILURE: MALFORMED URL EXCEPTION");
@@ -215,13 +251,12 @@ public class Node {
 		} catch (java.io.IOException e) {
 			System.out.println("FAILURE: IO EXCEPTION");
 			e.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
-
-	/**
-	 */
-
 
 	/**
 	 * Get previous node.
@@ -256,7 +291,7 @@ public class Node {
 			try {
 				// <<<<<<< HEAD
 				if (this.rmi.getHash(this.rmi.getPrevIp(bestand)) == this.prevNode) {
-					
+
 				}
 				/*
 				 * ======= DatagramPacket packetNext, packetPrevious; IWrapper
@@ -358,6 +393,13 @@ public class Node {
 		this.localList.add(name);
 		this.OwnerList.add(name);
 	}
-
 	
+	private String createJSONObject(String type, Object data) throws JSONException {
+		JSONObject jobj = new JSONObject();
+		jobj.put("type", type);
+		jobj.put("data", data);
+		
+		return jobj.toString();
+	}
+
 }
