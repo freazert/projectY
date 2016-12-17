@@ -16,6 +16,12 @@ public class NodeRMI extends UnicastRemoteObject implements INodeRMI{
     private Hashing currentHash;
     private Wrapper wrap;
 
+    /**
+     * The constructor method for nodeRMI. nodeRMI is used through 
+     * 
+     * @param wrap Wrapper object.
+     * @throws RemoteException
+     */
     protected NodeRMI(Wrapper wrap) throws RemoteException {
 		
     	super();
