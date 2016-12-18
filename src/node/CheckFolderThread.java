@@ -8,16 +8,18 @@ public class CheckFolderThread extends Thread {
 
 	private Node node;
 	private int refreshMs;
+	private String folderString;
 
-	public CheckFolderThread(Node node, int refreshMs) {
+	public CheckFolderThread(Node node, int refreshMs, String folder) {
 		this.node = node;
 		this.refreshMs = refreshMs;
+		this.folderString = folder;
 	}
 
 	@Override
 	public void run() {
 		while (true) {
-			File folder = new File("c:" + File.separator + "Nieuwe map");
+			File folder = new File(this.folderString);
 			File[] listOfFiles = folder.listFiles();
 			List<File> newFiles = new ArrayList<File>();
 			for (int i = 0; i < listOfFiles.length; i++) {
