@@ -16,12 +16,7 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-//<<<<<<< HEAD
 import interfaces.INodeRMI;
-/*=======
-import interfaces.IInitNodes;
-import interfaces.IWrapper;
->>>>>>> origin/feature/shutdown*/
 
 public class Node {
 	private int nextNode, prevNode, myNode;
@@ -76,19 +71,36 @@ public class Node {
 		}
 	}
 
+	// Getters
+
 	/**
-	 * Initialize nodes on startup.
+	 * Get previous node.
+	 * 
+	 * @return the previous node hash
 	 */
-	private void initNodes() {
-		try {
-			this.myNode = this.rmi.getCurrent(name);
-			this.prevNode = this.rmi.getPrevious(name);
-			this.nextNode = this.rmi.getNext(name);
-		} catch (RemoteException e) {
-			failure();
-			e.printStackTrace();
-		}
+	public int getPrev() {
+		return this.prevNode;
 	}
+
+	/**
+	 * Get next node.
+	 * 
+	 * @return the next node hash
+	 */
+	public int getNext() {
+		return this.nextNode;
+	}
+
+	/**
+	 * get own node.
+	 * 
+	 * @return the local node hash
+	 */
+	public int getCurrent() {
+		return this.myNode;
+	}
+
+	// Setters
 
 	/**
 	 * set previous and next node when a new connection is made, using the name
@@ -113,42 +125,13 @@ public class Node {
 		printNodes();
 	}
 
-	/**
-	 * Set new previous node.
-	 * 
-	 * @param hash
-	 *            the hash of the new node
+	/*
+	 * public functions.
 	 */
-	private void setPrev(int hash) {
-		if ((hash > this.prevNode && hash < this.myNode) || (this.myNode < this.prevNode && hash > this.prevNode)
-				|| this.prevNode == this.myNode) {
-			this.prevNode = hash;
-		}
-
-	}
 
 	/**
-	 * Set new next node.
-	 * 
-	 * @param hash
-	 *            the hash of the new node
+	 * Start the shutdown
 	 */
-	private void setNext(int hash) {
-		if ((hash < this.nextNode && hash > this.myNode) || (this.myNode > this.nextNode && hash < this.nextNode)
-				|| this.myNode == this.nextNode) {
-			this.nextNode = hash;
-		}
-	}
-
-	/**
-	 * Print out the current nodes.
-	 */
-	private void printNodes() {
-		System.out.println("my node: " + this.myNode);
-		System.out.println("next node: " + this.nextNode);
-		System.out.println("previous node: " + this.prevNode);
-	}
-
 	public void shutdown() {
 		try {
 			System.out.println("shutting down");
@@ -173,50 +156,6 @@ public class Node {
 		} finally {
 			System.exit(0);
 		}
-	}
-
-	private void shutdownLocalFiles() {
-		for (String file : this.localList) {
-			try {
-				String ip = this.rmi.getFileNode(file);
-				DatagramSocket socket = new DatagramSocket(4448);
-				String json = createJSONObject("remove", file);
-
-				sendUDP(socket, ip, json);
-
-			} catch (RemoteException | SocketException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	private void shutdownReplicatedFiles() throws InterruptedException {
-		List<File> files = new ArrayList<File>();
-		for(String filename : this.ownerList) {
-			File f = new File(folderString + File.separator + filename);
-			if(f.isFile()) {
-				files.add(f);
-			}
-		}
-		SendFileThread sft = new SendFileThread(files, this.rmi, this);
-		sft.start();
-		sft.join();
-	}
-
-	private void sendUDP(DatagramSocket socket, String ip, String data) throws IOException {
-		DatagramPacket packet;
-		byte[] buf = new byte[data.getBytes().length];
-
-		buf = data.getBytes();
-		packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(ip), 4448);
-		socket.send(packet);
 	}
 
 	public void failure() {
@@ -259,10 +198,11 @@ public class Node {
 		} catch (RemoteException e) {
 			System.out.println("FAILURE: REMOTE EXCEPTION");
 			e.printStackTrace();
-		} /*catch (NotBoundException e) {
-			System.out.println("FAILURE: NOT BOUND EXCEPTION");
-			e.printStackTrace();
-		} */catch (java.net.SocketException e) {
+		} /*
+			 * catch (NotBoundException e) {
+			 * System.out.println("FAILURE: NOT BOUND EXCEPTION");
+			 * e.printStackTrace(); }
+			 */catch (java.net.SocketException e) {
 			System.out.println("FAILURE: SOCKET EXCEPTION");
 			e.printStackTrace();
 		} catch (java.io.IOException e) {
@@ -273,33 +213,6 @@ public class Node {
 			e.printStackTrace();
 		}
 
-	}
-
-	/**
-	 * Get previous node.
-	 * 
-	 * @return the previous node hash
-	 */
-	public int getPrev() {
-		return this.prevNode;
-	}
-
-	/**
-	 * Get next node.
-	 * 
-	 * @return the next node hash
-	 */
-	public int getNext() {
-		return this.nextNode;
-	}
-
-	/**
-	 * get own node.
-	 * 
-	 * @return the local node hash
-	 */
-	public int getCurrent() {
-		return this.myNode;
 	}
 
 	public void controlFiles() {
@@ -411,12 +324,162 @@ public class Node {
 		this.ownerList.add(name);
 	}
 
+	/**
+	 * Remove a file of which this node is the owner, both on the ownerlist as
+	 * on the disk.
+	 * 
+	 * @param fileName
+	 *            the name of the file that has to be removed.
+	 */
+	public void removeFile(String fileName) {
+		int fileIndex = this.ownerList.indexOf(fileName);
+		if (fileIndex >= 0) {
+			File file = new File(this.folderString + File.separator + fileName);
+			file.delete();
+			this.ownerList.remove(fileIndex);
+		}
+	}
+
+	/*
+	 * internal private functions
+	 */
+
+	/**
+	 * create a JSON string int the form of { type: "[type]", data: [object] }.
+	 * this way certain data will be easy to send over any connection to another
+	 * node.
+	 * 
+	 * @param type
+	 *            A short string representation of what the receiver has to do
+	 *            with the file.
+	 * @param data
+	 *            The Object that has to be sent over
+	 * @return a string representation of all the data that has to be sent.
+	 * @throws JSONException
+	 */
 	private String createJSONObject(String type, Object data) throws JSONException {
 		JSONObject jobj = new JSONObject();
 		jobj.put("type", type);
 		jobj.put("data", data);
 
 		return jobj.toString();
+	}
+
+	/**
+	 * Initialize nodes on startup.
+	 */
+	private void initNodes() {
+		try {
+			this.myNode = this.rmi.getCurrent(name);
+			this.prevNode = this.rmi.getPrevious(name);
+			this.nextNode = this.rmi.getNext(name);
+		} catch (RemoteException e) {
+			failure();
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Set new previous node.
+	 * 
+	 * @param hash
+	 *            the hash of the new node
+	 */
+	private void setPrev(int hash) {
+		if ((hash > this.prevNode && hash < this.myNode) || (this.myNode < this.prevNode && hash > this.prevNode)
+				|| this.prevNode == this.myNode) {
+			this.prevNode = hash;
+		}
+
+	}
+
+	/**
+	 * Set new next node.
+	 * 
+	 * @param hash
+	 *            the hash of the new node
+	 */
+	private void setNext(int hash) {
+		if ((hash < this.nextNode && hash > this.myNode) || (this.myNode > this.nextNode && hash < this.nextNode)
+				|| this.myNode == this.nextNode) {
+			this.nextNode = hash;
+		}
+	}
+
+	/**
+	 * Send the replicated files to the new owner on shutdown. wait until this
+	 * is done before exiting the process.
+	 * 
+	 * @throws InterruptedException
+	 */
+	private void shutdownReplicatedFiles() throws InterruptedException {
+		List<File> files = new ArrayList<File>();
+		for (String filename : this.ownerList) {
+			File f = new File(folderString + File.separator + filename);
+			if (f.isFile()) {
+				files.add(f);
+			}
+		}
+		SendFileThread sft = new SendFileThread(files, this.rmi, this);
+		sft.start();
+		sft.join();
+	}
+
+	/**
+	 * Tell the owner of your local files that you will shutdown. the owner will
+	 * then remove the file if it hasn't been downloaded, otherwise it will
+	 * change the download location.
+	 */
+	private void shutdownLocalFiles() {
+		for (String file : this.localList) {
+			try {
+				String ip = this.rmi.getFileNode(file);
+				DatagramSocket socket = new DatagramSocket(4448);
+				String json = createJSONObject("remove", file);
+
+				sendUDP(socket, ip, json);
+
+			} catch (RemoteException | SocketException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * Send UDP message.
+	 * 
+	 * @param socket
+	 *            the socket over which the file has to be sent
+	 * @param ip
+	 *            the ip of the node that needs to be sent to
+	 * @param data
+	 *            the data converted to a JSON string that will be sent to the
+	 *            node.
+	 * @throws IOException
+	 */
+	private void sendUDP(DatagramSocket socket, String ip, String data) throws IOException {
+		DatagramPacket packet;
+		byte[] buf = new byte[data.getBytes().length];
+
+		buf = data.getBytes();
+		packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(ip), 4448);
+		socket.send(packet);
+	}
+
+	/**
+	 * Print out the current nodes.
+	 */
+	private void printNodes() {
+		System.out.println("my node: " + this.myNode);
+		System.out.println("next node: " + this.nextNode);
+		System.out.println("previous node: " + this.prevNode);
 	}
 
 }
