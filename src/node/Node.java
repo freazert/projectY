@@ -24,6 +24,7 @@ public class Node {
 	private String name;
 	private List<String> ownerList;
 	private List<String> localList;
+	private boolean mapUpdate;
 	private String serverIP = "192.168.1.16";
 	private String folderString = "C:" + File.separator + "nieuwe map";
 
@@ -33,6 +34,16 @@ public class Node {
 
 	public void addLocalList(String fileName) {
 		localList.add(fileName);
+	}
+	
+	public boolean isMapUpdate()
+	{
+		return this.mapUpdate;
+	}
+	
+	public void setMapUpdate(boolean mapUpdate)
+	{
+		this.mapUpdate = mapUpdate;
 	}
 
 	/**
@@ -271,7 +282,6 @@ public class Node {
 		// TODO Auto-generated method stub
 		// try {
 		/*
-		 * =======
 		 * 
 		 * public void SearchMap() { // TODO Auto-generated method stub File
 		 * folder = new File("your/path"); File[] listOfFiles =
