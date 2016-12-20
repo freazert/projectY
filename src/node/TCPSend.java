@@ -23,7 +23,7 @@ public class TCPSend {
 		// this.connectedSocket = new Socket(6789);
 		this.filePath = "C:" + File.separator + "nieuwe map" + File.separator;
 		System.out.println("creating");
-			this.welcomeSocket = welcomeSocket;
+		this.welcomeSocket = welcomeSocket;
 		}
 
 	/**
@@ -32,15 +32,6 @@ public class TCPSend {
 	 * @param socketPort The port over which the TCP connection is made.
 	 * @param filePath The path of the directory where the files are stored.
 	 */
-	TCPSend(int socketPort, String filePath) {
-		this.filePath = filePath;
-		try {
-			this.welcomeSocket = new ServerSocket(socketPort);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
 	/**
 	 * send a file over the TCP connection
@@ -73,8 +64,7 @@ public class TCPSend {
 				outToClient = new DataOutputStream(socket.getOutputStream());
 				outToClient.writeBytes("File doesn't exist!");
 			}
-
-			socket.close();
+		socket.close();	
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -113,7 +103,9 @@ public class TCPSend {
 		System.out.println("Sending Files...");
 		outToClient.write(bytearray, 0, bytearray.length);
 		outToClient.flush();
+		fin.close();
 		bin.close();
+		
 
 		System.out.println("File transfer complete");
 	}
