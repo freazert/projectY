@@ -46,6 +46,7 @@ public class SendFileThread extends Thread {
 	@Override
 	public void run() {
 		try {
+			node.setMapUpdate(true);
 			for (File file : files) {
 
 				InetAddress IPAddress = InetAddress.getByName(getIP(file.getName()));
@@ -58,9 +59,9 @@ public class SendFileThread extends Thread {
 				TCPSend sendFile = new TCPSend(serverSocket);
 				sendFile.send(file.getName());
 				
-				serverSocket.close();
 				
 		}
+			node.setMapUpdate(false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

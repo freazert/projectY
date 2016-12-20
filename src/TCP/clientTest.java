@@ -6,7 +6,7 @@ public class clientTest {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		TCPReceive tr = new TCPReceive(6789);
+		TCPReceive tr = new TCPReceive(9876);
 		try {
 			tr.receiveFile("127.0.0.1");
 		} catch (IOException e) {
