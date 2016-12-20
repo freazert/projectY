@@ -8,7 +8,9 @@ public class clientTest {
 		// TODO Auto-generated method stub
 		TCPReceive tr = new TCPReceive(9876);
 		try {
-			tr.receiveFile("127.0.0.1");
+			for(int i = 0; i < 100; i++)
+				tr.receiveFile("192.168.1.30", i + ".txt", 7);
+			//tr.receiveFile("127.0.0.1");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
