@@ -12,7 +12,7 @@ public class Main {
 
 	public static void main(String args[]) throws MalformedURLException, RemoteException, NotBoundException {
 
-		System.setProperty("java.net.preferIPv4Stack" , "true");
+		System.setProperty("java.net.preferIPv4Stack", "true");
 
 		/*
 		 * String name; if(args.length > 0) { name = args[0]; } else { name =
@@ -27,30 +27,34 @@ public class Main {
 		System.out.println("Enter name of the new agent: ");
 		Scanner sc = new Scanner(System.in);
 		String name = sc.nextLine();
-		
 
 		Node node = new Node(name);
 		// MulticastClient mc = new MulticastClient(node);
 		while (true) {
 			String cmd;
-			//System.out.println("waiting for the cmd...");
+			// System.out.println("waiting for the cmd...");
 			while (!sc.hasNextLine()) {
-				//System.out.println("noooooz");
+				// System.out.println("noooooz");
 			}
-			
+
 			cmd = sc.nextLine();
 			System.out.println("ciao bello");
 			node.shutdown();
-			
+
 			// } catch (Exception e) {
 			// e.printStackTrace(arg0);
 			// }
 		}
-		
-		
 
 	}
 
+	/**
+	 * Ping to given ip address.
+	 * 
+	 * @param ip
+	 *            the ip address to ping to.
+	 * @return boolean, failure: 0 success: 1.
+	 */
 	public static boolean ping(String ip) {
 
 		InetAddress inet;
