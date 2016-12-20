@@ -24,6 +24,7 @@ public class Node {
 	private String name;
 	private List<String> OwnerList;
 	private List<String> localList;
+	private boolean mapUpdate;
 
 	public List<String> getLocalList() {
 		return localList;
@@ -32,6 +33,16 @@ public class Node {
 	public void addLocalList(String fileName)
 	{
 		localList.add(fileName);
+	}
+	
+	public boolean isMapUpdate()
+	{
+		return this.mapUpdate;
+	}
+	
+	public void setMapUpdate(boolean mapUpdate)
+	{
+		this.mapUpdate = mapUpdate;
 	}
 
 	/**
