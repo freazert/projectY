@@ -30,7 +30,12 @@ public class Wrapper{
 	}
 	
 	
-	
+	/**
+	 * Remove node from the hashmap.
+	 * 
+	 * @param name the hash of the node that needs to be removed
+	 * @return boolean. returns 1 on success, 0 on failure 
+ 	 */
 	public int removeNode(int name)
 	{
 		int success = this.hmap.removeRecord(name);
@@ -46,6 +51,11 @@ public class Wrapper{
 		}
 	}
 	
+	/**
+	 * Convert object to XML string.
+	 * 
+	 * @throws JAXBException
+	 */
 	private void objectToXml() throws JAXBException {
 		HashingMap object = this.hmap;
 		JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
@@ -74,6 +84,13 @@ public class Wrapper{
 	}
 >>>>>>> origin/feature/shutdown*/
 	
+	/**
+	 * Add new node to the hashmap. 
+	 * 
+	 * @param name the name of the new node.
+	 * @param ip the ip of the new node.
+	 * @return
+	 */
 	public int createNode(String name, String ip)
 	{
 		try {
@@ -93,6 +110,12 @@ public class Wrapper{
 		}
 	}
 
+	/**
+	 * Convert XML string to hashmap.
+	 * 
+	 * @return
+	 * @throws JAXBException
+	 */
 	private HashingMap xmlToObject() throws JAXBException {
 		JAXBContext jaxbContext = JAXBContext.newInstance(HashingMap.class);
 		Unmarshaller u = jaxbContext.createUnmarshaller();
@@ -114,7 +137,11 @@ public class Wrapper{
 	}
 
 
-
+	/**
+	 * Getter method for the hashmap.
+	 * 
+	 * @return the current hashmap.
+	 */
 	public HashingMap getHashMap() {
 		// TODO Auto-generated method stub
 		return this.hmap;

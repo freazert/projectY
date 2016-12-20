@@ -76,17 +76,17 @@ public class TCPReceive {
 		FileOutputStream fos = new FileOutputStream(filePath + name);
 		BufferedOutputStream bos = new BufferedOutputStream(fos);
 		System.out.println("bytearray length: " + bytearray.length);
-		bytesRead = is.read(bytearray, 0, bytearray.length);
-		currentTot = bytesRead;
+		//bytesRead = is.read(bytearray, 0, bytearray.length);
+		currentTot = 0;//0bytesRead;
 		do {
-			bytesRead = is.read(bytearray, currentTot, (bytearray.length - currentTot));
+			bytesRead = is.read(bytearray, currentTot, (filesize - currentTot));
 			if (bytesRead >= 0)
 				currentTot += bytesRead;
 		} while (bytesRead > -1);
 		System.out.println("bytes: " + currentTot);
 		System.out.println(new String(bytearray));
 
-		bos.write(bytearray, 0, bytearray.length - 1);
+		bos.write(bytearray, 0, bytearray.length );
 		
 		node.addOwnerList(name);
 		
