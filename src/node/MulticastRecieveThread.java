@@ -11,21 +11,21 @@ import org.json.JSONException;
 
 public class MulticastRecieveThread extends Thread {
 
-	private MulticastSocket socket;
+	private SocketHandler sHandler;
 	private String addr;
 	private Node node;
 
 	/**
 	 * The constructor method for the MulticastReceiveThread.
 	 * 
-	 * @param socket The socket for the multicast group.
-	 * @param addr The IP of the multicast.
-	 * @param node The node that uses the multicastReceiveThread.
+	 * @param group The socket for the multicast group.
+	 * @param node The IP of the multicast.
+	 * @param sHandler The node that uses the multicastReceiveThread.
 	 */
-	public MulticastRecieveThread(MulticastSocket socket, String addr, Node node) {
-		this.socket = socket;
-		this.addr = addr;
+	public MulticastRecieveThread(String group, Node node, SocketHandler sHandler) {
+		this.addr = group;
 		this.node = node;
+		this.sHandler = sHandler;
 	}
 
 	public void run() {
@@ -53,7 +53,7 @@ public class MulticastRecieveThread extends Thread {
 	 */
 	private void joinMulticast() throws UnknownHostException, IOException{
 		System.out.println("before join");
-		socket.joinGroup(InetAddress.getByName(this.addr));
+		sHandler.getMultiSocket().joinGroup(InetAddress.getByName(this.addr));
 		System.out.println("joined group");
 	}
 
@@ -92,7 +92,7 @@ public class MulticastRecieveThread extends Thread {
 		byte[] buf = new byte[1024];
 		DatagramPacket dp = new DatagramPacket(buf, buf.length);
 
-		socket.receive(dp);
+		this.sHandler.getMultiSocket().receive(dp);
 		System.out.println("lol");
 
 		buf = dp.getData();

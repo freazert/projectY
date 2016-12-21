@@ -13,14 +13,16 @@ public class TCPSend {
 
     private ServerSocket welcomeSocket;
     private String filePath;
+    private SocketHandler sHandler;
 
     /**
      * The constructor method for TCPSend
      *
      * @param socketPort the port over which the TCP connection will be made.
      */
-    TCPSend(ServerSocket welcomeSocket) {
+    TCPSend(SocketHandler sHandler) {
         // this.connectedSocket = new Socket(6789);
+    	this.sHandler = sHandler;
         this.filePath = "C:" + File.separator + "nieuwe map" + File.separator;
         System.out.println("creating");
         this.welcomeSocket = welcomeSocket;

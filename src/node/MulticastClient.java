@@ -15,68 +15,12 @@ public class MulticastClient {
 	private DatagramSocket socketReceive;
 	private MulticastSocket multiSocket;
 	private Node node;
+	private SocketHandler sHandler;
 
-	public MulticastClient(Node node) {
+	public MulticastClient(Node node, SocketHandler sHandler) {
 		this.node = node;
-//<<<<<<< HEAD
-		try {
-
-			multiSocket = new MulticastSocket(portMulticasting);
-
-			//new MulticastRecieveThread(multiSocket, group, this.node).start();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-/*=======
-		try{
-			System.out.println("Enter name of the new agent: ");
-	        Scanner sc = new Scanner(System.in);
-	        String agentName = sc.nextLine();
-	        //sc.close();
-	        
-	        JSONObject jobj = new JSONObject();
-    		jobj.put("type", "new");
-    		jobj.put("name", agentName);
-    		
-    		System.out.println(jobj);
-	        
-            socket = new DatagramSocket(portMulticasting);
-            socketReceive = new DatagramSocket(3000);
-           
-            start(jobj.toString());
-            
-            
-            System.out.println("agent ready");
-            
-    		this.node.initNodes(jobj.getString("name"));
-    		//this.node.SearchMap();
-
-    		//IInitNodes obj = (IInitNodes) Naming.lookup("//" + "192.168.1.15" + "/initNode");
-    		
-    		
-    		
-            
-            System.out.println("agent ready");
-
-            
-            socket.close();
-            multiSocket = new MulticastSocket(portMulticasting);
-            
-            new MulticastRecieveThread(multiSocket, group, this.node).start();
-            System.out.println("to remove node: type getmeout");
-            String removecommand = sc.nextLine();
-            System.out.println(removecommand);
-            if (removecommand.equals( "getmeout" ))
-            {
-                this.node.shutdown();
-            }
-        }
-        catch (Exception e){
-            e.printStackTrace();
-            System.exit(1);
-        }
->>>>>>> origin/feature/shutdown*/
+		this.sHandler = sHandler;
+		sHandler.startMulticastSend();
 	}
 
 	public void start(String name) {
@@ -87,12 +31,12 @@ public class MulticastClient {
 			byte[] buf = new byte[1024];
 			buf = name.getBytes();
 			packet = new DatagramPacket(buf, buf.length, address, portMulticasting);
-			socket.send(packet);
+			sHandler.getMultiSocket().send(packet);
 
 			buf = new byte[1024];
 			packet = new DatagramPacket(buf, buf.length);
 			System.out.println("before receive");
-			socketReceive.receive(packet);
+			sHandler.getMulticastReceiveSocket().receive(packet);
 			System.out.println("after receive");
 
 			int countNodes = Integer.parseInt(new String(packet.getData(), 0, packet.getLength()));
@@ -116,16 +60,14 @@ public class MulticastClient {
 
 			System.out.println(jobj);
 
-			socket = this.multiSocket;
-			socketReceive = new DatagramSocket(3000);
-
+			this.sHandler.startMulticastReceive();
 			start(jobj.toString());
 
 			//socket.close();
 
 			//multiSocket = new MulticastSocket(portMulticasting);
 
-			new MulticastRecieveThread(multiSocket, group, this.node).start();
+			new MulticastRecieveThread(group, this.node, this.sHandler).start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
