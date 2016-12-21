@@ -10,7 +10,7 @@ import org.json.JSONObject;
 
 public class ReceiveUDPThread extends Thread {
 
-    private DatagramSocket serverSocket;
+    private SocketHandler sHandler;
     private Node node;
 
     /**
@@ -18,9 +18,9 @@ public class ReceiveUDPThread extends Thread {
      *
      * @param node The node that receives the data.
      */
-    public ReceiveUDPThread(Node node, DatagramSocket serverSocket) {
+    public ReceiveUDPThread(Node node, SocketHandler sHandler) {
         this.node = node;
-        this.serverSocket = serverSocket;
+        this.sHandler = sHandler;
     }
 
     @Override
@@ -29,14 +29,14 @@ public class ReceiveUDPThread extends Thread {
             try {
                 while (!node.isMapUpdate()) {
                     System.out.println("receiveUDPThread run");
-                    DatagramPacket data = getData(serverSocket);
+                    DatagramPacket data = getData();
                     String ip = data.getAddress().getHostAddress();
 
                     handleData(new String(data.getData()), ip);
                 }
 
             } catch (IOException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -46,18 +46,17 @@ public class ReceiveUDPThread extends Thread {
     /**
      * receive data from the socket.
      *
-     * @param socket the socket over which the data comes.
      * @return the received data
      * @throws IOException
      */
-    private DatagramPacket getData(DatagramSocket socket) throws IOException {
+    private DatagramPacket getData() throws IOException {
         byte[] receiveData = new byte[10240];
 
         System.out.println("rft receiveUDP");
 
         DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
         System.out.println("waiting for udp receive");
-        socket.receive(receivePacket);
+        sHandler.getUdpSocket().receive(receivePacket);
         System.out.println("UDP received");
 
         // reply();
@@ -82,7 +81,7 @@ public class ReceiveUDPThread extends Thread {
         switch (type) {
             case "file":
                 System.out.println("receive file");
-                TCPReceive receive = new TCPReceive(node, 5555);
+                TCPReceive receive = new TCPReceive(node, this.sHandler);
                 String name = jobj.getString("data");
                 int size = (int) jobj.getLong("size");
                 System.out.println("the name is: " + name);

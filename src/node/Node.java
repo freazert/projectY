@@ -24,13 +24,17 @@ public class Node {
 
     private int nextNode, prevNode, myNode;
     private INodeRMI rmi;
-    private DatagramSocket serverSocket;
+    //private DatagramSocket serverSocket;
     private String name;
     private List<String> ownerList;
     private List<String> localList;
     private boolean mapUpdate;
     private String serverIP = "192.168.1.16";
     private String folderString = "C:" + File.separator + "nieuwe map";
+    private SocketHandler sHandler;
+    private final int UDP_PORT = 6789;
+    private final int MULTICAST_PORT = 3000;
+    private final int TCP_PORT = 5555;
 
     public List<String> getLocalList() {
         return localList;
@@ -58,17 +62,14 @@ public class Node {
         this.localList = new ArrayList<String>();
         this.name = name;
         this.mapUpdate = false;
-        try {
-            serverSocket = new DatagramSocket(6789);
-        } catch (SocketException ex) {
-            Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-
+        this.sHandler = new SocketHandler(TCP_PORT,UDP_PORT,MULTICAST_PORT);
+        
+        this.sHandler.startServerSocket();
+        
         /*
 		 * ListenToCmdThread cmd = new ListenToCmdThread(this); cmd.start();
          */
-        MulticastClient mc = new MulticastClient(this);
+        MulticastClient mc = new MulticastClient(this, this.sHandler);
 
         mc.multicastStart(name);
 
@@ -84,7 +85,7 @@ public class Node {
             new CheckFolderThread(this, 10000, this.folderString).start();
             ;
         } else {
-                ReceiveUDPThread rft = new ReceiveUDPThread(this, serverSocket);
+                ReceiveUDPThread rft = new ReceiveUDPThread(this, this.sHandler);
                 rft.start();
         }
     }
@@ -159,7 +160,7 @@ public class Node {
             String toSendNext = createJSONObject("next", this.nextNode);
             sendUDP(socket, rmi.getIp(this.prevNode), toSendNext);
 
-			//shutdownReplicatedFiles();
+			shutdownReplicatedFiles();
 			//shutdownLocalFiles();
 
             socket.close();
@@ -176,34 +177,16 @@ public class Node {
     public void failure() {
 
         try {
-            this.prevNode = this.rmi.getPrevious(name);
-            this.nextNode = this.rmi.getNext(name);
-
-            // INodeRMI obj = (INodeRMI) Naming.lookup("//" + serverIP +
-            // "/hash");
+        	initNodes();
+            
             DatagramSocket socket = new DatagramSocket(4448);
 
             String prev = createJSONObject("previous", this.prevNode);
             sendUDP(socket, this.rmi.getIp(this.nextNode), prev);
-            /*
-			 * String toSendPrev = "node failed, previous: " + this.prevNode;
-			 * byte[] bufPrev = new byte[toSendPrev.getBytes().length]; bufPrev
-			 * = toSendPrev.getBytes(); packetNext = new DatagramPacket(bufPrev,
-			 * bufPrev.length, InetAddress.getByName(obj.getIp(this.nextNode)),
-			 * 4448); socket.send(packetNext);
-             */
 
             String next = createJSONObject("next", this.nextNode);
             sendUDP(socket, this.rmi.getIp(this.prevNode), next);
-            /*
-			 * String toSendNext = "node failed, next: " + this.nextNode; byte[]
-			 * bufNext = new byte[toSendNext.getBytes().length]; bufNext =
-			 * toSendNext.getBytes(); packetPrevious = new
-			 * DatagramPacket(bufNext, bufNext.length,
-			 * InetAddress.getByName(obj.getIp(this.prevNode)), 4448);
-			 * socket.send(packetPrevious);
-             */
-
+            
             this.rmi.removeNode(this.myNode);
 
         } catch (MalformedURLException e) {
@@ -314,7 +297,7 @@ public class Node {
 
         // int hash = this.rmi.(obj.getHash(listOfFiles[i].getName()));
         try {
-            SendFileThread sft = new SendFileThread(files, this.rmi, this);
+            SendFileThread sft = new SendFileThread(files, this.rmi, this, this.sHandler);
             sft.start();
         } catch (Exception e) {
             failure();
@@ -419,12 +402,15 @@ public class Node {
     private void shutdownReplicatedFiles() throws InterruptedException {
         List<File> files = new ArrayList<File>();
         for (String filename : this.ownerList) {
+        	System.out.println(filename);
             File f = new File(folderString + File.separator + filename);
             if (f.isFile()) {
+            	System.out.println("addFile");
                 files.add(f);
             }
         }
-        SendFileThread sft = new SendFileThread(files, this.rmi, this);
+        
+        SendFileThread sft = new SendFileThread(files, this.rmi, this, this.sHandler);
         sft.start();
         sft.join();
     }
@@ -483,16 +469,6 @@ public class Node {
         System.out.println("previous node: " + this.prevNode);
     }
 
-    void closeServerSokcet() {
-        this.serverSocket.close();
-    }
-    void openServerSocket()
-    {
-        try {
-            this.serverSocket = new DatagramSocket(6789);
-        } catch (SocketException ex) {
-            Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+    
 
 }

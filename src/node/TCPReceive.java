@@ -5,7 +5,7 @@ import java.net.Socket;
 
 public class TCPReceive {
 	private String filePath;
-	private int socketPort;
+	private SocketHandler sHandler;
 	private Node node;
 
 	public final static int FILE_SIZE = 6022386; // file size temporary hard
@@ -13,9 +13,9 @@ public class TCPReceive {
 													// should bigger than the
 													// file to be downloaded
 
-	public TCPReceive(Node node, int socketPort) {
+	public TCPReceive(Node node, SocketHandler sHandler) {
 		this.filePath = "D:" + File.separator + "school"+ File.separator + "SCH-IW_EI" + File.separator + "shared" + File.separator + "receive" + File.separator;
-		this.socketPort = socketPort;
+		this.sHandler = sHandler;
 		this.node = node;
 	}
 
@@ -28,16 +28,17 @@ public class TCPReceive {
 	 */
 	public void receiveFile(String ip, String name, int size) throws IOException {
 		System.out.println("receive file started.");
-		Socket socket = new Socket(ip, this.socketPort);
+		this.sHandler.startReceiveTCPSocket(ip);
+		//Socket socket = new Socket(ip, this.socketPort);
 		try {
 			//String name = connect(socket);
-			getFile(socket, name, size);
+			getFile(name, size);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		socket.close();
+		this.sHandler.stopSendFile();
 	}
 
 	
@@ -65,14 +66,14 @@ public class TCPReceive {
 	 * @param name
 	 * @throws Exception
 	 */
-	private void getFile(Socket socket, String name, int size) throws Exception {
+	private void getFile(String name, int size) throws Exception {
 		int bytesRead;
 		int currentTot = 0;
 		int filesize = size;
 
 		
 		byte[] bytearray = new byte[filesize];
-		InputStream is = socket.getInputStream();
+		InputStream is = this.sHandler.getReceiveTCPSocket().getInputStream();
 		FileOutputStream fos = new FileOutputStream(filePath + name);
 		BufferedOutputStream bos = new BufferedOutputStream(fos);
 		System.out.println("bytearray length: " + bytearray.length);
