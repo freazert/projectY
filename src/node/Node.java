@@ -17,224 +17,226 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import interfaces.INodeRMI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Node {
-	private int nextNode, prevNode, myNode;
-	private INodeRMI rmi;
-	private String name;
-	private List<String> ownerList;
-	private List<String> localList;
-	private boolean mapUpdate;
-	private String serverIP = "192.168.1.16";
-	private String folderString = "C:" + File.separator + "nieuwe map";
 
-	public List<String> getLocalList() {
-		return localList;
-	}
+    private int nextNode, prevNode, myNode;
+    private INodeRMI rmi;
+    private DatagramSocket serverSocket;
+    private String name;
+    private List<String> ownerList;
+    private List<String> localList;
+    private boolean mapUpdate;
+    private String serverIP = "192.168.1.16";
+    private String folderString = "C:" + File.separator + "nieuwe map";
 
-	public void addLocalList(String fileName) {
-		localList.add(fileName);
-	}
-	
-	public boolean isMapUpdate()
-	{
-		return this.mapUpdate;
-	}
-	
-	public void setMapUpdate(boolean mapUpdate)
-	{
-		this.mapUpdate = mapUpdate;
-	}
+    public List<String> getLocalList() {
+        return localList;
+    }
 
-	/**
-	 * The constructor method node.
-	 * 
-	 * @param name
-	 *            the agentname of the node.
-	 */
-	public Node(String name) {
-		this.ownerList = new ArrayList<String>();
-		this.localList = new ArrayList<String>();
-		this.name = name;
+    public void addLocalList(String fileName) {
+        localList.add(fileName);
+    }
 
-		/*
+    public synchronized boolean isMapUpdate() {
+        return this.mapUpdate;
+    }
+
+    public synchronized void setMapUpdate(boolean mapUpdate) {
+        this.mapUpdate = mapUpdate;
+    }
+
+    /**
+     * The constructor method node.
+     *
+     * @param name the agentname of the node.
+     */
+    public Node(String name) {
+        this.ownerList = new ArrayList<String>();
+        this.localList = new ArrayList<String>();
+        this.name = name;
+        this.mapUpdate = false;
+        try {
+            serverSocket = new DatagramSocket(6789);
+        } catch (SocketException ex) {
+            Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
+        /*
 		 * ListenToCmdThread cmd = new ListenToCmdThread(this); cmd.start();
-		 */
+         */
+        MulticastClient mc = new MulticastClient(this);
 
-		MulticastClient mc = new MulticastClient(this);
+        mc.multicastStart(name);
 
-		mc.multicastStart(name);
+        try {
+            this.rmi = (INodeRMI) Naming.lookup("//" + this.serverIP + "/nodeRMI");
+        } catch (MalformedURLException | RemoteException | NotBoundException e) {
+            failure();
+            e.printStackTrace();
+        }
+        printNodes();
+        this.initNodes();
+        if (this.myNode != this.prevNode) {
+            new CheckFolderThread(this, 10000, this.folderString).start();
+            ;
+        } else {
+                ReceiveUDPThread rft = new ReceiveUDPThread(this, serverSocket);
+                rft.start();
+        }
+    }
 
-		try {
-			this.rmi = (INodeRMI) Naming.lookup("//" + this.serverIP + "/nodeRMI");
-		} catch (MalformedURLException | RemoteException | NotBoundException e) {
-			failure();
-			e.printStackTrace();
-		}
-		printNodes();
-		this.initNodes();
-		if (this.myNode != this.prevNode) {
-			new CheckFolderThread(this, 10000, this.folderString).start();
-			;
-		} else {
-			ReceiveUDPThread rft = new ReceiveUDPThread(this);
-			rft.start();
-		}
-	}
+    // Getters
+    /**
+     * Get previous node.
+     *
+     * @return the previous node hash
+     */
+    public int getPrev() {
+        return this.prevNode;
+    }
 
-	// Getters
+    /**
+     * Get next node.
+     *
+     * @return the next node hash
+     */
+    public int getNext() {
+        return this.nextNode;
+    }
 
-	/**
-	 * Get previous node.
-	 * 
-	 * @return the previous node hash
-	 */
-	public int getPrev() {
-		return this.prevNode;
-	}
+    /**
+     * get own node.
+     *
+     * @return the local node hash
+     */
+    public int getCurrent() {
+        return this.myNode;
+    }
 
-	/**
-	 * Get next node.
-	 * 
-	 * @return the next node hash
-	 */
-	public int getNext() {
-		return this.nextNode;
-	}
+    // Setters
+    /**
+     * set previous and next node when a new connection is made, using the name
+     * of the new node.
+     *
+     * @param name the name of the new node
+     */
+    public void setNodes(String name) {
+        try {
+            int hash = this.rmi.getCurrent(name);
+            System.out.println(name);
 
-	/**
-	 * get own node.
-	 * 
-	 * @return the local node hash
-	 */
-	public int getCurrent() {
-		return this.myNode;
-	}
+            setPrev(hash);
+            setNext(hash);
 
-	// Setters
+        } catch (RemoteException e) {
+            failure();
+            e.printStackTrace();
+        }
 
-	/**
-	 * set previous and next node when a new connection is made, using the name
-	 * of the new node.
-	 * 
-	 * @param name
-	 *            the name of the new node
-	 */
-	public void setNodes(String name) {
-		try {
-			int hash = this.rmi.getCurrent(name);
-			System.out.println(name);
+        printNodes();
+    }
 
-			setPrev(hash);
-			setNext(hash);
-
-		} catch (RemoteException e) {
-			failure();
-			e.printStackTrace();
-		}
-
-		printNodes();
-	}
-
-	/*
+    /*
 	 * public functions.
-	 */
+     */
+    /**
+     * Start the shutdown
+     */
+    public void shutdown() {
+        try {
+            System.out.println("shutting down");
 
-	/**
-	 * Start the shutdown
-	 */
-	public void shutdown() {
-		try {
-			System.out.println("shutting down");
+            rmi.removeNode(this.myNode);
 
-			rmi.removeNode(this.myNode);
+            DatagramSocket socket = new DatagramSocket(4448);
+            String toSendPrev = createJSONObject("previous", this.prevNode);
+            sendUDP(socket, rmi.getIp(this.nextNode), toSendPrev);
 
-			DatagramSocket socket = new DatagramSocket(4448);
-			String toSendPrev = createJSONObject("previous", this.prevNode);
-			sendUDP(socket, rmi.getIp(this.nextNode), toSendPrev);
+            String toSendNext = createJSONObject("next", this.nextNode);
+            sendUDP(socket, rmi.getIp(this.prevNode), toSendNext);
 
-			String toSendNext = createJSONObject("next", this.nextNode);
-			sendUDP(socket, rmi.getIp(this.prevNode), toSendNext);
+            socket.close();
 
-			socket.close();
+        //   shutdownReplicatedFiles();
+        //    shutdownLocalFiles();
 
-			shutdownReplicatedFiles();
-			shutdownLocalFiles();
+        } catch (Exception e) {
+            failure();
+            e.printStackTrace();
+        } finally {
+            System.exit(0);
+        }
+    }
 
-		} catch (Exception e) {
-			failure();
-			e.printStackTrace();
-		} finally {
-			System.exit(0);
-		}
-	}
+    public void failure() {
 
-	public void failure() {
+        try {
+            this.prevNode = this.rmi.getPrevious(name);
+            this.nextNode = this.rmi.getNext(name);
 
-		try {
-			this.prevNode = this.rmi.getPrevious(name);
-			this.nextNode = this.rmi.getNext(name);
+            // INodeRMI obj = (INodeRMI) Naming.lookup("//" + serverIP +
+            // "/hash");
+            DatagramSocket socket = new DatagramSocket(4448);
 
-			// INodeRMI obj = (INodeRMI) Naming.lookup("//" + serverIP +
-			// "/hash");
-
-			DatagramSocket socket = new DatagramSocket(4448);
-
-			String prev = createJSONObject("previous", this.prevNode);
-			sendUDP(socket, this.rmi.getIp(this.nextNode), prev);
-			/*
+            String prev = createJSONObject("previous", this.prevNode);
+            sendUDP(socket, this.rmi.getIp(this.nextNode), prev);
+            /*
 			 * String toSendPrev = "node failed, previous: " + this.prevNode;
 			 * byte[] bufPrev = new byte[toSendPrev.getBytes().length]; bufPrev
 			 * = toSendPrev.getBytes(); packetNext = new DatagramPacket(bufPrev,
 			 * bufPrev.length, InetAddress.getByName(obj.getIp(this.nextNode)),
 			 * 4448); socket.send(packetNext);
-			 */
+             */
 
-			String next = createJSONObject("next", this.nextNode);
-			sendUDP(socket, this.rmi.getIp(this.prevNode), next);
-			/*
+            String next = createJSONObject("next", this.nextNode);
+            sendUDP(socket, this.rmi.getIp(this.prevNode), next);
+            /*
 			 * String toSendNext = "node failed, next: " + this.nextNode; byte[]
 			 * bufNext = new byte[toSendNext.getBytes().length]; bufNext =
 			 * toSendNext.getBytes(); packetPrevious = new
 			 * DatagramPacket(bufNext, bufNext.length,
 			 * InetAddress.getByName(obj.getIp(this.prevNode)), 4448);
 			 * socket.send(packetPrevious);
-			 */
+             */
 
-			this.rmi.removeNode(this.myNode);
+            this.rmi.removeNode(this.myNode);
 
-		} catch (MalformedURLException e) {
-			System.out.println("FAILURE: MALFORMED URL EXCEPTION");
-			e.printStackTrace();
-		} catch (RemoteException e) {
-			System.out.println("FAILURE: REMOTE EXCEPTION");
-			e.printStackTrace();
-		} /*
+        } catch (MalformedURLException e) {
+            System.out.println("FAILURE: MALFORMED URL EXCEPTION");
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            System.out.println("FAILURE: REMOTE EXCEPTION");
+            e.printStackTrace();
+        } /*
 			 * catch (NotBoundException e) {
 			 * System.out.println("FAILURE: NOT BOUND EXCEPTION");
 			 * e.printStackTrace(); }
-			 */catch (java.net.SocketException e) {
-			System.out.println("FAILURE: SOCKET EXCEPTION");
-			e.printStackTrace();
-		} catch (java.io.IOException e) {
-			System.out.println("FAILURE: IO EXCEPTION");
-			e.printStackTrace();
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+         */ catch (java.net.SocketException e) {
+            System.out.println("FAILURE: SOCKET EXCEPTION");
+            e.printStackTrace();
+        } catch (java.io.IOException e) {
+            System.out.println("FAILURE: IO EXCEPTION");
+            e.printStackTrace();
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-	}
+    }
 
-	public void controlFiles() {
-		// TODO Auto-generated method stub
-		for (String bestand : this.localList) {
-			try {
-				// <<<<<<< HEAD
-				if (this.rmi.getHash(this.rmi.getPrevIp(bestand)) == this.prevNode) {
+    public void controlFiles() {
+        // TODO Auto-generated method stub
+        for (String bestand : this.localList) {
+            try {
+                // <<<<<<< HEAD
+                if (this.rmi.getHash(this.rmi.getPrevIp(bestand)) == this.prevNode) {
 
-				}
-				/*
+                }
+                /*
 				 * ======= DatagramPacket packetNext, packetPrevious; IWrapper
 				 * obj = (IWrapper) Naming.lookup("//" + "192.168.1.15" +
 				 * "/hash"); obj.removeNode(this.myNode);
@@ -263,25 +265,24 @@ public class Node {
 				 * } catch (MalformedURLException e) { // ODO Auto-generated
 				 * catch block e.printStackTrace(); >>>>>>>
 				 * origin/feature/shutdown
-				 */
-			} catch (RemoteException e) {
-				failure();
-				e.printStackTrace();
-			}
-		}
-		// <<<<<<< HEAD
-	}
+                 */
+            } catch (RemoteException e) {
+                failure();
+                e.printStackTrace();
+            }
+        }
+        // <<<<<<< HEAD
+    }
 
-	/**
-	 * Get the owner of the file.
-	 * 
-	 * @param files
-	 *            the files that needs to be sent
-	 */
-	public void sendFiles(List<File> files) {
-		// TODO Auto-generated method stub
-		// try {
-		/*
+    /**
+     * Get the owner of the file.
+     *
+     * @param files the files that needs to be sent
+     */
+    public void sendFiles(List<File> files) {
+        // TODO Auto-generated method stub
+        // try {
+        /*
 		 * 
 		 * public void SearchMap() { // TODO Auto-generated method stub File
 		 * folder = new File("your/path"); File[] listOfFiles =
@@ -308,188 +309,189 @@ public class Node {
 		 * } } }
 		 * 
 		 * >>>>>>> origin/feature/shutdown
-		 */
+         */
 
-		// int hash = this.rmi.(obj.getHash(listOfFiles[i].getName()));
+        // int hash = this.rmi.(obj.getHash(listOfFiles[i].getName()));
+        try {
+            SendFileThread sft = new SendFileThread(files, this.rmi, this);
+            sft.start();
+        } catch (Exception e) {
+            failure();
+            e.printStackTrace();
+        }
 
-		try {
-			SendFileThread sft = new SendFileThread(files, this.rmi, this);
-			sft.start();
-		} catch (Exception e) {
-			failure();
-			e.printStackTrace();
-		}
+        // sft.
+        // } catch (RemoteException e) {
+        // TODO Auto-generated catch block
+        // e.printStackTrace();
+        // }
+    }
 
-		// sft.
+    public void addOwnerList(String name) {
+        // TODO Auto-generated method stub
+        this.localList.add(name);
+        this.ownerList.add(name);
+    }
 
-		// } catch (RemoteException e) {
-		// TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-	}
+    /**
+     * Remove a file of which this node is the owner, both on the ownerlist as
+     * on the disk.
+     *
+     * @param fileName the name of the file that has to be removed.
+     */
+    public void removeFile(String fileName) {
+        int fileIndex = this.ownerList.indexOf(fileName);
+        if (fileIndex >= 0) {
+            File file = new File(this.folderString + File.separator + fileName);
+            file.delete();
+            this.ownerList.remove(fileIndex);
+        }
+    }
 
-	public void addOwnerList(String name) {
-		// TODO Auto-generated method stub
-		this.localList.add(name);
-		this.ownerList.add(name);
-	}
-
-	/**
-	 * Remove a file of which this node is the owner, both on the ownerlist as
-	 * on the disk.
-	 * 
-	 * @param fileName
-	 *            the name of the file that has to be removed.
-	 */
-	public void removeFile(String fileName) {
-		int fileIndex = this.ownerList.indexOf(fileName);
-		if (fileIndex >= 0) {
-			File file = new File(this.folderString + File.separator + fileName);
-			file.delete();
-			this.ownerList.remove(fileIndex);
-		}
-	}
-
-	/*
+    /*
 	 * internal private functions
-	 */
+     */
+    /**
+     * create a JSON string int the form of { type: "[type]", data: [object] }.
+     * this way certain data will be easy to send over any connection to another
+     * node.
+     *
+     * @param type A short string representation of what the receiver has to do
+     * with the file.
+     * @param data The Object that has to be sent over
+     * @return a string representation of all the data that has to be sent.
+     * @throws JSONException
+     */
+    private String createJSONObject(String type, Object data) throws JSONException {
+        JSONObject jobj = new JSONObject();
+        jobj.put("type", type);
+        jobj.put("data", data);
 
-	/**
-	 * create a JSON string int the form of { type: "[type]", data: [object] }.
-	 * this way certain data will be easy to send over any connection to another
-	 * node.
-	 * 
-	 * @param type
-	 *            A short string representation of what the receiver has to do
-	 *            with the file.
-	 * @param data
-	 *            The Object that has to be sent over
-	 * @return a string representation of all the data that has to be sent.
-	 * @throws JSONException
-	 */
-	private String createJSONObject(String type, Object data) throws JSONException {
-		JSONObject jobj = new JSONObject();
-		jobj.put("type", type);
-		jobj.put("data", data);
+        return jobj.toString();
+    }
 
-		return jobj.toString();
-	}
+    /**
+     * Initialize nodes on startup.
+     */
+    private void initNodes() {
+        try {
+            this.myNode = this.rmi.getCurrent(name);
+            this.prevNode = this.rmi.getPrevious(name);
+            this.nextNode = this.rmi.getNext(name);
+        } catch (RemoteException e) {
+            failure();
+            e.printStackTrace();
+        }
+    }
 
-	/**
-	 * Initialize nodes on startup.
-	 */
-	private void initNodes() {
-		try {
-			this.myNode = this.rmi.getCurrent(name);
-			this.prevNode = this.rmi.getPrevious(name);
-			this.nextNode = this.rmi.getNext(name);
-		} catch (RemoteException e) {
-			failure();
-			e.printStackTrace();
-		}
-	}
+    /**
+     * Set new previous node.
+     *
+     * @param hash the hash of the new node
+     */
+    private void setPrev(int hash) {
+        if ((hash > this.prevNode && hash < this.myNode) || (this.myNode < this.prevNode && hash > this.prevNode)
+                || this.prevNode == this.myNode) {
+            this.prevNode = hash;
+        }
 
-	/**
-	 * Set new previous node.
-	 * 
-	 * @param hash
-	 *            the hash of the new node
-	 */
-	private void setPrev(int hash) {
-		if ((hash > this.prevNode && hash < this.myNode) || (this.myNode < this.prevNode && hash > this.prevNode)
-				|| this.prevNode == this.myNode) {
-			this.prevNode = hash;
-		}
+    }
 
-	}
+    /**
+     * Set new next node.
+     *
+     * @param hash the hash of the new node
+     */
+    private void setNext(int hash) {
+        if ((hash < this.nextNode && hash > this.myNode) || (this.myNode > this.nextNode && hash < this.nextNode)
+                || this.myNode == this.nextNode) {
+            this.nextNode = hash;
+        }
+    }
 
-	/**
-	 * Set new next node.
-	 * 
-	 * @param hash
-	 *            the hash of the new node
-	 */
-	private void setNext(int hash) {
-		if ((hash < this.nextNode && hash > this.myNode) || (this.myNode > this.nextNode && hash < this.nextNode)
-				|| this.myNode == this.nextNode) {
-			this.nextNode = hash;
-		}
-	}
+    /**
+     * Send the replicated files to the new owner on shutdown. wait until this
+     * is done before exiting the process.
+     *
+     * @throws InterruptedException
+     */
+    private void shutdownReplicatedFiles() throws InterruptedException {
+        List<File> files = new ArrayList<File>();
+        for (String filename : this.ownerList) {
+            File f = new File(folderString + File.separator + filename);
+            if (f.isFile()) {
+                files.add(f);
+            }
+        }
+        SendFileThread sft = new SendFileThread(files, this.rmi, this);
+        sft.start();
+        sft.join();
+    }
 
-	/**
-	 * Send the replicated files to the new owner on shutdown. wait until this
-	 * is done before exiting the process.
-	 * 
-	 * @throws InterruptedException
-	 */
-	private void shutdownReplicatedFiles() throws InterruptedException {
-		List<File> files = new ArrayList<File>();
-		for (String filename : this.ownerList) {
-			File f = new File(folderString + File.separator + filename);
-			if (f.isFile()) {
-				files.add(f);
-			}
-		}
-		SendFileThread sft = new SendFileThread(files, this.rmi, this);
-		sft.start();
-		sft.join();
-	}
+    /**
+     * Tell the owner of your local files that you will shutdown. the owner will
+     * then remove the file if it hasn't been downloaded, otherwise it will
+     * change the download location.
+     */
+    private void shutdownLocalFiles() {
+        for (String file : this.localList) {
+            try {
+                String ip = this.rmi.getFileNode(file);
+                DatagramSocket socket = new DatagramSocket(4448);
+                String json = createJSONObject("remove", file);
 
-	/**
-	 * Tell the owner of your local files that you will shutdown. the owner will
-	 * then remove the file if it hasn't been downloaded, otherwise it will
-	 * change the download location.
-	 */
-	private void shutdownLocalFiles() {
-		for (String file : this.localList) {
-			try {
-				String ip = this.rmi.getFileNode(file);
-				DatagramSocket socket = new DatagramSocket(4448);
-				String json = createJSONObject("remove", file);
+                sendUDP(socket, ip, json);
 
-				sendUDP(socket, ip, json);
+            } catch (RemoteException | SocketException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
 
-			} catch (RemoteException | SocketException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
+    /**
+     * Send UDP message.
+     *
+     * @param socket the socket over which the file has to be sent
+     * @param ip the ip of the node that needs to be sent to
+     * @param data the data converted to a JSON string that will be sent to the
+     * node.
+     * @throws IOException
+     */
+    private void sendUDP(DatagramSocket socket, String ip, String data) throws IOException {
+        DatagramPacket packet;
+        byte[] buf = new byte[data.getBytes().length];
 
-	/**
-	 * Send UDP message.
-	 * 
-	 * @param socket
-	 *            the socket over which the file has to be sent
-	 * @param ip
-	 *            the ip of the node that needs to be sent to
-	 * @param data
-	 *            the data converted to a JSON string that will be sent to the
-	 *            node.
-	 * @throws IOException
-	 */
-	private void sendUDP(DatagramSocket socket, String ip, String data) throws IOException {
-		DatagramPacket packet;
-		byte[] buf = new byte[data.getBytes().length];
+        buf = data.getBytes();
+        packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(ip), 4448);
+        socket.send(packet);
+    }
 
-		buf = data.getBytes();
-		packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(ip), 4448);
-		socket.send(packet);
-	}
+    /**
+     * Print out the current nodes.
+     */
+    private void printNodes() {
+        System.out.println("my node: " + this.myNode);
+        System.out.println("next node: " + this.nextNode);
+        System.out.println("previous node: " + this.prevNode);
+    }
 
-	/**
-	 * Print out the current nodes.
-	 */
-	private void printNodes() {
-		System.out.println("my node: " + this.myNode);
-		System.out.println("next node: " + this.nextNode);
-		System.out.println("previous node: " + this.prevNode);
-	}
+    void closeServerSokcet() {
+        this.serverSocket.close();
+    }
+    void openServerSocket()
+    {
+        try {
+            this.serverSocket = new DatagramSocket(6789);
+        } catch (SocketException ex) {
+            Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
 }
