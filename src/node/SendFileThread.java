@@ -15,128 +15,131 @@ import org.json.JSONObject;
 import interfaces.INodeRMI;
 
 public class SendFileThread extends Thread {
-	private List<File> files;
-	private INodeRMI rmi;
-	private Node node;
-	ServerSocket serverSocket;
-	/**
-	 * The constructor method for the SendFileThread.
-	 * 
-	 * @param files
-	 *            List of files to be sent
-	 * @param rmi
-	 *            the remote method invocation object used to communicate with the nameServer.
-	 * @param node
-	 *            the node that sends the files.
-	 */
-	public SendFileThread(List<File> files, INodeRMI rmi, Node node) {
 
-		try {
-			this.serverSocket = new ServerSocket(5555);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    private List<File> files;
+    private INodeRMI rmi;
+    private Node node;
+    ServerSocket serverSocket;
 
-		this.files = files;
-		this.rmi = rmi;
-		this.node = node;
-	}
+    /**
+     * The constructor method for the SendFileThread.
+     *
+     * @param files List of files to be sent
+     * @param rmi the remote method invocation object used to communicate with
+     * the nameServer.
+     * @param node the node that sends the files.
+     */
+    public SendFileThread(List<File> files, INodeRMI rmi, Node node) {
 
-	@Override
-	public void run() {
-		try {
-			node.setMapUpdate(true);
-			for (File file : files) {
+        try {
+            this.serverSocket = new ServerSocket(5555);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-				InetAddress IPAddress = InetAddress.getByName(getIP(file.getName()));
+        this.files = files;
+        this.rmi = rmi;
+        this.node = node;
+    }
 
-				String jsonString = createJsonString(file.getName(),file.length());
-				System.out.print(jsonString);
-				sendUdp(jsonString, IPAddress);
+    @Override
+    public void run() {
+        try {
+            synchronized (this.node) {
+                node.setMapUpdate(true);
+                node.closeServerSokcet();
+                for (File file : files) {
 
-				//receive
-				TCPSend sendFile = new TCPSend(serverSocket);
-				sendFile.send(file.getName());
-				
-				
-		}
-			node.setMapUpdate(false);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+                    InetAddress IPAddress = InetAddress.getByName(getIP(file.getName()));
 
-	/**
-	 * Send server a message with the name of a file, requesting the ip of the
-	 * node that needs to be sent to. return null if
-	 * 
-	 * @param name
-	 *            the name of file
-	 * @return the ip of the client node.
-	 */
-	private String getIP(String name) throws RemoteException {
-		String ip = rmi.getPrevIp(name);
+                    String jsonString = createJsonString(file.getName(), file.length());
+                    System.out.print(jsonString);
+                    sendUdp(jsonString, IPAddress);
 
-		int hash = rmi.getHash(name);
-		if (ip.equals(rmi.getIp(this.node.getCurrent()))){
-			ip = rmi.getIp(this.node.getPrev());
-		}
+                    //receive
+                    TCPSend sendFile = new TCPSend(serverSocket);
+                    sendFile.send(file.getName());
 
-		return ip;
-	}
+                }
+               //     node.openServerSocket();
+               
+            serverSocket.close();
+            node.setMapUpdate(false);
+            }
+            } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
 
-	/**
-	 * Create the string that needs to be sent to the other node.
-	 * 
-	 * @return the string for the user, on failure returns an empty string.
-	 */
-	private String createJsonString(String name, long size) {
-		try {
-			JSONObject jobj = new JSONObject();
-			jobj.put("type", "file");
-			jobj.put("data", name);
-			jobj.put("size", size);
+    }
 
-			return jobj.toString();
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+    /**
+     * Send server a message with the name of a file, requesting the ip of the
+     * node that needs to be sent to. return null if
+     *
+     * @param name the name of file
+     * @return the ip of the client node.
+     */
+    private String getIP(String name) throws RemoteException {
+        String ip = rmi.getPrevIp(name);
 
-		return "";
-	}
+        int hash = rmi.getHash(name);
+        if (ip.equals(rmi.getIp(this.node.getCurrent()))) {
+            ip = rmi.getIp(this.node.getPrev());
+        }
 
-	/**
-	 * send UDP message to node that receives file.
-	 * 
-	 * @param data
-	 *            the data that needs to be sent.
-	 * @param ip
-	 *            the IP address of the receiving node.
-	 */
-	private void sendUdp(String data, InetAddress ip) {
-		byte[] sendData = new byte[1024];
+        return ip;
+    }
 
-		try {
-			DatagramSocket clientSocket = new DatagramSocket();
+    /**
+     * Create the string that needs to be sent to the other node.
+     *
+     * @return the string for the user, on failure returns an empty string.
+     */
+    private String createJsonString(String name, long size) {
+        try {
+            JSONObject jobj = new JSONObject();
+            jobj.put("type", "file");
+            jobj.put("data", name);
+            jobj.put("size", size);
 
-			sendData = data.toString().getBytes();
-			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ip, 6789);
+            return jobj.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-			clientSocket.send(sendPacket);
+        return "";
+    }
 
-			/*
+    /**
+     * send UDP message to node that receives file.
+     *
+     * @param data the data that needs to be sent.
+     * @param ip the IP address of the receiving node.
+     */
+    private void sendUdp(String data, InetAddress ip) {
+        byte[] sendData = new byte[1024];
+
+        try {
+            DatagramSocket clientSocket = new DatagramSocket();
+
+            sendData = data.toString().getBytes();
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ip, 6789);
+
+            clientSocket.send(sendPacket);
+
+            /*
 			 * DatagramPacket receivePacket = new DatagramPacket(receiveData,
 			 * receiveData.length); clientSocket.receive(receivePacket); String
 			 * modifiedSentence = new String(receivePacket.getData());
 			 * System.out.println("FROM SERVER:" + modifiedSentence);
-			 */
-
-			clientSocket.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+             */
+            clientSocket.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
 }

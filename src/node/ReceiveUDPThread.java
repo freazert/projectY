@@ -9,100 +9,94 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ReceiveUDPThread extends Thread {
-	private DatagramSocket serverSocket;
-	private Node node;
 
-	/**
-	 * The constructor method for the ReceiveUDPThread
-	 * 
-	 * @param node
-	 *            The node that receives the data.
-	 */
-	public ReceiveUDPThread(Node node) {
-		try {
-			this.node = node;
-			this.serverSocket = new DatagramSocket(6789);
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+    private DatagramSocket serverSocket;
+    private Node node;
 
-	@Override
-	public void run() {
-		try {
-			while (true) {
-				System.out.println("receiveUDPThread run");
-				DatagramPacket data = getData(serverSocket);
-				String ip = data.getAddress().getHostAddress();
+    /**
+     * The constructor method for the ReceiveUDPThread
+     *
+     * @param node The node that receives the data.
+     */
+    public ReceiveUDPThread(Node node, DatagramSocket serverSocket) {
+        this.node = node;
+        this.serverSocket = serverSocket;
+    }
 
-				handleData(new String(data.getData()), ip);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                while (!node.isMapUpdate()) {
+                    System.out.println("receiveUDPThread run");
+                    DatagramPacket data = getData(serverSocket);
+                    String ip = data.getAddress().getHostAddress();
 
-	/**
-	 * receive data from the socket.
-	 * 
-	 * @param socket
-	 *            the socket over which the data comes.
-	 * @return the received data
-	 * @throws IOException
-	 */
-	private DatagramPacket getData(DatagramSocket socket) throws IOException {
-		byte[] receiveData = new byte[10240];
+                    handleData(new String(data.getData()), ip);
+                }
 
-		System.out.println("rft receiveUDP");
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-		DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-		System.out.println("waiting for udp receive");
-		socket.receive(receivePacket);
-		System.out.println("UDP received");
+    /**
+     * receive data from the socket.
+     *
+     * @param socket the socket over which the data comes.
+     * @return the received data
+     * @throws IOException
+     */
+    private DatagramPacket getData(DatagramSocket socket) throws IOException {
+        byte[] receiveData = new byte[10240];
 
-		// reply();
+        System.out.println("rft receiveUDP");
 
-		return receivePacket;
-	}
+        DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+        System.out.println("waiting for udp receive");
+        socket.receive(receivePacket);
+        System.out.println("UDP received");
 
-	/**
-	 * Handle JSON data on type. handleData checks for the given type in the
-	 * JSON message. starts the TCP receiveThread when it gets file, start the
-	 * control files method when the type is next.
-	 * 
-	 * @param data
-	 *            the unparsed JSON string
-	 * @param ip
-	 *            the ip of the UDP sender
-	 * @throws JSONException
-	 * @throws IOException
-	 */
-	private void handleData(String data, String ip) throws JSONException, IOException {
-		JSONObject jobj = new JSONObject(data);
+        // reply();
+        return receivePacket;
+    }
 
-		String type = jobj.getString("type");
-		System.out.println("type: " + type);
-		switch (type) {
-		case "file":
-			System.out.println("receive file");
-			TCPReceive receive = new TCPReceive(node, 5555);
-			String name = jobj.getString("data");
-			int size = (int) jobj.getLong("size");
-			System.out.println("the name is: " + name);
-			receive.receiveFile(ip, name, size);
-			break;
-		case "next":
-			this.node.controlFiles();
-			break;
-		case "remove":
-			String dataObj = jobj.getString("data");
-			this.node.removeFile(dataObj);
-			break;
-		}
+    /**
+     * Handle JSON data on type. handleData checks for the given type in the
+     * JSON message. starts the TCP receiveThread when it gets file, start the
+     * control files method when the type is next.
+     *
+     * @param data the unparsed JSON string
+     * @param ip the ip of the UDP sender
+     * @throws JSONException
+     * @throws IOException
+     */
+    private void handleData(String data, String ip) throws JSONException, IOException {
+        JSONObject jobj = new JSONObject(data);
 
-	}
+        String type = jobj.getString("type");
+        System.out.println("type: " + type);
+        switch (type) {
+            case "file":
+                System.out.println("receive file");
+                TCPReceive receive = new TCPReceive(node, 5555);
+                String name = jobj.getString("data");
+                int size = (int) jobj.getLong("size");
+                System.out.println("the name is: " + name);
+                receive.receiveFile(ip, name, size);
+                break;
+            case "next":
+                this.node.controlFiles();
+                break;
+            case "remove":
+                String dataObj = jobj.getString("data");
+                this.node.removeFile(dataObj);
+                break;
+        }
+
+    }
 
 }
