@@ -158,8 +158,8 @@ public class Node {
 
 			socket.close();
 
-			shutdownReplicatedFiles();
-			shutdownLocalFiles();
+			//shutdownReplicatedFiles();
+			//shutdownLocalFiles();
 
 		} catch (Exception e) {
 			failure();

@@ -68,7 +68,7 @@ public class TCPReceive {
 	private void getFile(Socket socket, String name, int size) throws Exception {
 		int bytesRead;
 		int currentTot = 0;
-		int filesize = size + 1;
+		int filesize = size;
 
 		
 		byte[] bytearray = new byte[filesize];
@@ -78,11 +78,16 @@ public class TCPReceive {
 		System.out.println("bytearray length: " + bytearray.length);
 		//bytesRead = is.read(bytearray, 0, bytearray.length);
 		currentTot = 0;//0bytesRead;
-		do {
+		/**
+		 * TODO: bigger files.
+		 * 
+		 * glue parts of bigger files together.
+		 */
+		//do {
 			bytesRead = is.read(bytearray, currentTot, (filesize - currentTot));
 			if (bytesRead >= 0)
 				currentTot += bytesRead;
-		} while (bytesRead > -1);
+		//} while (bytesRead > -1);
 		System.out.println("bytes: " + currentTot);
 		System.out.println(new String(bytearray));
 
