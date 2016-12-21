@@ -62,13 +62,13 @@ public class SendFileThread extends Thread {
                     sendFile.send(file.getName());
 
                 }
-               //     node.openServerSocket();
                
             serverSocket.close();
+            node.openServerSocket();
             node.setMapUpdate(false);
             }
             } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         
 

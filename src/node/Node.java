@@ -57,7 +57,8 @@ public class Node {
         this.ownerList = new ArrayList<String>();
         this.localList = new ArrayList<String>();
         this.name = name;
-        this.mapUpdate = false;
+        this.mapUpdate = true;
+        //TODO -> oet false zijn wanneer geen map
         try {
             serverSocket = new DatagramSocket(6789);
         } catch (SocketException ex) {
@@ -80,13 +81,7 @@ public class Node {
         }
         printNodes();
         this.initNodes();
-        if (this.myNode != this.prevNode) {
-            new CheckFolderThread(this, 10000, this.folderString).start();
-            ;
-        } else {
-                ReceiveUDPThread rft = new ReceiveUDPThread(this, serverSocket);
-                rft.start();
-        }
+        new StartupThread(rmi,this).start();
     }
 
     // Getters
@@ -99,6 +94,16 @@ public class Node {
         return this.prevNode;
     }
 
+    
+    public String getFolderString()
+    {
+        return this.folderString;
+    }
+
+    public DatagramSocket getServerSocket()
+    {
+        return this.serverSocket;
+    }
     /**
      * Get next node.
      *
