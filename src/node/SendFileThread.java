@@ -44,8 +44,7 @@ public class SendFileThread extends Thread {
         try {
             synchronized (this.node) {
                 node.setMapUpdate(true);
-                sHandler.startSending();
-                //node.closeServerSokcet();
+                sHandler.startSendFile();
                 for (File file : files) {
 
                     InetAddress IPAddress = InetAddress.getByName(getIP(file.getName()));
@@ -60,7 +59,6 @@ public class SendFileThread extends Thread {
 
                 }
                
-            serverSocket.close();
             sHandler.stopSendFile();
             //node.openServerSocket();
             node.setMapUpdate(false);
@@ -120,7 +118,7 @@ public class SendFileThread extends Thread {
         byte[] sendData = new byte[1024];
 
         try {
-            DatagramSocket clientSocket = new DatagramSocket();
+            DatagramSocket clientSocket = this.sHandler.getUdpSocket();
 
             sendData = data.toString().getBytes();
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ip, 6789);
@@ -133,7 +131,7 @@ public class SendFileThread extends Thread {
 			 * modifiedSentence = new String(receivePacket.getData());
 			 * System.out.println("FROM SERVER:" + modifiedSentence);
 			 */
-			clientSocket.close();
+			//clientSocket.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

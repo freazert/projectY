@@ -10,8 +10,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class TCPSend {
-
-    private ServerSocket welcomeSocket;
     private String filePath;
     private SocketHandler sHandler;
 
@@ -25,7 +23,7 @@ public class TCPSend {
     	this.sHandler = sHandler;
         this.filePath = "C:" + File.separator + "nieuwe map" + File.separator;
         System.out.println("creating");
-        this.welcomeSocket = welcomeSocket;
+        
     }
 
     /**
@@ -46,7 +44,10 @@ public class TCPSend {
         Socket socket;
         try {
             System.out.println("waiting for accept");
-            socket = this.welcomeSocket.accept();
+            socket = this.sHandler.getServerSocket().accept();
+            /**
+             * TODO: add functionalities to sockethandler.
+             */
 
             byte[] b = new byte[250];
 
