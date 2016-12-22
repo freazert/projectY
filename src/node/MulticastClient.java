@@ -60,13 +60,13 @@ public class MulticastClient {
 
 			System.out.println(jobj);
 
-			this.sHandler.startMulticastReceive();
 			start(jobj.toString());
 
+			this.sHandler.startMulticastReceive();
 			//socket.close();
 
 			//multiSocket = new MulticastSocket(portMulticasting);
-
+			
 			new MulticastRecieveThread(group, this.node, this.sHandler).start();
 		} catch (Exception e) {
 			e.printStackTrace();

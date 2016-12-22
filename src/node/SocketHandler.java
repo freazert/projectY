@@ -23,6 +23,13 @@ public class SocketHandler {
 		this.tcpPort = tcpPort;
 		this.udpPort = udpPort;
 		this.multicastPort = multicastPort;
+		
+		try {
+			this.udpSocket = new DatagramSocket(this.udpPort);
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	//getters
@@ -100,13 +107,15 @@ public class SocketHandler {
 	//close
 	
 	public void closeUdpSocket() {
-		this.udpSocket.close();
+		if(!this.udpSocket.isClosed())
+			this.udpSocket.close();
 	}
 	
 	public void closeServerSocket()
 	{
 		try {
-			this.serverSocket.close();
+			if(!this.serverSocket.isClosed())
+				this.serverSocket.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -114,50 +123,53 @@ public class SocketHandler {
 	}
 	
 	public void closeMulticastSocket() {
-		this.multiSocket.close();
+		if(!this.multiSocket.isClosed())
+			this.multiSocket.close();
 	}
 	
 	public void closeMulticastReceiveSocket() {
-		this.multicastReceiveSocket.close();
+		if(!this.multicastReceiveSocket.isClosed())
+			this.multicastReceiveSocket.close();
 	}
 	
 	public void closeReceiveTCPSocket() {
 		try {
-			this.receiveTCPSocket.close();
+			if(!this.receiveTCPSocket.isClosed())
+				this.receiveTCPSocket.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void startSending() {
-		
+	public void startMulticastReceive() {
+		this.closeMulticastSocket();
+		this.startMulticastReceiveSocket();
 		
 	}
 
-	public void startReceiving() {
-		// TODO Auto-generated method stub
+	/**
+	 * Start TCP serverSocket and return value of server socket.
+	 * 
+	 * @return The serversocket.
+	 */
+	public void startSendFile() {
+		this.closeUdpSocket();
+		this.startUdpSocket();
+		this.closeReceiveTCPSocket();
 		
+		this.startServerSocket();
+	}
+
+	/**
+	 * End of sending file, close the server socket.
+	 */
+	public void stopSendFile() {
+		this.closeServerSocket();		
 	}
 
 	public void startMulticastSend() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void startMulticastReceive() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void startSendFile() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void stopSendFile() {
-		// TODO Auto-generated method stub
-		
+		this.closeMulticastReceiveSocket();
+		this.startMulticastSocket();
 	}
 	
 }
