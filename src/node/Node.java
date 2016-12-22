@@ -66,6 +66,7 @@ public class Node {
         
         this.sHandler.startServerSocket();
         
+
         /*
 		 * ListenToCmdThread cmd = new ListenToCmdThread(this); cmd.start();
          */
@@ -81,13 +82,8 @@ public class Node {
         }
         printNodes();
         this.initNodes();
-        if (this.myNode != this.prevNode) {
-            new CheckFolderThread(this, 10000, this.folderString).start();
-            ;
-        } else {
-                ReceiveUDPThread rft = new ReceiveUDPThread(this, this.sHandler);
-                rft.start();
-        }
+
+        new StartupThread(rmi,this, this.sHandler).start();
     }
 
     // Getters
@@ -98,6 +94,12 @@ public class Node {
      */
     public int getPrev() {
         return this.prevNode;
+    }
+
+    
+    public String getFolderString()
+    {
+        return this.folderString;
     }
 
     /**
