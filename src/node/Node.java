@@ -77,7 +77,7 @@ public class Node {
         try {
             this.rmi = (INodeRMI) Naming.lookup("//" + this.serverIP + "/nodeRMI");
         } catch (MalformedURLException | RemoteException | NotBoundException e) {
-            failure();
+            //failure();
             e.printStackTrace();
         }
         printNodes();
@@ -178,8 +178,8 @@ public class Node {
 
     public void failure() {
 
-        try {
-        	initNodes();
+        /*try {
+        	//initNodes();
             
             DatagramSocket socket = new DatagramSocket(4448);
 
@@ -201,7 +201,7 @@ public class Node {
 			 * catch (NotBoundException e) {
 			 * System.out.println("FAILURE: NOT BOUND EXCEPTION");
 			 * e.printStackTrace(); }
-         */ catch (java.net.SocketException e) {
+         *//* catch (java.net.SocketException e) {
             System.out.println("FAILURE: SOCKET EXCEPTION");
             e.printStackTrace();
         } catch (java.io.IOException e) {
@@ -210,7 +210,7 @@ public class Node {
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
+        }*/
 
     }
 

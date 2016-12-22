@@ -61,7 +61,9 @@ public class MulticastServerThread extends Thread {
                     
                     buf = new byte[256];
                     
-                    buf = String.valueOf(wrap.getHashMap().getCount()).getBytes();
+                    String cntNodes = this.createJSONObject("nodes", wrap.getHashMap().getCount());
+                    
+                    buf = cntNodes.getBytes();
                     packet = new DatagramPacket(buf , buf.length, packet.getAddress(), 3000);
                     socketUni.send(packet);
                 } catch (NumberFormatException e){
@@ -80,4 +82,23 @@ public class MulticastServerThread extends Thread {
         	
         }
 	}
+	
+	/**
+     * create a JSON string int the form of { type: "[type]", data: [object] }.
+     * this way certain data will be easy to send over any connection to another
+     * node.
+     *
+     * @param type A short string representation of what the receiver has to do
+     * with the file.
+     * @param data The Object that has to be sent over
+     * @return a string representation of all the data that has to be sent.
+     * @throws JSONException
+     */
+    private String createJSONObject(String type, Object data) throws JSONException {
+        JSONObject jobj = new JSONObject();
+        jobj.put("type", type);
+        jobj.put("data", data);
+
+        return jobj.toString();
+    }
 }

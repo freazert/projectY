@@ -31,17 +31,7 @@ public class MulticastClient {
 			byte[] buf = new byte[1024];
 			buf = name.getBytes();
 			packet = new DatagramPacket(buf, buf.length, address, portMulticasting);
-			sHandler.getMultiSocket().send(packet);
-
-			buf = new byte[1024];
-			packet = new DatagramPacket(buf, buf.length);
-			System.out.println("before receive");
-			sHandler.getMulticastReceiveSocket().receive(packet);
-			System.out.println("after receive");
-
-			int countNodes = Integer.parseInt(new String(packet.getData(), 0, packet.getLength()));
-
-			System.out.print(countNodes);
+			sHandler.getMulticastSendSocket().send(packet);
 
 			// }
 			//socket.close();
