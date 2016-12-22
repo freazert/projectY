@@ -65,21 +65,21 @@ public class MulticastRecieveThread extends Thread {
 	 * @throws JSONException
 	 */
 	private void handleData(String data) throws JSONException {
-
+		String name;
+		System.out.println("received: " +data);
 		JSONObject jobj = new JSONObject(data);
 		String type = jobj.getString("type");
-		String name = jobj.getString("data");
-
+		
+		
 		switch (type) {
 		case "next":
+			name = jobj.getString("data");
 			node.controlFiles();
 			break;
 		case "new":
+			name = jobj.getString("data");
 			this.node.setNodes(name);
 		}
-
-		System.out.println("nodenaam: " + jobj.getString("data"));
-
 	}
 
 	/**

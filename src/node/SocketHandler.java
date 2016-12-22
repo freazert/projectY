@@ -11,7 +11,7 @@ import java.net.UnknownHostException;
 public class SocketHandler {
 	private DatagramSocket udpSocket;
 	private MulticastSocket multiSocket;
-	private DatagramSocket multicastReceiveSocket;
+	private DatagramSocket multicastSendSocket;
 	private ServerSocket serverSocket;
 	private Socket receiveTCPSocket;
 
@@ -46,8 +46,10 @@ public class SocketHandler {
 		return serverSocket;
 	}
 
-	public DatagramSocket getMulticastReceiveSocket() {
-		return this.multicastReceiveSocket;
+	public DatagramSocket getMulticastSendSocket() {
+		if(this.multicastSendSocket == null)
+			this.startMulticastSendSocket();
+		return this.multicastSendSocket;
 	}
 
 	// startup
@@ -83,9 +85,9 @@ public class SocketHandler {
 		}
 	}
 
-	public void startMulticastReceiveSocket() {
+	public void startMulticastSendSocket() {
 		try {
-			this.multicastReceiveSocket = new DatagramSocket(this.multicastPort);
+			this.multicastSendSocket = new DatagramSocket(this.multicastPort);
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -129,10 +131,10 @@ public class SocketHandler {
 			this.multiSocket.close();
 	}
 
-	public void closeMulticastReceiveSocket() {
-		if (this.multicastReceiveSocket != null && 
-				!this.multicastReceiveSocket.isClosed())
-			this.multicastReceiveSocket.close();
+	public void closeMulticastSendSocket() {
+		if (this.multicastSendSocket != null && 
+				!this.multicastSendSocket.isClosed())
+			this.multicastSendSocket.close();
 	}
 
 	public void closeReceiveTCPSocket() {
@@ -146,8 +148,9 @@ public class SocketHandler {
 	}
 
 	public void startMulticastReceive() {
-		this.closeMulticastSocket();
-		this.startMulticastReceiveSocket();
+		this.closeMulticastSendSocket();
+		this.startMulticastSocket();
+		
 
 	}
 
@@ -172,8 +175,9 @@ public class SocketHandler {
 	}
 
 	public void startMulticastSend() {
-		this.closeMulticastReceiveSocket();
-		this.startMulticastSocket();
+		this.closeMulticastSocket();
+		this.startMulticastSendSocket();
+		
 	}
 
 }
