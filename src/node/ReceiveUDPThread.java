@@ -57,6 +57,7 @@ public class ReceiveUDPThread extends Thread {
         DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
         System.out.println("waiting for udp receive");
         sHandler.getUdpSocket().receive(receivePacket);
+
         System.out.println("UDP received");
 
         // reply();
