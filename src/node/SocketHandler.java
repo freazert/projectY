@@ -69,6 +69,7 @@ public class SocketHandler {
 
 	public void startServerSocket() {
 		try {
+			this.closeServerSocket();
 			this.serverSocket = new ServerSocket(this.tcpPort);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -176,6 +177,7 @@ public class SocketHandler {
 
 	public void startMulticastSend() {
 		this.closeMulticastSocket();
+		this.closeMulticastSendSocket();
 		this.startMulticastSendSocket();
 		
 	}
