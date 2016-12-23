@@ -17,4 +17,6 @@ public interface INodeRMI extends Remote{
 	int getHash(String name) throws RemoteException;
 	String getPrevIp(String filename) throws RemoteException;
 	
+	int getHmapSize() throws RemoteException;
+	
 }
