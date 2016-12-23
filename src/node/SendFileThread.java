@@ -49,7 +49,9 @@ public class SendFileThread extends Thread {
 				sHandler.startSendFile();
 				for (File file : files) {
 
-					InetAddress IPAddress = InetAddress.getByName(getIP(file.getName()));
+					String ip = getIP(file.getName());
+					if(!ip.equals(rmi.getIp(this.node.getCurrent()))){
+						InetAddress IPAddress = InetAddress.getByName(ip);
 
 					String jsonString = createJsonString(file.getName(), file.length());
 					System.out.print(jsonString);
@@ -58,6 +60,7 @@ public class SendFileThread extends Thread {
 					// receive
 					TCPSend sendFile = new TCPSend(this.sHandler);
 					sendFile.send(file.getName());
+					}
 
 				}
 
