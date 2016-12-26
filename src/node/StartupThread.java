@@ -27,6 +27,7 @@ public class StartupThread extends Thread {
                 new CheckFolderThread(this.node, 10000, this.node.getFolderString()).start();
                 ReceiveUDPThread rft = new ReceiveUDPThread(this.node, this.sHandler);
                 rft.start();
+                new FailureThread(this.node, rmi).start();
     }
 
 }
