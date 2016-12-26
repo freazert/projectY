@@ -80,6 +80,7 @@ public class MulticastRecieveThread extends Thread {
 			name = jobj.getString("data");
 			this.node.setNodes(name);
 		}
+ 
 	}
 
 	/**

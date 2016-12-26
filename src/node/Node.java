@@ -136,7 +136,7 @@ public class Node {
             setNext(hash);
 
         } catch (RemoteException e) {
-            failure();
+            //failure();
             e.printStackTrace();
         }
 
@@ -154,6 +154,7 @@ public class Node {
             System.out.println("shutting down");
 
             rmi.removeNode(this.myNode);
+            
 
             DatagramSocket socket = new DatagramSocket(4448);
             String toSendPrev = createJSONObject("previous", this.prevNode);
@@ -169,7 +170,7 @@ public class Node {
 
 
         } catch (Exception e) {
-            failure();
+            //failure();
             e.printStackTrace();
         } finally {
             System.exit(0);
