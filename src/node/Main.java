@@ -61,7 +61,7 @@ public class Main {
 
 		try {
 			inet = InetAddress.getByName(ip);
-			if (inet.isReachable(5000))
+			if (inet.isReachable(500))
 				return true;
 			return false;
 		} catch (UnknownHostException e) {
