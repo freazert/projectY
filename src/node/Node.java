@@ -24,7 +24,7 @@ public class Node {
 
     private int nextNode, prevNode, myNode;
     private INodeRMI rmi;
-    //private DatagramSocket serverSocket;
+    // private DatagramSocket serverSocket;
     private String name;
     private List<String> ownerList;
     private List<String> localList;
@@ -62,10 +62,9 @@ public class Node {
         this.localList = new ArrayList<String>();
         this.name = name;
         this.mapUpdate = false;
-        this.sHandler = new SocketHandler(TCP_PORT,UDP_PORT,MULTICAST_PORT);
-        
+        this.sHandler = new SocketHandler(TCP_PORT, UDP_PORT, MULTICAST_PORT);
+
         this.sHandler.startServerSocket();
-        
 
         /*
 		 * ListenToCmdThread cmd = new ListenToCmdThread(this); cmd.start();
@@ -77,13 +76,13 @@ public class Node {
         try {
             this.rmi = (INodeRMI) Naming.lookup("//" + this.serverIP + "/nodeRMI");
         } catch (MalformedURLException | RemoteException | NotBoundException e) {
-            //failure();
+            // failure();
             e.printStackTrace();
         }
         printNodes();
         this.initNodes();
 
-        new StartupThread(rmi,this, this.sHandler).start();
+        new StartupThread(rmi, this, this.sHandler).start();
     }
 
     // Getters
@@ -96,9 +95,7 @@ public class Node {
         return this.prevNode;
     }
 
-    
-    public String getFolderString()
-    {
+    public String getFolderString() {
         return this.folderString;
     }
 
@@ -154,20 +151,20 @@ public class Node {
             System.out.println("shutting down");
 
             rmi.removeNode(this.myNode);
-            
+            if (rmi.getHmapSize() > 0) {
 
-            DatagramSocket socket = new DatagramSocket(4448);
-            String toSendPrev = createJSONObject("previous", this.prevNode);
-            sendUDP(socket, rmi.getIp(this.nextNode), toSendPrev);
+                DatagramSocket socket = new DatagramSocket(4448);
+                String toSendPrev = createJSONObject("previous", this.prevNode);
+                sendUDP(socket, rmi.getIp(this.nextNode), toSendPrev);
 
-            String toSendNext = createJSONObject("next", this.nextNode);
-            sendUDP(socket, rmi.getIp(this.prevNode), toSendNext);
+                String toSendNext = createJSONObject("next", this.nextNode);
+                sendUDP(socket, rmi.getIp(this.prevNode), toSendNext);
 
-			shutdownReplicatedFiles();
-			//shutdownLocalFiles();
+                shutdownReplicatedFiles();
+                // shutdownLocalFiles();
 
-            socket.close();
-
+                socket.close();
+            }
 
         } catch (Exception e) {
             //failure();
@@ -179,39 +176,34 @@ public class Node {
 
     public void failure() {
 
-        /*try {
-        	//initNodes();
-            
-            DatagramSocket socket = new DatagramSocket(4448);
-
-            String prev = createJSONObject("previous", this.prevNode);
-            sendUDP(socket, this.rmi.getIp(this.nextNode), prev);
-
-            String next = createJSONObject("next", this.nextNode);
-            sendUDP(socket, this.rmi.getIp(this.prevNode), next);
-            
-            this.rmi.removeNode(this.myNode);
-
-        } catch (MalformedURLException e) {
-            System.out.println("FAILURE: MALFORMED URL EXCEPTION");
-            e.printStackTrace();
-        } catch (RemoteException e) {
-            System.out.println("FAILURE: REMOTE EXCEPTION");
-            e.printStackTrace();
-        } /*
-			 * catch (NotBoundException e) {
-			 * System.out.println("FAILURE: NOT BOUND EXCEPTION");
+        /*
+		 * try { //initNodes();
+		 * 
+		 * DatagramSocket socket = new DatagramSocket(4448);
+		 * 
+		 * String prev = createJSONObject("previous", this.prevNode);
+		 * sendUDP(socket, this.rmi.getIp(this.nextNode), prev);
+		 * 
+		 * String next = createJSONObject("next", this.nextNode);
+		 * sendUDP(socket, this.rmi.getIp(this.prevNode), next);
+		 * 
+		 * this.rmi.removeNode(this.myNode);
+		 * 
+		 * } catch (MalformedURLException e) {
+		 * System.out.println("FAILURE: MALFORMED URL EXCEPTION");
+		 * e.printStackTrace(); } catch (RemoteException e) {
+		 * System.out.println("FAILURE: REMOTE EXCEPTION"); e.printStackTrace();
+		 * } /* catch (NotBoundException e) {
+		 * System.out.println("FAILURE: NOT BOUND EXCEPTION");
+		 * e.printStackTrace(); }
+         *//*
+			 * catch (java.net.SocketException e) {
+			 * System.out.println("FAILURE: SOCKET EXCEPTION");
+			 * e.printStackTrace(); } catch (java.io.IOException e) {
+			 * System.out.println("FAILURE: IO EXCEPTION"); e.printStackTrace();
+			 * } catch (JSONException e) { // TODO Auto-generated catch block
 			 * e.printStackTrace(); }
-         *//* catch (java.net.SocketException e) {
-            System.out.println("FAILURE: SOCKET EXCEPTION");
-            e.printStackTrace();
-        } catch (java.io.IOException e) {
-            System.out.println("FAILURE: IO EXCEPTION");
-            e.printStackTrace();
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }*/
+         */
 
     }
 
@@ -405,14 +397,14 @@ public class Node {
     private void shutdownReplicatedFiles() throws InterruptedException {
         List<File> files = new ArrayList<File>();
         for (String filename : this.ownerList) {
-        	System.out.println(filename);
+            System.out.println(filename);
             File f = new File(folderString + File.separator + filename);
             if (f.isFile()) {
-            	System.out.println("addFile");
+                System.out.println("addFile");
                 files.add(f);
             }
         }
-        
+
         SendFileThread sft = new SendFileThread(files, this.rmi, this, this.sHandler);
         sft.start();
         sft.join();
@@ -471,7 +463,5 @@ public class Node {
         System.out.println("next node: " + this.nextNode);
         System.out.println("previous node: " + this.prevNode);
     }
-
-    
 
 }
