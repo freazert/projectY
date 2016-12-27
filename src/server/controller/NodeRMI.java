@@ -81,6 +81,11 @@ public class NodeRMI extends UnicastRemoteObject implements INodeRMI{
 		// TODO Auto-generated method stub
 		return this.hashmap.getPrevIp(filename);
 	}
+	
+	@Override
+	public int getHmapSize() throws RemoteException {
+		return this.hashmap.getCount();
+	}
 
 
 }
