@@ -8,6 +8,8 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Scanner;
 
+import gui.GUI;
+
 public class Main {
 
 	public static void main(String args[]) throws MalformedURLException, RemoteException, NotBoundException {
@@ -29,6 +31,7 @@ public class Main {
 		String name = sc.nextLine();
 
 		Node node = new Node(name);
+		GUI gui = new GUI();
 		// MulticastClient mc = new MulticastClient(node);
 		while (true) {
 			String cmd;

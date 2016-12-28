@@ -14,7 +14,7 @@ public class TCPReceive {
 													// file to be downloaded
 
 	public TCPReceive(int socketPort) {
-		this.filePath = "D:" + File.separator + "school"+ File.separator + "SCH-IW_EI" + File.separator + "shared" + File.separator + "receive" + File.separator;
+		this.filePath = "C:" + File.separator + "receive"+ File.separator;
 		this.socketPort = socketPort;
 		//this.node = node;
 	}
