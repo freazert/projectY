@@ -14,20 +14,15 @@ import javax.swing.JScrollPane;
 
 public class GUIView extends JFrame{
 	
-	JPanel panel = new JPanel();
-	DefaultListModel model = new DefaultListModel();
-	JList list = new JList(model);
-	JScrollPane pane = new JScrollPane(list);
-	JButton openButton = new JButton("Open File");
-	JButton removeButton = new JButton("Remove File");
+
 	 
 	public GUIView(String name){
 		super(name);
 		setSize(600,400);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
-		JPanel panel1 = createJPanel("c:/test" , "Local Files");
-		JPanel panel2 = createJPanel("c:/test2", "Replicated Files");
+		JPanel panel1 = createJPanel("c:/nieuwe map" , "Local Files");
+		JPanel panel2 = createJPanel("c:/receive", "Replicated Files");
 		
 				
 		add(panel1, BorderLayout.CENTER);
@@ -43,17 +38,19 @@ public class GUIView extends JFrame{
         model.removeElementAt(list.getSelectedIndex() );
 	}
 	
-	public DefaultListModel getDefaultListModel(){
-		return model;
-	}
-	
+
 	public JPanel createJPanel(String dir, String type){
 		 
 		 JLabel label3 = new JLabel(type);
 
-		 
+			JPanel panel = new JPanel();
+			DefaultListModel model = new DefaultListModel();
+			JList list = new JList(model);
+			JScrollPane pane = new JScrollPane(list);
+			JButton openButton = new JButton("Open File");
+			JButton removeButton = new JButton("Remove File");
 	     GUIModel gui_model = new GUIModel();
-		 gui_model.fillListModel(dir);
+		 gui_model.fillListModel(dir,model);
 		 
 		 openButton.addActionListener(new ActionListener() {
 	    	 public void actionPerformed(ActionEvent e) {
