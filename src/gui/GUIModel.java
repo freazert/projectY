@@ -13,26 +13,28 @@ public class GUIModel {
 		
 	}
 	
-	public void fillListModel(String dir){
-		 DefaultListModel model = new DefaultListModel();
+	public void fillListModel(String dir, DefaultListModel model){
 		 File directory = new File(dir);
 		 File[] fList = directory.listFiles();
 
-	     for (File file : fList){
-	      	if (file.isFile()){
-	      		model.addElement(file);
-	         }
-	      }
+	     if(fList!=null&&fList.length>0){
+			 for (File file : fList){
+			      	if (file.isFile()){
+			      		model.addElement(file);
+			         }
+			      }    	 
+	     }
+
 	}
 	
 	public void emptyListModel(){
 		DefaultListModel model = new DefaultListModel();
-		model.clear();
+		model.removeAllElements();
 	}
 	
 	public void refreshList(String directory){
 		emptyListModel();
-		fillListModel(directory);
+		//fillListModel(directory);
 	}
 	 
 
