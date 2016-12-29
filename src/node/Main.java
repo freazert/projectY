@@ -8,7 +8,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Scanner;
 
-import gui.GUI;
+import gui.GUIView;
 
 public class Main {
 
@@ -31,7 +31,8 @@ public class Main {
 		String name = sc.nextLine();
 
 		Node node = new Node(name);
-		GUI gui = new GUI();
+		GUIView gui_view = new GUIView(name);
+		gui_view.setVisible(true);
 		// MulticastClient mc = new MulticastClient(node);
 		while (true) {
 			String cmd;

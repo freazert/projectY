@@ -3,6 +3,9 @@ package node;
 import java.io.*;
 import java.net.Socket;
 
+import gui.GUIController;
+import gui.GUIModel;
+
 public class TCPReceive {
 	private String filePath;
 	private SocketHandler sHandler;
@@ -14,7 +17,7 @@ public class TCPReceive {
 													// file to be downloaded
 
 	public TCPReceive(Node node, SocketHandler sHandler) {
-		this.filePath = "D:" + File.separator + "school"+ File.separator + "SCH-IW_EI" + File.separator + "shared" + File.separator + "receive" + File.separator;
+		this.filePath = "c:" + File.separator + "receive"+ File.separator;
 		this.sHandler = sHandler;
 		this.node = node;
 	}
@@ -98,6 +101,8 @@ public class TCPReceive {
 		
 		bos.flush();
 		bos.close();
+		GUIController gui_controller = new GUIController();
+		gui_controller.refreshList(filePath);
 	}
 
 }

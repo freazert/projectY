@@ -6,19 +6,35 @@ import java.io.File;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-public class GUIView {
+public class GUIView extends JFrame{
 	
-	public GUIView(){
+	JPanel panel = new JPanel();
+	DefaultListModel model = new DefaultListModel();
+	JList list = new JList(model);
+	JScrollPane pane = new JScrollPane(list);
+	JButton openButton = new JButton("Open File");
+	JButton removeButton = new JButton("Remove File");
+	 
+	public GUIView(String name){
+		super(name);
+		setSize(600,400);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		
+		JPanel panel1 = createJPanel("c:/test" , "Local Files");
+		JPanel panel2 = createJPanel("c:/test2", "Replicated Files");
+		
+				
+		add(panel1, BorderLayout.CENTER);
+		add(panel2, BorderLayout.SOUTH);	
 		
 	}
-	
-
-	
+		
 	public File getFileElementFromList(JList list){
 		return (File) list.getSelectedValue();
 	}
@@ -27,20 +43,17 @@ public class GUIView {
         model.removeElementAt(list.getSelectedIndex() );
 	}
 	
+	public DefaultListModel getDefaultListModel(){
+		return model;
+	}
+	
 	public JPanel createJPanel(String dir, String type){
-		 JPanel panel = new JPanel();
-		 DefaultListModel model = new DefaultListModel();
-		 JList list = new JList(model);
-		 JScrollPane pane = new JScrollPane(list);
-		 JButton openButton = new JButton("Open File");
-		 JButton removeButton = new JButton("Remove File");
-		 File directory = new File(dir);
-		  JLabel label3 = new JLabel(type);
+		 
+		 JLabel label3 = new JLabel(type);
 
 		 
 	     GUIModel gui_model = new GUIModel();
-		 File[] fList = directory.listFiles();
-		 gui_model.fillListModel(fList, model);
+		 gui_model.fillListModel(dir);
 		 
 		 openButton.addActionListener(new ActionListener() {
 	    	 public void actionPerformed(ActionEvent e) {
@@ -65,7 +78,7 @@ public class GUIView {
 		  panel.add(pane, BorderLayout.NORTH);
 		  panel.add(openButton, BorderLayout.EAST);
 		  panel.add(removeButton, BorderLayout.WEST);	
-		 return panel;
+		  return panel;
 		 
 	       
 	}
