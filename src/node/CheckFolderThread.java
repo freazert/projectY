@@ -4,6 +4,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import gui.GUIController;
+import gui.GUIModel;
+
 public class CheckFolderThread extends Thread {
 
 	private Node node;
@@ -24,8 +27,12 @@ public class CheckFolderThread extends Thread {
 			List<File> newFiles = new ArrayList<File>();
 			for (int i = 0; i < listOfFiles.length; i++) {
 				if (listOfFiles[i].isFile() && !node.getLocalList().contains(listOfFiles[i].getName())) {
+					System.out.print("\nNew local File discovered: ");
+					System.out.println(listOfFiles[i].getName());
 					newFiles.add(listOfFiles[i]);
 					node.addLocalList(listOfFiles[i].getName());
+					GUIController gui_controller = new GUIController();
+					gui_controller.refreshList(this.folderString);
 				}
 			}
 			if(newFiles.size() != 0)
