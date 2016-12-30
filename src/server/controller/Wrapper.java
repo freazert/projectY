@@ -13,99 +13,110 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-public class Wrapper{
+public class Wrapper
+{
 
 	private HashingMap hmap;
-	
+
 	public Wrapper()
 	{
-		try {
+		try
+		{
 			hmap = new HashingMap();
 			this.hmap = xmlToObject();
 			System.out.println("start up");
-			
-		} catch (JAXBException e) {
+
+		} catch (JAXBException e)
+		{
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	/**
 	 * Remove node from the hashmap.
 	 * 
-	 * @param name the hash of the node that needs to be removed
-	 * @return boolean. returns 1 on success, 0 on failure 
- 	 */
+	 * @param name
+	 *            the hash of the node that needs to be removed
+	 * @return boolean. returns 1 on success, 0 on failure
+	 */
 	public int removeNode(int name)
 	{
 		int success = this.hmap.removeRecord(name);
-		try {
+		try
+		{
 			objectToXml();
-			
+
 			return success;
-		} catch (JAXBException e) {
+		} catch (JAXBException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			
+
 			return 0;
 		}
 	}
-	
+
 	/**
 	 * Convert object to XML string.
 	 * 
 	 * @throws JAXBException
 	 */
-	private void objectToXml() throws JAXBException {
+	private void objectToXml() throws JAXBException
+	{
 		HashingMap object = this.hmap;
 		JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
 		// StringWriter writerTo = new StringWriter();
 		FileOutputStream fileOut;
-		try {
+		try
+		{
 			fileOut = new FileOutputStream("hashMap.xml");
 			Marshaller marshaller = jaxbContext.createMarshaller();
-			//StringWriter wr = new StringWriter();
+			// StringWriter wr = new StringWriter();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			marshaller.marshal(object, fileOut);
-			//System.out.println(wr);
-		} catch (FileNotFoundException e) {
+			// System.out.println(wr);
+		} catch (FileNotFoundException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-//<<<<<<< HEAD
-/*=======
-	public String getIp(int hash)
-	{
-		String ip = this.hmap.getIp(hash);
-		
-		return ip;
-	}
->>>>>>> origin/feature/shutdown*/
-	
-	/**
-	 * Add new node to the hashmap. 
+
+	// <<<<<<< HEAD
+	/*
+	 * ======= public String getIp(int hash) { String ip =
+	 * this.hmap.getIp(hash);
 	 * 
-	 * @param name the name of the new node.
-	 * @param ip the ip of the new node.
+	 * return ip; } >>>>>>> origin/feature/shutdown
+	 */
+
+	/**
+	 * Add new node to the hashmap.
+	 * 
+	 * @param name
+	 *            the name of the new node.
+	 * @param ip
+	 *            the ip of the new node.
 	 * @return
 	 */
 	public int createNode(String name, String ip)
 	{
-		try {
+		try
+		{
 			int success = this.hmap.addRecord(new Hashing(name), ip);
 			objectToXml();
-			
+
 			return success;
-		/*} catch (ServerNotActiveException e) {
-			// TODO Auto-generated catch block
+			/*
+			 * } catch (ServerNotActiveException e) { // TODO Auto-generated
+			 * catch block e.printStackTrace();
+			 * 
+			 * return 0;
+			 */
+		} catch (JAXBException e)
+		{
 			e.printStackTrace();
-			
-			return 0;*/
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			
+
 			return 0;
 		}
 	}
@@ -116,44 +127,45 @@ public class Wrapper{
 	 * @return
 	 * @throws JAXBException
 	 */
-	private HashingMap xmlToObject() throws JAXBException {
+	private HashingMap xmlToObject() throws JAXBException
+	{
 		JAXBContext jaxbContext = JAXBContext.newInstance(HashingMap.class);
 		Unmarshaller u = jaxbContext.createUnmarshaller();
 		this.hmap = new HashingMap();
-		
-		
-		try {
+
+		try
+		{
 			File f = new File("hashMap.xml");
 			f.createNewFile();
 			this.hmap = new HashingMap();
 			objectToXml();
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return (HashingMap) u.unmarshal(new File("hashMap.xml"));
 
 	}
-
 
 	/**
 	 * Getter method for the hashmap.
 	 * 
 	 * @return the current hashmap.
 	 */
-	public HashingMap getHashMap() {
+	public HashingMap getHashMap()
+	{
 		// TODO Auto-generated method stub
 		return this.hmap;
 	}
-/*<<<<<<< HEAD
-=======
-	
-	public String getPrevIp(String filename)
-	{
-		return hmap.getPrevIp(filename);
-	}
-	
->>>>>>> origin/feature/shutdown*/
+	/*
+	 * <<<<<<< HEAD =======
+	 * 
+	 * public String getPrevIp(String filename) { return
+	 * hmap.getPrevIp(filename); }
+	 * 
+	 * >>>>>>> origin/feature/shutdown
+	 */
 
 }

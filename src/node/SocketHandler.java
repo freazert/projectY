@@ -8,7 +8,8 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-public class SocketHandler {
+public class SocketHandler
+{
 	private DatagramSocket udpSocket;
 	private MulticastSocket multiSocket;
 	private DatagramSocket multicastSendSocket;
@@ -19,14 +20,17 @@ public class SocketHandler {
 
 	// private multicastAddress
 
-	public SocketHandler(int tcpPort, int udpPort, int multicastPort) {
+	public SocketHandler(int tcpPort, int udpPort, int multicastPort)
+	{
 		this.tcpPort = tcpPort;
 		this.udpPort = udpPort;
 		this.multicastPort = multicastPort;
 
-		try {
+		try
+		{
 			this.udpSocket = new DatagramSocket(this.udpPort);
-		} catch (SocketException e) {
+		} catch (SocketException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -34,74 +38,95 @@ public class SocketHandler {
 
 	// getters
 
-	public DatagramSocket getUdpSocket() {
+	public DatagramSocket getUdpSocket()
+	{
 		return udpSocket;
 	}
 
-	public MulticastSocket getMultiSocket() {
+	public MulticastSocket getMultiSocket()
+	{
 		return multiSocket;
 	}
 
-	public ServerSocket getServerSocket() {
+	public ServerSocket getServerSocket()
+	{
 		return serverSocket;
 	}
 
-	public DatagramSocket getMulticastSendSocket() {
-		if(this.multicastSendSocket == null)
+	public DatagramSocket getMulticastSendSocket()
+	{
+		if (this.multicastSendSocket == null)
 			this.startMulticastSendSocket();
 		return this.multicastSendSocket;
 	}
 
 	// startup
 
-	public Socket getReceiveTCPSocket() {
+	public Socket getReceiveTCPSocket()
+	{
 		return receiveTCPSocket;
 	}
 
-	public void startUdpSocket() {
-		try {
+	public void startUdpSocket()
+	{
+		try
+		{
 			this.udpSocket = new DatagramSocket(this.udpPort);
-		} catch (SocketException e) {
+		} catch (SocketException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void startServerSocket() {
-		try {
+	public void startServerSocket()
+	{
+		try
+		{
 			this.closeServerSocket();
 			this.serverSocket = new ServerSocket(this.tcpPort);
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void startMulticastSocket() {
-		try {
+	public void startMulticastSocket()
+	{
+		try
+		{
 			this.multiSocket = new MulticastSocket(this.multicastPort);
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void startMulticastSendSocket() {
-		try {
+	public void startMulticastSendSocket()
+	{
+		try
+		{
 			this.multicastSendSocket = new DatagramSocket(this.multicastPort);
-		} catch (SocketException e) {
+		} catch (SocketException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void startReceiveTCPSocket(String ip) {
-		try {
+	public void startReceiveTCPSocket(String ip)
+	{
+		try
+		{
 			this.receiveTCPSocket = new Socket(ip, this.tcpPort);
-		} catch (UnknownHostException e) {
+		} catch (UnknownHostException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -109,49 +134,53 @@ public class SocketHandler {
 
 	// close
 
-	public void closeUdpSocket() {
-		if (this.udpSocket != null &&
-				!this.udpSocket.isClosed())
+	public void closeUdpSocket()
+	{
+		if (this.udpSocket != null && !this.udpSocket.isClosed())
 			this.udpSocket.close();
 	}
 
-	public void closeServerSocket() {
-		try {
-			if (this.serverSocket != null &&
-					!this.serverSocket.isClosed())
+	public void closeServerSocket()
+	{
+		try
+		{
+			if (this.serverSocket != null && !this.serverSocket.isClosed())
 				this.serverSocket.close();
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void closeMulticastSocket() {
-		if (this.multiSocket != null && 
-				!this.multiSocket.isClosed())
+	public void closeMulticastSocket()
+	{
+		if (this.multiSocket != null && !this.multiSocket.isClosed())
 			this.multiSocket.close();
 	}
 
-	public void closeMulticastSendSocket() {
-		if (this.multicastSendSocket != null && 
-				!this.multicastSendSocket.isClosed())
+	public void closeMulticastSendSocket()
+	{
+		if (this.multicastSendSocket != null && !this.multicastSendSocket.isClosed())
 			this.multicastSendSocket.close();
 	}
 
-	public void closeReceiveTCPSocket() {
-		try {
-			if (this.receiveTCPSocket != null && 
-					!this.receiveTCPSocket.isClosed())
+	public void closeReceiveTCPSocket()
+	{
+		try
+		{
+			if (this.receiveTCPSocket != null && !this.receiveTCPSocket.isClosed())
 				this.receiveTCPSocket.close();
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 	}
 
-	public void startMulticastReceive() {
+	public void startMulticastReceive()
+	{
 		this.closeMulticastSendSocket();
 		this.startMulticastSocket();
-		
 
 	}
 
@@ -160,7 +189,8 @@ public class SocketHandler {
 	 * 
 	 * @return The serversocket.
 	 */
-	public void startSendFile() {
+	public void startSendFile()
+	{
 		this.closeUdpSocket();
 		this.startUdpSocket();
 		this.closeReceiveTCPSocket();
@@ -171,15 +201,17 @@ public class SocketHandler {
 	/**
 	 * End of sending file, close the server socket.
 	 */
-	public void stopSendFile() {
+	public void stopSendFile()
+	{
 		this.closeServerSocket();
 	}
 
-	public void startMulticastSend() {
+	public void startMulticastSend()
+	{
 		this.closeMulticastSocket();
 		this.closeMulticastSendSocket();
 		this.startMulticastSendSocket();
-		
+
 	}
 
 }

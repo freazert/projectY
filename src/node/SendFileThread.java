@@ -14,7 +14,8 @@ import org.json.JSONObject;
 
 import interfaces.INodeRMI;
 
-public class SendFileThread extends Thread {
+public class SendFileThread extends Thread
+{
 
 	private List<File> files;
 	private INodeRMI rmi;
@@ -33,7 +34,8 @@ public class SendFileThread extends Thread {
 	 * @param node
 	 *            the node that sends the files.
 	 */
-	public SendFileThread(List<File> files, INodeRMI rmi, Node node, SocketHandler sHandler) {
+	public SendFileThread(List<File> files, INodeRMI rmi, Node node, SocketHandler sHandler)
+	{
 
 		this.sHandler = sHandler;
 		this.files = files;
@@ -42,24 +44,29 @@ public class SendFileThread extends Thread {
 	}
 
 	@Override
-	public void run() {
-		try {
-			synchronized (this.node) {
+	public void run()
+	{
+		try
+		{
+			synchronized (this.node)
+			{
 				node.setMapUpdate(true);
 				sHandler.startSendFile();
-				for (File file : files) {
+				for (File file : files)
+				{
 
 					String ip = getIP(file.getName());
-					if(!ip.equals(rmi.getIp(this.node.getCurrent()))){
+					if (!ip.equals(rmi.getIp(this.node.getCurrent())))
+					{
 						InetAddress IPAddress = InetAddress.getByName(ip);
 
-					String jsonString = createJsonString(file.getName(), file.length());
-					System.out.print(jsonString);
-					sendUdp(jsonString, IPAddress);
+						String jsonString = createJsonString(file.getName(), file.length());
+						System.out.print(jsonString);
+						sendUdp(jsonString, IPAddress);
 
-					// receive
-					TCPSend sendFile = new TCPSend(this.sHandler);
-					sendFile.send(file.getName());
+						// receive
+						TCPSend sendFile = new TCPSend(this.sHandler);
+						sendFile.send(file.getName());
 					}
 
 				}
@@ -67,7 +74,8 @@ public class SendFileThread extends Thread {
 				sHandler.stopSendFile();
 				node.setMapUpdate(false);
 			}
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			// e.printStackTrace();
 		}
 
@@ -81,11 +89,13 @@ public class SendFileThread extends Thread {
 	 *            the name of file
 	 * @return the ip of the client node.
 	 */
-	private String getIP(String name) throws RemoteException {
+	private String getIP(String name) throws RemoteException
+	{
 		String ip = rmi.getPrevIp(name);
 
 		int hash = rmi.getHash(name);
-		if (ip.equals(rmi.getIp(this.node.getCurrent()))) {
+		if (ip.equals(rmi.getIp(this.node.getCurrent())))
+		{
 			ip = rmi.getIp(this.node.getPrev());
 		}
 
@@ -95,17 +105,24 @@ public class SendFileThread extends Thread {
 	/**
 	 * Create the string that needs to be sent to the other node.
 	 *
+	 * @param name
+	 *            the name of the file.
+	 * @param size
+	 *            the size of the file.
 	 * @return the string for the user, on failure returns an empty string.
 	 */
-	private String createJsonString(String name, long size) {
-		try {
+	private String createJsonString(String name, long size)
+	{
+		try
+		{
 			JSONObject jobj = new JSONObject();
 			jobj.put("type", "file");
 			jobj.put("data", name);
 			jobj.put("size", size);
 
 			return jobj.toString();
-		} catch (JSONException e) {
+		} catch (JSONException e)
+		{
 			e.printStackTrace();
 		}
 
@@ -120,10 +137,12 @@ public class SendFileThread extends Thread {
 	 * @param ip
 	 *            the IP address of the receiving node.
 	 */
-	private void sendUdp(String data, InetAddress ip) {
+	private void sendUdp(String data, InetAddress ip)
+	{
 		byte[] sendData = new byte[1024];
 
-		try {
+		try
+		{
 			DatagramSocket clientSocket = this.sHandler.getUdpSocket();
 
 			sendData = data.toString().getBytes();
@@ -138,7 +157,8 @@ public class SendFileThread extends Thread {
 			 * System.out.println("FROM SERVER:" + modifiedSentence);
 			 */
 			// clientSocket.close();
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

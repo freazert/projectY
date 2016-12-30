@@ -8,8 +8,8 @@ import java.net.UnknownHostException;
 import org.json.JSONObject;
 import org.json.JSONException;
 
-
-public class MulticastRecieveThread extends Thread {
+public class MulticastRecieveThread extends Thread
+{
 
 	private SocketHandler sHandler;
 	private String addr;
@@ -18,40 +18,50 @@ public class MulticastRecieveThread extends Thread {
 	/**
 	 * The constructor method for the MulticastReceiveThread.
 	 * 
-	 * @param group The socket for the multicast group.
-	 * @param node The IP of the multicast.
-	 * @param sHandler The node that uses the multicastReceiveThread.
+	 * @param group
+	 *            The socket for the multicast group.
+	 * @param node
+	 *            The IP of the multicast.
+	 * @param sHandler
+	 *            The node that uses the multicastReceiveThread.
 	 */
-	public MulticastRecieveThread(String group, Node node, SocketHandler sHandler) {
+	public MulticastRecieveThread(String group, Node node, SocketHandler sHandler)
+	{
 		this.addr = group;
 		this.node = node;
 		this.sHandler = sHandler;
 	}
 
-	public void run() {
-		try {
+	public void run()
+	{
+		try
+		{
 			joinMulticast();
 
 			while (true)
 				handleData(receiveData());
 
-		} catch (UnknownHostException e) {
+		} catch (UnknownHostException e)
+		{
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			e.printStackTrace();
-		} catch (JSONException e) {
+		} catch (JSONException e)
+		{
 			e.printStackTrace();
 		}
 
 	}
-	
+
 	/**
 	 * Join Multicast group.
 	 * 
-	 * @throws IOException 
-	 * @throws UnknownHostException 
+	 * @throws IOException
+	 * @throws UnknownHostException
 	 */
-	private void joinMulticast() throws UnknownHostException, IOException{
+	private void joinMulticast() throws UnknownHostException, IOException
+	{
 		System.out.println("before join");
 		sHandler.getMultiSocket().joinGroup(InetAddress.getByName(this.addr));
 		System.out.println("joined group");
@@ -64,23 +74,26 @@ public class MulticastRecieveThread extends Thread {
 	 *            the string that needs to be handled
 	 * @throws JSONException
 	 */
-	private void handleData(String data) throws JSONException {
+	private void handleData(String data) throws JSONException
+	{
 		String name;
-		System.out.println("received: " +data);
+		System.out.println("received: " + data);
 		JSONObject jobj = new JSONObject(data);
 		String type = jobj.getString("type");
-		
-		
-		switch (type) {
-		case "next":
+
+		switch (type)
+		{
+		case "next" :
 			name = jobj.getString("data");
 			node.controlFiles();
 			break;
-		case "new":
+		case "new" :
 			name = jobj.getString("data");
 			this.node.setNodes(name);
+			System.out.println("new node: ");
+			this.node.printNodes();
 		}
- 
+
 	}
 
 	/**
@@ -89,7 +102,8 @@ public class MulticastRecieveThread extends Thread {
 	 * @return Data sent over UDP parsed as string.
 	 * @throws IOException
 	 */
-	private String receiveData() throws IOException {
+	private String receiveData() throws IOException
+	{
 		byte[] buf = new byte[1024];
 		DatagramPacket dp = new DatagramPacket(buf, buf.length);
 
@@ -98,6 +112,7 @@ public class MulticastRecieveThread extends Thread {
 
 		buf = dp.getData();
 		int len = dp.getLength();
+		System.out.println((new String(buf)).substring(0, len));
 		return (new String(buf)).substring(0, len);
 
 	}

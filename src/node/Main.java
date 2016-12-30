@@ -10,9 +10,11 @@ import java.util.Scanner;
 
 import gui.GUIView;
 
-public class Main {
+public class Main
+{
 
-	public static void main(String args[]) throws MalformedURLException, RemoteException, NotBoundException {
+	public static void main(String args[]) throws MalformedURLException, RemoteException, NotBoundException
+	{
 
 		System.setProperty("java.net.preferIPv4Stack", "true");
 
@@ -34,10 +36,12 @@ public class Main {
 		GUIView gui_view = new GUIView(name);
 		gui_view.setVisible(true);
 		// MulticastClient mc = new MulticastClient(node);
-		while (true) {
+		while (true)
+		{
 			String cmd;
 			// System.out.println("waiting for the cmd...");
-			while (!sc.hasNextLine()) {
+			while (!sc.hasNextLine())
+			{
 				// System.out.println("noooooz");
 			}
 
@@ -59,19 +63,23 @@ public class Main {
 	 *            the ip address to ping to.
 	 * @return boolean, failure: 0 success: 1.
 	 */
-	public static boolean ping(String ip) {
+	public static boolean ping(String ip)
+	{
 
 		InetAddress inet;
 
-		try {
+		try
+		{
 			inet = InetAddress.getByName(ip);
 			if (inet.isReachable(500))
 				return true;
 			return false;
-		} catch (UnknownHostException e) {
+		} catch (UnknownHostException e)
+		{
 			// TODO Auto-generated catch block
 			return false;
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			return false;
 		}

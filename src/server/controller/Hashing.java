@@ -5,21 +5,23 @@ import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class Hashing {
+public class Hashing
+{
 	private String name;
 	private int hash;
 
 	/**
 	 * The constructor method for Hashing.
 	 * 
-	 * @param name the name that needs to be hashed.
+	 * @param name
+	 *            the name that needs to be hashed.
 	 */
 	public Hashing(String name)
 	{
 		this.name = name;
 		makeHash();
 	}
-	
+
 	/**
 	 * Getter method for the hashed value.
 	 * 
@@ -29,7 +31,7 @@ public class Hashing {
 	{
 		return this.hash;
 	}
-	
+
 	/**
 	 * Getter method for the initial name.
 	 * 
@@ -39,22 +41,26 @@ public class Hashing {
 	{
 		return this.name;
 	}
-	
+
 	/**
 	 * Create the hash.
 	 */
 	private void makeHash()
 	{
 		MessageDigest md = null;
-		try{
+		try
+		{
 			md = MessageDigest.getInstance("SHA-1");
-		} catch(NoSuchAlgorithmException e) {
-	        e.printStackTrace();
-	    }
+		} catch (NoSuchAlgorithmException e)
+		{
+			e.printStackTrace();
+		}
 		md.reset();
-		try {
+		try
+		{
 			md.update(this.name.getBytes("UTF-8"));
-		} catch (UnsupportedEncodingException e) {
+		} catch (UnsupportedEncodingException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -62,10 +68,5 @@ public class Hashing {
 		h = Math.abs(h);
 		this.hash = h % 32769;
 	}
-	
-	
-	
-	
-	
-	
+
 }

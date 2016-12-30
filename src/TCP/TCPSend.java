@@ -9,29 +9,35 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class TCPSend {
+public class TCPSend
+{
 
 	private ServerSocket welcomeSocket;
 	private String filePath;
-	private Socket socket =  null;
+	private Socket socket = null;
+
 	/**
 	 * The constructor method for TCPSend
 	 * 
-	 * @param socketPort the port over which the TCP connection will be made.
+	 * @param socketPort
+	 *            the port over which the TCP connection will be made.
 	 */
-	
-	TCPSend(ServerSocket welcomeSocket) {
+
+	TCPSend(ServerSocket welcomeSocket)
+	{
 		// this.connectedSocket = new Socket(6789);
 		this.filePath = "C:" + File.separator + "nieuwe map" + File.separator;
 		System.out.println("creating");
 		this.welcomeSocket = welcomeSocket;
-		}
+	}
 
 	/**
 	 * The constructor method for TCPSend
 	 * 
-	 * @param socketPort The port over which the TCP connection is made.
-	 * @param filePath The path of the directory where the files are stored.
+	 * @param socketPort
+	 *            The port over which the TCP connection is made.
+	 * @param filePath
+	 *            The path of the directory where the files are stored.
 	 */
 
 	/**
@@ -40,32 +46,37 @@ public class TCPSend {
 	 * @param fileName
 	 *            the name of the file that needs to be sent.
 	 */
-	public void send(String fileName) {
+	public void send(String fileName)
+	{
 		String fullName = this.filePath + fileName;
 		System.out.print(fullName);
 		DataOutputStream outToClient;
-		try {
+		try
+		{
 			System.out.println("waiting for accept");
 			socket = this.welcomeSocket.accept();
-			
+
 			byte[] b = new byte[250];
-			
+
 			InputStream is = socket.getInputStream();
-			
+
 			File transferFile = new File(fullName);
 			System.out.println("Received: " + fullName);
 
-			if (transferFile.exists()) {
+			if (transferFile.exists())
+			{
 				outToClient = new DataOutputStream(socket.getOutputStream());
-				//sendName(fileName, outToClient);	
+				// sendName(fileName, outToClient);
 				sendFile(transferFile, outToClient);
-			} else {
+			} else
+			{
 				System.out.println("file not found");
 				outToClient = new DataOutputStream(socket.getOutputStream());
 				outToClient.writeBytes("File doesn't exist!");
 			}
 			socket.close();
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -80,7 +91,8 @@ public class TCPSend {
 	 *            The output stream to the receiver.
 	 * @throws IOException
 	 */
-	private void sendName(String name, DataOutputStream outToClient) throws IOException {
+	private void sendName(String name, DataOutputStream outToClient) throws IOException
+	{
 		outToClient.writeBytes(name + "\n");
 		outToClient.flush();
 	}
@@ -88,11 +100,14 @@ public class TCPSend {
 	/**
 	 * Send the file over the TCP connection.
 	 * 
-	 * @param file The file that needs to be sent.
-	 * @param outToClient The outputstream to the receiver.
+	 * @param file
+	 *            The file that needs to be sent.
+	 * @param outToClient
+	 *            The outputstream to the receiver.
 	 * @throws IOException
 	 */
-	private void sendFile(File file, DataOutputStream outToClient) throws IOException {
+	private void sendFile(File file, DataOutputStream outToClient) throws IOException
+	{
 		byte[] bytearray = new byte[(int) file.length()];
 		FileInputStream fin = new FileInputStream(file);
 		BufferedInputStream bin = new BufferedInputStream(fin);
@@ -105,7 +120,6 @@ public class TCPSend {
 		outToClient.flush();
 		fin.close();
 		bin.close();
-		
 
 		System.out.println("File transfer complete");
 	}
