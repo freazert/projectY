@@ -3,20 +3,22 @@ package TCP;
 import java.io.*;
 import java.net.Socket;
 
-public class TCPReceive {
+public class TCPReceive
+{
 	private String filePath;
 	private int socketPort;
-	//private Node node;
+	// private Node node;
 
 	public final static int FILE_SIZE = 6022386; // file size temporary hard
 													// coded
 													// should bigger than the
 													// file to be downloaded
 
-	public TCPReceive(int socketPort) {
-		this.filePath = "C:" + File.separator + "receive"+ File.separator;
+	public TCPReceive(int socketPort)
+	{
+		this.filePath = "C:" + File.separator + "receive" + File.separator;
 		this.socketPort = socketPort;
-		//this.node = node;
+		// this.node = node;
 	}
 
 	/**
@@ -26,14 +28,17 @@ public class TCPReceive {
 	 *            the IP of the TCP sender.
 	 * @throws Exception
 	 */
-	public void receiveFile(String ip, String name, int size) throws IOException {
+	public void receiveFile(String ip, String name, int size) throws IOException
+	{
 		System.out.println("receive file started.");
-		
+
 		Socket socket = new Socket(ip, this.socketPort);
-		try {
-			//String name = connect(socket);
+		try
+		{
+			// String name = connect(socket);
 			getFile(socket, name, size);
-		} catch (Exception e) {
+		} catch (Exception e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -41,7 +46,6 @@ public class TCPReceive {
 		socket.close();
 	}
 
-	
 	/**
 	 * Create connection and receive filename.
 	 * 
@@ -49,7 +53,8 @@ public class TCPReceive {
 	 * @return
 	 * @throws Exception
 	 */
-	private String connect(Socket socket) throws Exception {
+	private String connect(Socket socket) throws Exception
+	{
 		DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
 		BufferedReader inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
@@ -66,20 +71,21 @@ public class TCPReceive {
 	 * @param name
 	 * @throws Exception
 	 */
-	private void getFile(Socket socket, String name, int size) throws Exception {
+	private void getFile(Socket socket, String name, int size) throws Exception
+	{
 		int bytesRead;
 		int currentTot = 0;
 		int filesize = size + 1;
 
-		
 		byte[] bytearray = new byte[filesize];
 		InputStream is = socket.getInputStream();
 		FileOutputStream fos = new FileOutputStream(filePath + name);
 		BufferedOutputStream bos = new BufferedOutputStream(fos);
 		System.out.println("bytearray length: " + bytearray.length);
-		//bytesRead = is.read(bytearray, 0, bytearray.length);
-		currentTot = 0;//0bytesRead;
-		do {
+		// bytesRead = is.read(bytearray, 0, bytearray.length);
+		currentTot = 0;// 0bytesRead;
+		do
+		{
 			bytesRead = is.read(bytearray, currentTot, (filesize - currentTot));
 			if (bytesRead >= 0)
 				currentTot += bytesRead;
@@ -88,9 +94,9 @@ public class TCPReceive {
 		System.out.println(new String(bytearray));
 
 		bos.write(bytearray, 0, bytearray.length - 1);
-		
-		//node.addOwnerList(name);
-		
+
+		// node.addOwnerList(name);
+
 		bos.flush();
 		bos.close();
 	}
