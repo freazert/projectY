@@ -11,12 +11,13 @@ import java.net.UnknownHostException;
 public class SocketHandler
 {
 	private DatagramSocket udpSocket;
+	private DatagramSocket udpInfoSocket;
 	private MulticastSocket multiSocket;
 	private DatagramSocket multicastSendSocket;
 	private ServerSocket serverSocket;
 	private Socket receiveTCPSocket;
 
-	private int tcpPort, udpPort, multicastPort;
+	private int tcpPort, udpPort, multicastPort, udpInfoPort;
 
 	// private multicastAddress
 
@@ -25,6 +26,7 @@ public class SocketHandler
 		this.tcpPort = tcpPort;
 		this.udpPort = udpPort;
 		this.multicastPort = multicastPort;
+		this.udpInfoPort = 9666;
 
 		try
 		{
@@ -41,6 +43,11 @@ public class SocketHandler
 	public DatagramSocket getUdpSocket()
 	{
 		return udpSocket;
+	}
+	
+	public DatagramSocket getUdpInfoSocket()
+	{
+		return udpInfoSocket;
 	}
 
 	public MulticastSocket getMultiSocket()
@@ -75,6 +82,15 @@ public class SocketHandler
 		} catch (SocketException e)
 		{
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void startUdpInfoSocket()
+	{
+		try {
+			this.udpInfoSocket = new DatagramSocket(this.udpInfoPort);
+		} catch (SocketException e) {
 			e.printStackTrace();
 		}
 	}
@@ -138,6 +154,12 @@ public class SocketHandler
 	{
 		if (this.udpSocket != null && !this.udpSocket.isClosed())
 			this.udpSocket.close();
+	}
+	
+	public void closeUdpInfoSocket()
+	{
+		if (this.udpInfoSocket != null && ! this.udpInfoSocket.isClosed())
+			this.udpInfoSocket.close();
 	}
 
 	public void closeServerSocket()
@@ -211,6 +233,12 @@ public class SocketHandler
 		this.closeMulticastSendSocket();
 		this.startMulticastSendSocket();
 
+	}
+	
+	public void startInfo()
+	{
+		this.closeUdpInfoSocket();
+		this.startUdpInfoSocket();
 	}
 
 }

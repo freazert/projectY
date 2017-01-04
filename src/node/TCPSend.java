@@ -55,7 +55,7 @@ public class TCPSend
 
 		System.out.println("waiting for accept");
 		ServerSocket sSocket = this.sHandler.getServerSocket();
-		sSocket.setSoTimeout(5000);
+		sSocket.setSoTimeout(60000);
 		socket = sSocket.accept();
 		/**
 		 * TODO: add functionalities to sockethandler.
