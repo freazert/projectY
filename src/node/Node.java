@@ -378,6 +378,12 @@ public class Node
 			this.myNode = this.rmi.getCurrent(name);
 			this.prevNode = this.rmi.getPrevious(name);
 			this.nextNode = this.rmi.getNext(name);
+                        
+                        if(this.myNode == this.prevNode && this.myNode  == this.nextNode )
+                        {
+                            this.isBussy = true;
+                        }
+                        
 		} catch (RemoteException e)
 		{
 			e.printStackTrace();

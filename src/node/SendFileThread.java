@@ -53,9 +53,14 @@ public class SendFileThread extends Thread {
                         InetAddress IPAddress = InetAddress.getByName(ip);
 
                         boolean canSendFile = false;
-                        while (!canSendFile) {
+                        while (!canSendFile && !this.node.getBusyState()) {
                             String jsonString = createJsonInfo();
                             System.out.print(jsonString);
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException ex) {
+                                Logger.getLogger(SendFileThread.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                             sendUdp(jsonString, IPAddress);
 
                             byte[] receiveData = new byte[10240];
@@ -69,7 +74,7 @@ public class SendFileThread extends Thread {
                             sHandler.getUdpInfoSocket().receive(receivePacket);
                            
                             String receive = new String(receivePacket.getData());
-                            
+                            System.out.print(receive);
                             try { 
                                 JSONObject json = new JSONObject(receive);
                                 if(json.get("type").equals("inforeply"))
@@ -89,7 +94,7 @@ public class SendFileThread extends Thread {
 							}
                         }
                         
-                        this.node.setBussy(true);
+                        //this.node.setBussy(true);
 
                         String jsonString = createJsonString(file.getName(), file.length());
                         System.out.print(jsonString);
@@ -112,7 +117,7 @@ public class SendFileThread extends Thread {
             }
 
             
-            this.node.setBussy(false);
+            //this.node.setBussy(false);
             sHandler.stopSendFile();
             node.setMapUpdate(false);
         }
