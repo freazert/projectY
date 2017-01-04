@@ -9,16 +9,26 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/**
+ * Send a file over TCP
+ */
 public class TCPSend
 {
+	/**
+	 * The path to the file that has to be sent.
+	 */
 	private String filePath;
+	
+	/**
+	 * The object that performs and maintains all socket actions.
+	 */
 	private SocketHandler sHandler;
 
 	/**
 	 * The constructor method for TCPSend
 	 *
-	 * @param socketPort
-	 *            the port over which the TCP connection will be made.
+	 * @param sHandler
+	 *            The object that performs and maintains all socket actions.
 	 */
 	TCPSend(SocketHandler sHandler)
 	{
@@ -29,14 +39,6 @@ public class TCPSend
 
 	}
 
-	/**
-	 * The constructor method for TCPSend
-	 *
-	 * @param socketPort
-	 *            The port over which the TCP connection is made.
-	 * @param filePath
-	 *            The path of the directory where the files are stored.
-	 */
 	/**
 	 * send a file over the TCP connection
 	 *
@@ -89,7 +91,7 @@ public class TCPSend
 	 *            The name of the file.
 	 * @param outToClient
 	 *            The output stream to the receiver.
-	 * @throws IOException
+	 * @throws IOException there was a problem while writing something to the other node.
 	 */
 	private void sendName(String name, DataOutputStream outToClient) throws IOException
 	{
@@ -104,7 +106,7 @@ public class TCPSend
 	 *            The file that needs to be sent.
 	 * @param outToClient
 	 *            The outputstream to the receiver.
-	 * @throws IOException
+	 * @throws IOException There was a problem while writing something to the other node.
 	 */
 	private void sendFile(File file, DataOutputStream outToClient) throws IOException
 	{

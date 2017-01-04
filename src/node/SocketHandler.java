@@ -187,7 +187,6 @@ public class SocketHandler
 	/**
 	 * Start TCP serverSocket and return value of server socket.
 	 * 
-	 * @return The serversocket.
 	 */
 	public void startSendFile()
 	{

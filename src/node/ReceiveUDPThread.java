@@ -11,7 +11,13 @@ import org.json.JSONObject;
 public class ReceiveUDPThread extends Thread
 {
 
+	/**
+	 * The object that maintains all the socket actions.
+	 */
 	private SocketHandler sHandler;
+	/**
+	 * The nodethat receives the data.
+	 */
 	private Node node;
 
 	/**
@@ -19,6 +25,8 @@ public class ReceiveUDPThread extends Thread
 	 *
 	 * @param node
 	 *            The node that receives the data.
+	 * @param sHandler
+	 *            The object that maintains all the socket actions.
 	 */
 	public ReceiveUDPThread(Node node, SocketHandler sHandler)
 	{
@@ -58,6 +66,7 @@ public class ReceiveUDPThread extends Thread
 	 *
 	 * @return the received data
 	 * @throws IOException
+	 *             Something went wrong while receiving data through UDP
 	 */
 	private DatagramPacket getData() throws IOException
 	{
@@ -85,7 +94,10 @@ public class ReceiveUDPThread extends Thread
 	 * @param ip
 	 *            the ip of the UDP sender
 	 * @throws JSONException
+	 *             Something went wrong while parsing the JSON data. possible
+	 *             that the data is not correctly formatted to json.
 	 * @throws IOException
+	 *             Something went wrong while receiving the file.
 	 */
 	private void handleData(String data, String ip) throws JSONException, IOException
 	{

@@ -57,8 +57,8 @@ public class MulticastRecieveThread extends Thread
 	/**
 	 * Join Multicast group.
 	 * 
-	 * @throws IOException
-	 * @throws UnknownHostException
+	 * @throws IOException Something went wrong while joining the group.
+	 * @throws UnknownHostException Something went wrong while joining the group.
 	 */
 	private void joinMulticast() throws UnknownHostException, IOException
 	{
@@ -73,6 +73,8 @@ public class MulticastRecieveThread extends Thread
 	 * @param data
 	 *            the string that needs to be handled
 	 * @throws JSONException
+	 *             Something went wrong while parsing the data to a json object.
+	 *             possible that the received data was not JSON
 	 */
 	private void handleData(String data) throws JSONException
 	{
@@ -101,6 +103,7 @@ public class MulticastRecieveThread extends Thread
 	 * 
 	 * @return Data sent over UDP parsed as string.
 	 * @throws IOException
+	 *             Something went wrong while receiving multicast date.
 	 */
 	private String receiveData() throws IOException
 	{

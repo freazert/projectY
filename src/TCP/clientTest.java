@@ -5,7 +5,7 @@ import java.io.IOException;
 public class clientTest
 {
 
-	public static void main(String[] args)
+	/*public static void main(String[] args)
 	{
 		// TODO Auto-generated method stub
 		TCPReceive tr = new TCPReceive(9876);
@@ -19,6 +19,6 @@ public class clientTest
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 }
