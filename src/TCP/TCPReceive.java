@@ -26,22 +26,15 @@ public class TCPReceive
 	 * 
 	 * @param ip
 	 *            the IP of the TCP sender.
-	 * @throws Exception
+	 * @throws Exception An exception occured while receiving the file.
 	 */
-	public void receiveFile(String ip, String name, int size) throws IOException
+	public void receiveFile(String ip, String name, int size) throws Exception
 	{
 		System.out.println("receive file started.");
 
 		Socket socket = new Socket(ip, this.socketPort);
-		try
-		{
-			// String name = connect(socket);
-			getFile(socket, name, size);
-		} catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		getFile(socket, name, size);
 
 		socket.close();
 	}
@@ -50,10 +43,12 @@ public class TCPReceive
 	 * Create connection and receive filename.
 	 * 
 	 * @param socket
-	 * @return
-	 * @throws Exception
+	 *            The socket through which the data comes
+	 * @return The line read from the server
+	 * @throws IOException
+	 *             Something went wrong wile writing to the bus.
 	 */
-	private String connect(Socket socket) throws Exception
+	private String connect(Socket socket) throws IOException
 	{
 		DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
 		BufferedReader inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -68,10 +63,14 @@ public class TCPReceive
 	 * Download the file.
 	 * 
 	 * @param socket
+	 *            The socket used to download over.
 	 * @param name
-	 * @throws Exception
+	 *            the name of the file.
+	 * @param size
+	 *             the size of the file.
+	 * @throws IOException Something went wrong with the connection to the other node.
 	 */
-	private void getFile(Socket socket, String name, int size) throws Exception
+	private void getFile(Socket socket, String name, int size) throws IOException
 	{
 		int bytesRead;
 		int currentTot = 0;

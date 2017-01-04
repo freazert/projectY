@@ -66,7 +66,7 @@ public class Hashing
 		}
 		int h = ByteBuffer.wrap(md.digest()).getInt();
 		h = Math.abs(h);
-		this.hash = h % 32769;
+		this.hash = h % 32768;
 	}
 
 }

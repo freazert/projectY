@@ -19,10 +19,9 @@ public class TCPSend
 	/**
 	 * The constructor method for TCPSend
 	 * 
-	 * @param socketPort
+	 * @param welcomeSocket
 	 *            the port over which the TCP connection will be made.
 	 */
-
 	TCPSend(ServerSocket welcomeSocket)
 	{
 		// this.connectedSocket = new Socket(6789);
@@ -89,7 +88,7 @@ public class TCPSend
 	 *            The name of the file.
 	 * @param outToClient
 	 *            The output stream to the receiver.
-	 * @throws IOException
+	 * @throws IOException Something went wrong while writing to the dataOutputStream.
 	 */
 	private void sendName(String name, DataOutputStream outToClient) throws IOException
 	{
@@ -104,7 +103,7 @@ public class TCPSend
 	 *            The file that needs to be sent.
 	 * @param outToClient
 	 *            The outputstream to the receiver.
-	 * @throws IOException
+	 * @throws IOException Something went wrong while reading the dataOutputStream.
 	 */
 	private void sendFile(File file, DataOutputStream outToClient) throws IOException
 	{

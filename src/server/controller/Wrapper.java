@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.rmi.RemoteException;
-import java.rmi.server.ServerNotActiveException;
-import java.rmi.server.UnicastRemoteObject;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -15,9 +12,19 @@ import javax.xml.bind.Unmarshaller;
 
 public class Wrapper
 {
-
+	/**
+	 * The Hashmap which holds the (key, value) pair (int nodeHash, String ip)
+	 */
 	private HashingMap hmap;
 
+	/**
+	 * The filename used for the xml file
+	 */
+	private static String FILE_NAME = "hashmap.xml";
+
+	/**
+	 * The constructor method for the Wrapper.
+	 */
 	public Wrapper()
 	{
 		try
@@ -60,6 +67,7 @@ public class Wrapper
 	 * Convert object to XML string.
 	 * 
 	 * @throws JAXBException
+	 *             Something went wrong while marshalling this object.
 	 */
 	private void objectToXml() throws JAXBException
 	{
@@ -69,26 +77,15 @@ public class Wrapper
 		FileOutputStream fileOut;
 		try
 		{
-			fileOut = new FileOutputStream("hashMap.xml");
+			fileOut = new FileOutputStream(FILE_NAME);
 			Marshaller marshaller = jaxbContext.createMarshaller();
-			// StringWriter wr = new StringWriter();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			marshaller.marshal(object, fileOut);
-			// System.out.println(wr);
 		} catch (FileNotFoundException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
-	// <<<<<<< HEAD
-	/*
-	 * ======= public String getIp(int hash) { String ip =
-	 * this.hmap.getIp(hash);
-	 * 
-	 * return ip; } >>>>>>> origin/feature/shutdown
-	 */
 
 	/**
 	 * Add new node to the hashmap.
@@ -97,7 +94,8 @@ public class Wrapper
 	 *            the name of the new node.
 	 * @param ip
 	 *            the ip of the new node.
-	 * @return
+	 * @return the status of creating the node. returns 1 on success, 0 on
+	 *         failure.
 	 */
 	public int createNode(String name, String ip)
 	{
@@ -107,12 +105,6 @@ public class Wrapper
 			objectToXml();
 
 			return success;
-			/*
-			 * } catch (ServerNotActiveException e) { // TODO Auto-generated
-			 * catch block e.printStackTrace();
-			 * 
-			 * return 0;
-			 */
 		} catch (JAXBException e)
 		{
 			e.printStackTrace();
@@ -124,8 +116,9 @@ public class Wrapper
 	/**
 	 * Convert XML string to hashmap.
 	 * 
-	 * @return
+	 * @return the HashingMap object.
 	 * @throws JAXBException
+	 *             There went something wrong while marshalling the class
 	 */
 	private HashingMap xmlToObject() throws JAXBException
 	{
@@ -135,17 +128,16 @@ public class Wrapper
 
 		try
 		{
-			File f = new File("hashMap.xml");
+			File f = new File(FILE_NAME);
 			f.createNewFile();
 			this.hmap = new HashingMap();
 			objectToXml();
 		} catch (IOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		return (HashingMap) u.unmarshal(new File("hashMap.xml"));
+		return (HashingMap) u.unmarshal(new File(FILE_NAME));
 
 	}
 
@@ -156,16 +148,7 @@ public class Wrapper
 	 */
 	public HashingMap getHashMap()
 	{
-		// TODO Auto-generated method stub
 		return this.hmap;
 	}
-	/*
-	 * <<<<<<< HEAD =======
-	 * 
-	 * public String getPrevIp(String filename) { return
-	 * hmap.getPrevIp(filename); }
-	 * 
-	 * >>>>>>> origin/feature/shutdown
-	 */
 
 }

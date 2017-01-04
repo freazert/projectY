@@ -33,6 +33,8 @@ public class SendFileThread extends Thread
 	 *            the nameServer.
 	 * @param node
 	 *            the node that sends the files.
+	 * @param sHandler
+	 *            the object that maintains all the sockets.
 	 */
 	public SendFileThread(List<File> files, INodeRMI rmi, Node node, SocketHandler sHandler)
 	{
@@ -88,6 +90,10 @@ public class SendFileThread extends Thread
 	 * @param name
 	 *            the name of file
 	 * @return the ip of the client node.
+	 * 
+	 * @throws RemoteException
+	 *             Something went wrong while using the remote method invocation
+	 *             to the name server.
 	 */
 	private String getIP(String name) throws RemoteException
 	{

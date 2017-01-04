@@ -5,32 +5,29 @@ import java.rmi.server.UnicastRemoteObject;
 
 import interfaces.INodeRMI;
 
+/**
+ * The class that can be remotely called for remote actions with the hashmap.
+ */
 public class NodeRMI extends UnicastRemoteObject implements INodeRMI
 {
 
 	/**
-	 * 
+	 * serialisable version.
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * 
+	 */
 	private HashingMap hashmap;
-	private Hashing currentHash;
 	private Wrapper wrap;
 
-	/**
-	 * The constructor method for nodeRMI. nodeRMI is used through
-	 * 
-	 * @param wrap
-	 *            Wrapper object.
-	 * @throws RemoteException
-	 */
+	
 	protected NodeRMI(Wrapper wrap) throws RemoteException
 	{
-
 		super();
 		this.hashmap = wrap.getHashMap();
 		this.wrap = wrap;
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -54,7 +51,6 @@ public class NodeRMI extends UnicastRemoteObject implements INodeRMI
 	@Override
 	public String getFileNode(String name) throws RemoteException
 	{
-		// TODO Auto-generated method stub
 		return this.hashmap.getNode(new Hashing(name));
 
 	}
@@ -68,21 +64,18 @@ public class NodeRMI extends UnicastRemoteObject implements INodeRMI
 	@Override
 	public int createNode(String name, String ip) throws RemoteException
 	{
-		// TODO Auto-generated method stub
 		return wrap.createNode(name, ip);
 	}
 
 	@Override
 	public int removeNode(int hash) throws RemoteException
 	{
-		// TODO Auto-generated method stub
 		return wrap.removeNode(hash);
 	}
 
 	@Override
 	public int getHash(String name) throws RemoteException
 	{
-		// TODO Auto-generated method stub
 		return (new Hashing(name)).getHash();
 
 	}
@@ -90,7 +83,6 @@ public class NodeRMI extends UnicastRemoteObject implements INodeRMI
 	@Override
 	public String getPrevIp(String filename) throws RemoteException
 	{
-		// TODO Auto-generated method stub
 		return this.hashmap.getPrevIp(filename);
 	}
 

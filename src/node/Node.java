@@ -288,7 +288,6 @@ public class Node
 				e.printStackTrace();
 			}
 		}
-		// <<<<<<< HEAD
 	}
 
 	/**
@@ -313,7 +312,6 @@ public class Node
 
 	public void addOwnerList(String name)
 	{
-		// TODO Auto-generated method stub
 		this.localList.add(name);
 		this.ownerList.add(name);
 	}
@@ -351,6 +349,7 @@ public class Node
 	 *            The Object that has to be sent over
 	 * @return a string representation of all the data that has to be sent.
 	 * @throws JSONException
+	 *             Something went wrong while creating the JSON object.
 	 */
 	private String createJSONObject(String type, Object data) throws JSONException
 	{
@@ -413,6 +412,8 @@ public class Node
 	 * is done before exiting the process.
 	 *
 	 * @throws InterruptedException
+	 *             there went something wrong in the send file thread. the
+	 *             thread was stopped preemptively.
 	 */
 	private void shutdownReplicatedFiles() throws InterruptedException
 	{
@@ -477,6 +478,7 @@ public class Node
 	 *            the data converted to a JSON string that will be sent to the
 	 *            node.
 	 * @throws IOException
+	 *             Something went wrong while writing to the UDP socket
 	 */
 	private void sendUDP(DatagramSocket socket, String ip, String data) throws IOException
 	{
