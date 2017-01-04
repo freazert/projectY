@@ -34,14 +34,14 @@ public class FailureThread extends Thread
 		{
 			try
 			{
-				InetAddress inet = InetAddress.getByName(nodeRMI.getIp(node.getNext()));
+				int nextNode = node.getNext();
+				InetAddress inet = InetAddress.getByName(nodeRMI.getIp(nextNode));
 				boolean reachable = inet.isReachable(500);
 				System.out.print(reachable);
 
 				if (!reachable)
 				{
-					node.failure();
-
+					node.failure(nextNode);
 				}
 
 				try

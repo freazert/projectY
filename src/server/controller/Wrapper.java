@@ -102,6 +102,7 @@ public class Wrapper
 		try
 		{
 			int success = this.hmap.addRecord(new Hashing(name), ip);
+			System.out.println("creating node " + name + ", status: " + success);
 			objectToXml();
 
 			return success;

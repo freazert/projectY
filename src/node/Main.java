@@ -1,17 +1,25 @@
 package node;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
+import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.server.ServerNotActiveException;
 import java.util.Scanner;
 
 import gui.GUIView;
+import interfaces.INodeRMI;
 
 public class Main
 {
+	/**
+	 * The ip address of the name server.
+	 */
+	private static String SERVER_IP = "192.168.1.16";
 
 	public static void main(String args[]) throws MalformedURLException, RemoteException, NotBoundException
 	{
@@ -28,30 +36,60 @@ public class Main
 		 * System.out.println(ip); boolean test = ping(ip); if(test) {
 		 * System.out.println("yowza"); }
 		 */
-		System.out.println("Enter name of the new agent: ");
-		Scanner sc = new Scanner(System.in);
-		String name = sc.nextLine();
-
-		Node node = new Node(name);
-		GUIView gui_view = new GUIView(name);
-		gui_view.setVisible(true);
-		// MulticastClient mc = new MulticastClient(node);
-		while (true)
+		try
 		{
-			String cmd;
-			// System.out.println("waiting for the cmd...");
-			while (!sc.hasNextLine())
+			INodeRMI rmi = (INodeRMI) Naming.lookup("//" + SERVER_IP + "/nodeRMI");
+			int success = 0;
+			String name = "";
+			Scanner sc = new Scanner(System.in);
+
+			while (success <= 0)
 			{
-				// System.out.println("noooooz");
+				System.out.println("Enter name of the new node: ");
+				
+				name = sc.nextLine();
+				success = rmi.createNode(name);
+				if (success == 0) {
+					System.out.println("This name is already taken, please choose another.");
+				} else {
+					System.out.println("Node added succesfully.");
+				}
 			}
+			
+			/*System.out.println("verwijderen node met naam " + name + ", status: " + rmi.removeNode(rmi.getHash(name)));
+			System.out.println("verwijderen node met naam alfred, status: " + rmi.removeNode(rmi.getHash("alfred")));
+			*/
 
-			cmd = sc.nextLine();
-			System.out.println("ciao bello");
-			node.shutdown();
+			Node node = new Node(name, rmi);
 
-			// } catch (Exception e) {
-			// e.printStackTrace(arg0);
-			// }
+			// GUIView gui_view = new GUIView(name);
+			// gui_view.setVisible(true);
+			//MulticastClient mc = new MulticastClient(node);
+			while (true)
+			{
+				String cmd;
+				// System.out.println("waiting for the cmd...");
+				while (!sc.hasNextLine())
+				{
+					// System.out.println("noooooz");
+				}
+
+				cmd = sc.nextLine();
+				System.out.println("ciao bello");
+				node.shutdown();
+
+				// } catch (Exception e) {
+				// e.printStackTrace(arg0);
+				// }
+			}
+		} catch (MalformedURLException | RemoteException | NotBoundException e)
+		{
+			// failure();
+			e.printStackTrace();
+		}  catch (ServerNotActiveException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}

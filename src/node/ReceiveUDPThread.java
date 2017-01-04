@@ -116,7 +116,10 @@ public class ReceiveUDPThread extends Thread
 			receive.receiveFile(ip, name, size);
 			break;
 		case "next" :
-			this.node.controlFiles();
+			this.node.setNextNode(jobj.getInt("data"));
+			break;
+		case "previous" :
+			this.node.setPrevNode(jobj.getInt("data"));
 			break;
 		case "remove" :
 			String dataObj = jobj.getString("data");

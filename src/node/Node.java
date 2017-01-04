@@ -63,7 +63,7 @@ public class Node
 	 * @param name
 	 *            the agentname of the node.
 	 */
-	public Node(String name)
+	public Node(String name, INodeRMI rmi)
 	{
 		this.ownerList = new ArrayList<String>();
 		this.localList = new ArrayList<String>();
@@ -80,14 +80,7 @@ public class Node
 
 		mc.multicastStart(name);
 
-		try
-		{
-			this.rmi = (INodeRMI) Naming.lookup("//" + this.serverIP + "/nodeRMI");
-		} catch (MalformedURLException | RemoteException | NotBoundException e)
-		{
-			// failure();
-			e.printStackTrace();
-		}
+		this.rmi = rmi;
 		this.initNodes();
 		printNodes();
 
@@ -157,6 +150,16 @@ public class Node
 		printNodes();
 	}
 
+	public void setNextNode(int hash)
+	{
+		this.nextNode = hash;
+	}
+
+	public void setPrevNode(int hash)
+	{
+		this.prevNode = hash;
+	}
+
 	/*
 	 * public functions.
 	 */
@@ -200,20 +203,31 @@ public class Node
 	 * Next node fails. notify server and next + previous node of this change.
 	 * reinitialize own previous and next nodes.
 	 */
-	public void failure()
+	public void failure(int failingNode)
 	{
 		try
 		{
+			System.out.println("failingnode: " + failingNode);
 			this.rmi.removeNode(this.nextNode);
-			initNodes();
+			int size = this.rmi.getHmapSize();
+			int nextNode = this.rmi.getNext(failingNode);
+			int prevNode = this.rmi.getPrevious(failingNode);
+			System.out.println("nextnode: " + nextNode);
+			System.out.println("prevnode: " + prevNode);
 
 			DatagramSocket socket = this.sHandler.getUdpSocket();
 
-			String prev = createJSONObject("previous", this.prevNode);
-			sendUDP(socket, this.rmi.getIp(this.nextNode), prev);
+			if(size == 1) {
+				this.nextNode = this.myNode;
+				this.prevNode = this.myNode;
+			}
+			String prev = createJSONObject("previous", prevNode);
+			if (nextNode >= 0)
+				sendUDP(socket, this.rmi.getIp(nextNode), prev);
 
-			String next = createJSONObject("next", this.nextNode);
-			sendUDP(socket, this.rmi.getIp(this.prevNode), next);
+			String next = createJSONObject("next", nextNode);
+			if (prevNode >= 0)
+				sendUDP(socket, this.rmi.getIp(prevNode), next);
 
 			// this.sHandler.startMulticastReceive();
 
@@ -298,16 +312,8 @@ public class Node
 	 */
 	public void sendFiles(List<File> files)
 	{
-		try
-		{
-			SendFileThread sft = new SendFileThread(files, this.rmi, this, this.sHandler);
-			sft.start();
-		} catch (Exception e)
-		{
-			// failure();
-			e.printStackTrace();
-		}
-
+		SendFileThread sft = new SendFileThread(files, this.rmi, this, this.sHandler);
+		sft.start();
 	}
 
 	public void addOwnerList(String name)
@@ -445,7 +451,7 @@ public class Node
 		{
 			try
 			{
-				String ip = this.rmi.getFileNode(file);
+				String ip = this.rmi.getFileIp(file);
 				DatagramSocket socket = new DatagramSocket(4448);
 				String json = createJSONObject("remove", file);
 
