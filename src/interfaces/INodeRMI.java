@@ -1,7 +1,9 @@
 package interfaces;
 
+import java.net.UnknownHostException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.server.ServerNotActiveException;
 
 public interface INodeRMI extends Remote
 {
@@ -43,7 +45,7 @@ public interface INodeRMI extends Remote
 	 * @return
 	 * @throws RemoteException
 	 */
-	String getFileNode(String name) throws RemoteException;
+	//String getFileNode(String name) throws RemoteException;
 
 	/**
 	 * Get the IP address corresponding to the given hash
@@ -60,12 +62,12 @@ public interface INodeRMI extends Remote
 	 * 
 	 * @param name
 	 *            the name of the new node.
-	 * @param ip
-	 *            the ip of the new node.
 	 * @return
 	 * @throws RemoteException
+	 * @throws UnknownHostException 
+	 * @throws ServerNotActiveException 
 	 */
-	int createNode(String name, String ip) throws RemoteException;
+	int createNode(String name) throws RemoteException, ServerNotActiveException;
 
 	/**
 	 * Remove a node.
@@ -104,5 +106,13 @@ public interface INodeRMI extends Remote
 	 * @throws RemoteException
 	 */
 	int getHmapSize() throws RemoteException;
+
+	int getPrevious(int hash) throws RemoteException;
+
+	int getFileNode(int hash) throws RemoteException;
+
+	int getNext(int hash) throws RemoteException;
+
+	String getFileIp(String name) throws RemoteException;
 
 }

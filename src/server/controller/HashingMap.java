@@ -71,7 +71,10 @@ public class HashingMap
 	{
 		try
 		{
-			this.hashMap.remove(hash);
+			String success = this.hashMap.remove(hash);
+			
+			if(success == null)
+				return 0;
 
 			return 1;
 		} catch (Exception e)
@@ -102,12 +105,12 @@ public class HashingMap
 	 *            the current hash
 	 * @return The next hash.
 	 */
-	public int getNext(Hashing hash)
+	public int getNext(int hash)
 	{
 		Map.Entry<Integer, String> record = null;
 		Map.Entry<Integer, String> highestRecord = null;
 		Map.Entry<Integer, String> lowestRecord = null;
-		int fileHash = hash.getHash();
+		int fileHash = hash;
 
 		Iterator it = this.hashMap.entrySet().iterator();
 		while (it.hasNext())
@@ -164,12 +167,12 @@ public class HashingMap
 	 * 
 	 * @param hash
 	 *            the current hash.
-	 * @return the previous hash.
+	 * @return the previous hash. return -1 if not found
 	 */
-	public int getPrev(Hashing hash)
+	public int getPrev(int hash)
 	{
 		TreeMap<Integer, String> treeMap = new TreeMap<Integer, String>(this.hashMap);
-		int value = hash.getHash();
+		int value = hash;
 
 		printMap(treeMap);
 
@@ -193,7 +196,7 @@ public class HashingMap
 			}
 		}
 
-		return value;
+		return keyArr[0];
 	}
 
 	/**
@@ -286,12 +289,12 @@ public class HashingMap
 	 * return record.getValue(); }
 	 */
 
-	public String get(Hashing hash)
+	public String get(int hash)
 	{
 		Map.Entry<Integer, String> record = null;
 		Map.Entry<Integer, String> highestRecord = null;
 		Map.Entry<Integer, String> lowestRecord = null;
-		int fileHash = hash.getHash();
+		int fileHash = hash;
 
 		Iterator it = this.hashMap.entrySet().iterator();
 		while (it.hasNext())
@@ -330,12 +333,12 @@ public class HashingMap
 		return record.getValue();
 	}
 
-	public String getNode(Hashing hash)
+	public String getNode(int hash)
 	{
 		Map.Entry<Integer, String> record = null;
 		Map.Entry<Integer, String> highestRecord = null;
 		Map.Entry<Integer, String> lowestRecord = null;
-		int fileHash = hash.getHash();
+		int fileHash = hash;
 
 		Iterator it = this.hashMap.entrySet().iterator();
 		System.out.println("searching... filehash = " + fileHash);
@@ -380,6 +383,58 @@ public class HashingMap
 		System.out.println("result: " + record.getKey());
 
 		return record.getValue();
+	}
+	
+	public int getNodeHash(int hash)
+	{
+		Map.Entry<Integer, String> record = null;
+		Map.Entry<Integer, String> highestRecord = null;
+		Map.Entry<Integer, String> lowestRecord = null;
+		int fileHash = hash;
+
+		Iterator it = this.hashMap.entrySet().iterator();
+		System.out.println("searching... filehash = " + fileHash);
+		while (it.hasNext())
+		{
+			Map.Entry<Integer, String> pair = (Map.Entry) it.next();
+			System.out.println("pair key = " + pair.getKey());
+			if (record == null)
+			{
+				record = pair;
+				System.out.println("new at start: " + record.getKey());
+				highestRecord = pair;
+				lowestRecord = pair;
+			} else
+			{
+				// set lowest and highest hashes
+				if (highestRecord.getKey() < pair.getKey())
+				{
+					highestRecord = pair;
+				} else if (lowestRecord.getKey() > pair.getKey())
+				{
+					lowestRecord = pair;
+				}
+
+				// check for new record
+				if (fileHash > pair.getKey() && (pair.getKey() > record.getKey() || fileHash < record.getKey()))
+				{
+					record = pair;
+					System.out.println("new: " + record.getKey());
+					// System.out.Println(record.getKey().toString());
+				}
+			}
+		}
+
+		// if fileHash is higher than highest hash, take lowest hash
+		if (fileHash < lowestRecord.getKey())
+		{
+			record = highestRecord;
+			System.out.println("new at end: " + record.getKey());
+		}
+		System.out.println("Search complete");
+		System.out.println("result: " + record.getKey());
+
+		return record.getKey();
 	}
 
 	/**

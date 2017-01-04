@@ -18,7 +18,7 @@ public class TCPSend
 	 * The path to the file that has to be sent.
 	 */
 	private String filePath;
-	
+
 	/**
 	 * The object that performs and maintains all socket actions.
 	 */
@@ -44,44 +44,42 @@ public class TCPSend
 	 *
 	 * @param fileName
 	 *            the name of the file that needs to be sent.
+	 * @throws IOException
 	 */
-	public void send(String fileName)
+	public void send(String fileName) throws IOException
 	{
 		String fullName = this.filePath + fileName;
 		System.out.print(fullName);
 		DataOutputStream outToClient;
 		Socket socket;
-		try
+
+		System.out.println("waiting for accept");
+		ServerSocket sSocket = this.sHandler.getServerSocket();
+		sSocket.setSoTimeout(5000);
+		socket = sSocket.accept();
+		/**
+		 * TODO: add functionalities to sockethandler.
+		 */
+
+		byte[] b = new byte[250];
+
+		InputStream is = socket.getInputStream();
+
+		File transferFile = new File(fullName);
+		System.out.println("Received: " + fullName);
+
+		if (transferFile.exists())
 		{
-			System.out.println("waiting for accept");
-			socket = this.sHandler.getServerSocket().accept();
-			/**
-			 * TODO: add functionalities to sockethandler.
-			 */
-
-			byte[] b = new byte[250];
-
-			InputStream is = socket.getInputStream();
-
-			File transferFile = new File(fullName);
-			System.out.println("Received: " + fullName);
-
-			if (transferFile.exists())
-			{
-				outToClient = new DataOutputStream(socket.getOutputStream());
-				// sendName(fileName, outToClient);
-				sendFile(transferFile, outToClient);
-			} else
-			{
-				System.out.println("file not found");
-				outToClient = new DataOutputStream(socket.getOutputStream());
-				outToClient.writeBytes("File doesn't exist!");
-			}
-		} catch (IOException e)
+			outToClient = new DataOutputStream(socket.getOutputStream());
+			// sendName(fileName, outToClient);
+			sendFile(transferFile, outToClient);
+		} else
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("file not found");
+			outToClient = new DataOutputStream(socket.getOutputStream());
+			outToClient.writeBytes("File doesn't exist!");
 		}
+
 	}
 
 	/**
@@ -91,7 +89,9 @@ public class TCPSend
 	 *            The name of the file.
 	 * @param outToClient
 	 *            The output stream to the receiver.
-	 * @throws IOException there was a problem while writing something to the other node.
+	 * @throws IOException
+	 *             there was a problem while writing something to the other
+	 *             node.
 	 */
 	private void sendName(String name, DataOutputStream outToClient) throws IOException
 	{
@@ -106,7 +106,9 @@ public class TCPSend
 	 *            The file that needs to be sent.
 	 * @param outToClient
 	 *            The outputstream to the receiver.
-	 * @throws IOException There was a problem while writing something to the other node.
+	 * @throws IOException
+	 *             There was a problem while writing something to the other
+	 *             node.
 	 */
 	private void sendFile(File file, DataOutputStream outToClient) throws IOException
 	{

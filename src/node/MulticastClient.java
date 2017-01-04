@@ -41,6 +41,7 @@ public class MulticastClient
 			// socket.close();
 		} catch (IOException e)
 		{
+			
 			e.printStackTrace();
 		}
 	}
@@ -67,6 +68,7 @@ public class MulticastClient
 			new MulticastRecieveThread(group, this.node, this.sHandler).start();
 		} catch (Exception e)
 		{
+			
 			e.printStackTrace();
 		}
 		return null;

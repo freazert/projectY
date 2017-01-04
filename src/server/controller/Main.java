@@ -19,7 +19,7 @@ public class Main
 	 * 
 	 * @throws AlreadyBoundException
 	 */
-	public static void main() throws AlreadyBoundException
+	public static void main(String[] args) throws AlreadyBoundException
 	{
 		Registry registry;
 		try
@@ -28,8 +28,8 @@ public class Main
 			Wrapper wrap = new Wrapper();
 
 			new MulticastServerThread(wrap).start();
+
 			NodeRMI nodeRMI = new NodeRMI(wrap);
-			
 			registry = LocateRegistry.createRegistry(1099);
 			registry.bind("nodeRMI", (Remote) nodeRMI);
 

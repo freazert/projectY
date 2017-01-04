@@ -1,6 +1,7 @@
 package server.controller;
 
 import java.rmi.RemoteException;
+import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 
 import interfaces.INodeRMI;
@@ -12,7 +13,7 @@ public class NodeRMI extends UnicastRemoteObject implements INodeRMI
 {
 
 	/**
-	 * serialisable version.
+	 * serializable version.
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -39,19 +40,38 @@ public class NodeRMI extends UnicastRemoteObject implements INodeRMI
 	@Override
 	public int getPrevious(String userName) throws RemoteException
 	{
-		return this.hashmap.getPrev(new Hashing(userName));
+		return this.hashmap.getPrev(new Hashing(userName).getHash());
+	}
+	
+	@Override 
+	public int getPrevious(int hash) throws RemoteException
+	{
+		return this.hashmap.getNodeHash(hash);
 	}
 
 	@Override
 	public int getNext(String userName) throws RemoteException
 	{
-		return this.hashmap.getNext(new Hashing(userName));
+		return this.hashmap.getNext(new Hashing(userName).getHash());
+	}
+	
+	@Override
+	public int getNext(int hash) throws RemoteException
+	{
+		return this.hashmap.getNext(hash);
 	}
 
 	@Override
-	public String getFileNode(String name) throws RemoteException
+	public String getFileIp(String name) throws RemoteException
 	{
-		return this.hashmap.getNode(new Hashing(name));
+		return this.hashmap.getNode(new Hashing(name).getHash());
+
+	}
+	
+	@Override
+	public int getFileNode(int hash) throws RemoteException
+	{
+		return this.hashmap.getNodeHash(hash);
 
 	}
 
@@ -62,9 +82,9 @@ public class NodeRMI extends UnicastRemoteObject implements INodeRMI
 	}
 
 	@Override
-	public int createNode(String name, String ip) throws RemoteException
+	public int createNode(String name) throws RemoteException, ServerNotActiveException
 	{
-		return wrap.createNode(name, ip);
+		return wrap.createNode(name, getClientHost());
 	}
 
 	@Override

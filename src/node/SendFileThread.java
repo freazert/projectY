@@ -48,15 +48,13 @@ public class SendFileThread extends Thread
 	@Override
 	public void run()
 	{
-		try
-		{
 			synchronized (this.node)
 			{
 				node.setMapUpdate(true);
 				sHandler.startSendFile();
 				for (File file : files)
 				{
-
+					try {
 					String ip = getIP(file.getName());
 					if (!ip.equals(rmi.getIp(this.node.getCurrent())))
 					{
@@ -70,16 +68,22 @@ public class SendFileThread extends Thread
 						TCPSend sendFile = new TCPSend(this.sHandler);
 						sendFile.send(file.getName());
 					}
+					} catch (IOException e) {
+						e.printStackTrace();
+						try
+						{
+							node.failure(this.rmi.getPrevious(file.getName()));
+						} catch (RemoteException e1)
+						{
+							e1.printStackTrace();
+						}
+					}
 
 				}
 
 				sHandler.stopSendFile();
 				node.setMapUpdate(false);
 			}
-		} catch (IOException e)
-		{
-			// e.printStackTrace();
-		}
 
 	}
 
