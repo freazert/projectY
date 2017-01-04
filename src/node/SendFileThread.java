@@ -191,7 +191,7 @@ public class SendFileThread extends Thread {
         byte[] sendData = new byte[1024];
 
         try {
-            DatagramSocket clientSocket = this.sHandler.getUdpSocket();
+            DatagramSocket clientSocket = this.sHandler.getUdpInfoSocket();
 
             sendData = data.toString().getBytes();
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ip, 6789);
