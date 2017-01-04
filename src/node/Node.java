@@ -27,6 +27,7 @@ public class Node
 	private INodeRMI rmi;
 	// private DatagramSocket serverSocket;
 	private String name;
+        private boolean isBussy;
 	private List<String> ownerList;
 	private List<String> localList;
 	private boolean mapUpdate;
@@ -71,6 +72,7 @@ public class Node
 		this.mapUpdate = false;
 		this.sHandler = new SocketHandler(TCP_PORT, UDP_PORT, MULTICAST_PORT);
 
+                isBussy =false;
 		this.sHandler.startServerSocket();
 
 		/*
@@ -410,6 +412,7 @@ public class Node
 				|| this.myNode == this.nextNode)
 		{
 			this.nextNode = hash;
+                        sendFilesToNewNode();
 		}
 	}
 
@@ -505,5 +508,36 @@ public class Node
 		System.out.println("next node: " + this.nextNode);
 		System.out.println("previous node: " + this.prevNode);
 	}
+
+    private void sendFilesToNewNode() {
+        List<File> filesToSend = new ArrayList<>();
+        for(String file : this.ownerList)
+        {
+            try {
+                if( this.myNode  != rmi.getFileNode(this.rmi.getHash(file)))
+                {
+                    filesToSend.add(new File(file));
+                }
+                
+                    
+            } catch (RemoteException ex) {
+                Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        this.sendFiles(filesToSend);
+    }
+
+    void removeOwnerList(String name) {
+        this.ownerList.remove(name);
+    }
+
+    boolean getBusyState() {
+        return (this.isBussy);
+    }
+
+    void setBussy(boolean b) {
+        this.isBussy = b;
+    }
 
 }
