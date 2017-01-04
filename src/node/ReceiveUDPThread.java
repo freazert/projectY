@@ -108,17 +108,20 @@ public class ReceiveUDPThread extends Thread {
                 String dataObj = jobj.getString("data");
                 this.node.removeFile(dataObj);
                 break;
-            case "isBussy":
+            case "info":
                 byte[] sendData = new byte[1024];
 
                 try {
-                    DatagramSocket clientSocket = this.sHandler.getUdpSocket();
+                	this.sHandler.startInfo();
+                	
+                    DatagramSocket clientSocket = this.sHandler.getUdpInfoSocket();
 
                     try {
 
                         jobj = new JSONObject();
                         jobj.put("type", "inforeply");
                         jobj.put("data", this.node.getBusyState());
+                        System.out.println("reply on info" + jobj.toString());
                         
                         sendData = jobj.toString().getBytes();
                         DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName(ip), 6789);

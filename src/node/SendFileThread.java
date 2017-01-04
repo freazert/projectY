@@ -61,11 +61,12 @@ public class SendFileThread extends Thread {
                             byte[] receiveData = new byte[10240];
 
                             System.out.println("rft receiveUDP");
+                            
+                            sHandler.startInfo();
 
                             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                             System.out.println("waiting for udp receive");
-                            sHandler.getUdpSocket().receive(receivePacket);
-                            
+                            sHandler.getUdpInfoSocket().receive(receivePacket);
                            
                             String receive = new String(receivePacket.getData());
                             
@@ -78,6 +79,14 @@ public class SendFileThread extends Thread {
                             } catch (JSONException ex) {
                                 Logger.getLogger(SendFileThread.class.getName()).log(Level.SEVERE, null, ex);
                             }
+                            try
+							{
+								this.sleep(1000);
+							} catch (InterruptedException e)
+							{
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
                         }
                         
                         this.node.setBussy(true);
