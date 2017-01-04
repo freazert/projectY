@@ -533,7 +533,7 @@ public class Node
     }
 
     boolean getBusyState() {
-        return (this.isBussy);
+    	return this.isBussy;
     }
 
     void setBussy(boolean b) {

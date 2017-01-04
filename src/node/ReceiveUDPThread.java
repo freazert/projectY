@@ -35,6 +35,7 @@ public class ReceiveUDPThread extends Thread {
     public void run() {
         while (true) {
             try {
+            	
                 while (!node.isMapUpdate()) {
                     this.node.printNodes();
                     System.out.println("receiveUDPThread run");
@@ -43,6 +44,7 @@ public class ReceiveUDPThread extends Thread {
 
                     handleData(new String(data.getData()), ip);
                 }
+                System.out.println("map is updating");
 
             } catch (IOException e) {
                 // e.printStackTrace();
@@ -124,8 +126,10 @@ public class ReceiveUDPThread extends Thread {
                         System.out.println("reply on info" + jobj.toString());
                         
                         sendData = jobj.toString().getBytes();
-                        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName(ip), 6789);
+                        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName(ip), 9666);
                         clientSocket.send(sendPacket);
+                        
+                        System.out.println("packet received in info");
 
                     } catch (JSONException e) {
                         e.printStackTrace();

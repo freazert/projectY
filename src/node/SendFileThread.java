@@ -44,6 +44,7 @@ public class SendFileThread extends Thread {
     @Override
     public void run() {
         synchronized (this.node) {
+        	
             node.setMapUpdate(true);
             sHandler.startSendFile();
             for (File file : files) {
