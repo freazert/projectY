@@ -36,7 +36,7 @@ public class FailureThread extends Thread
 			{
 				int nextNode = node.getNext();
 				InetAddress inet = InetAddress.getByName(nodeRMI.getIp(nextNode));
-				boolean reachable = inet.isReachable(500);
+				boolean reachable = inet.isReachable(10000);
 				System.out.print(reachable);
 
 				if (!reachable)
