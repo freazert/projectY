@@ -35,9 +35,10 @@ public class ReceiveUDPThread extends Thread {
     public void run() {
         while (true) {
             try {
-            	
+            	System.out.print("ok");
                 while (!node.isMapUpdate()) {
-                    this.node.printNodes();
+
+                   
                     System.out.println("receiveUDPThread run");
                     DatagramPacket data = getData();
                     String ip = data.getAddress().getHostAddress();
@@ -51,7 +52,10 @@ public class ReceiveUDPThread extends Thread {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            
+    System.out.println("lol");
         }
+        
     }
 
     /**
@@ -98,8 +102,8 @@ public class ReceiveUDPThread extends Thread {
                 String name = jobj.getString("data");
                 int size = (int) jobj.getLong("size");
                 System.out.println("the name is: " + name);
-                FileFiche fiche = new FileFiche(name, 0, ip); //voeg nieuwe filefiche toe --> ID VAN STURENDE NODE?
-                node.addFileFiche(fiche);
+//                FileFiche fiche = new FileFiche(name, 0, ip); //voeg nieuwe filefiche toe --> ID VAN STURENDE NODE?
+//                node.addFileFiche(fiche);
                 receive.receiveFile(ip, name, size);
                 break;
             case "next":
