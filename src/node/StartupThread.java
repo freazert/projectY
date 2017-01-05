@@ -27,9 +27,10 @@ public class StartupThread extends Thread
 		// SendFileThread sft = new SendFileThread(files, rmi, node);
 		// sft.start();
 		// sft.join();
-		new CheckFolderThread(this.node, 10000, this.node.getFolderString()).start();
+		
 		ReceiveUDPThread rft = new ReceiveUDPThread(this.node, this.sHandler);
-		rft.start();
+                rft.start();
+                new CheckFolderThread(this.node, 10000, this.node.getFolderString()).start();
 		//new ReceiveInfoThread(this.node, this.sHandler).start();
 		new FailureThread(this.node, rmi).start();
 	}
