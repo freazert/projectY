@@ -32,6 +32,7 @@ public class Node
         private boolean isBussy;
 	private List<String> ownerList;
 	private List<String> localList;
+	private List<FileFiche> FicheList;
     public TreeMap<String, Boolean> SystemList;
 	private boolean mapUpdate;
 	private String serverIP = "192.168.1.16";
@@ -49,6 +50,8 @@ public class Node
     {
         return ownerList;
     }
+
+    public void addFileFiche(FileFiche fiche) {FicheList.add(fiche);}
 
 	public void addLocalList(String fileName)
 	{
