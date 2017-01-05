@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -21,12 +23,15 @@ public class Wrapper
 	 * The filename used for the xml file
 	 */
 	private static String FILE_NAME = "hashmap.xml";
+       
+        private Map<Integer, Boolean> isBusy; 
 
 	/**
 	 * The constructor method for the Wrapper.
 	 */
 	public Wrapper()
 	{
+                this.isBusy = new TreeMap<>();
 		try
 		{
 			hmap = new HashingMap();
@@ -49,10 +54,11 @@ public class Wrapper
 	public int removeNode(int name)
 	{
 		int success = this.hmap.removeRecord(name);
-		try
+		this.isBusy.remove(name);
+                try
 		{
 			objectToXml();
-
+                        
 			return success;
 		} catch (JAXBException e)
 		{
@@ -102,7 +108,8 @@ public class Wrapper
 		try
 		{
 			int success = this.hmap.addRecord(new Hashing(name), ip);
-			System.out.println("creating node " + name + ", status: " + success);
+			this.isBusy.put(new Hashing(name).getHash(), false);
+                        System.out.println("creating node " + name + ", status: " + success);
 			objectToXml();
 
 			return success;
@@ -147,6 +154,17 @@ public class Wrapper
 	 * 
 	 * @return the current hashmap.
 	 */
+        
+        public void setBusy(int hash, boolean isbusy)
+        {
+            this.isBusy.replace(hash, isbusy);
+        }
+        
+        public boolean getBussyState(int hash)
+        {
+            return this.isBusy.get(hash);
+        }
+        
 	public HashingMap getHashMap()
 	{
 		return this.hmap;
