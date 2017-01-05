@@ -314,6 +314,7 @@ public class Node
 	 */
 	public void sendFiles(List<File> files)
 	{
+		System.out.println("node: send files");
 		SendFileThread sft = new SendFileThread(files, this.rmi, this, this.sHandler);
 		sft.start();
 	}
@@ -545,5 +546,11 @@ public class Node
     void setBussy(boolean b) {
         this.isBussy = b;
     }
+
+	public boolean checkBusyState()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }

@@ -42,6 +42,7 @@ public class CheckFolderThread extends Thread
 				}
 			}
 			if (newFiles.size() != 0)
+				System.out.println("sendfiles");
 				node.sendFiles(newFiles);
 			try
 			{

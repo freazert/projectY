@@ -44,7 +44,7 @@ public class ReceiveUDPThread extends Thread {
 
                     handleData(new String(data.getData()), ip);
                 }
-                System.out.println("map is updating");
+
 
             } catch (IOException e) {
                 // e.printStackTrace();
@@ -111,7 +111,7 @@ public class ReceiveUDPThread extends Thread {
                 this.node.removeFile(dataObj);
                 break;
             case "info":
-                new SendInfoThread(this.node, this.sHandler, ip).start();
+               
                 break;
         }
 

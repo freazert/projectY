@@ -17,6 +17,7 @@ public class ReceiveInfoThread extends Thread
 		super();
 		this.node = node;
 		this.sHandler = sHandler;
+		this.sHandler.startInfo();
 	}
 
 	public void run()
@@ -27,12 +28,15 @@ public class ReceiveInfoThread extends Thread
 
 			try
 			{
-				this.node.printNodes();
-				System.out.println("receiveUDPThread run");
-				DatagramPacket data = getData();
-				String ip = data.getAddress().getHostAddress();
+				while (!node.isMapUpdate())
+				{
+					this.node.printNodes();
+					System.out.println("receiveUDPThread run");
+					DatagramPacket data = getData();
+					String ip = data.getAddress().getHostAddress();
 
-				handleData(new String(data.getData()), ip);
+					handleData(new String(data.getData()), ip);
+				}
 			} catch (JSONException | IOException e)
 			{
 				// TODO Auto-generated catch block
@@ -52,6 +56,7 @@ public class ReceiveInfoThread extends Thread
 	{
 		byte[] receiveData = new byte[10240];
 
+		this.sHandler.startInfo();
 		System.out.println("rft receiveUDP");
 
 		DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
