@@ -516,22 +516,28 @@ public class Node
 		System.out.println("previous node: " + this.prevNode);
 	}
 
+	/**
+	 * TODO: schrap files die verstuurd zijn.
+	 */
     private void sendFilesToNewNode() {
+    	System.out.println("send file to new node");
         List<File> filesToSend = new ArrayList<>();
         for(String file : this.ownerList)
         {
-            try {
-                if( this.myNode  != rmi.getFileNode(this.rmi.getHash(file)))
-                {
+        	System.out.println("filename: " + file);
+            //try {
+                //if( this.myNode  != rmi.getFileNode(this.rmi.getHash(file)))
+                //{
+                	System.out.println(file + " added");
                     filesToSend.add(new File(file));
-                }
+                //}
                 
                     
-            } catch (RemoteException ex) {
-                Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            //} catch (RemoteException ex) {
+            //    Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
+            //}
         }
-        
+        System.out.println("send files - list made");
         this.sendFiles(filesToSend);
     }
 
