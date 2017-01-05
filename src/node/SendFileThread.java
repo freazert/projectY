@@ -52,8 +52,9 @@ public class SendFileThread extends Thread {
                     String ip = getIP(file.getName());
                     if (!ip.equals(rmi.getIp(this.node.getCurrent()))) {
                         InetAddress IPAddress = InetAddress.getByName(ip);
+                        new SendInfoThread(this.node, this.sHandler, ip).start();
 
-                        boolean canSendFile = false;
+                       /* boolean canSendFile = false;
                         while (!canSendFile && !this.node.getBusyState()) {
                             String jsonString = createJsonInfo();
                             System.out.print(jsonString);
@@ -93,7 +94,7 @@ public class SendFileThread extends Thread {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-                        }
+                        }*/
                         
                         //this.node.setBussy(true);
 
@@ -114,7 +115,6 @@ public class SendFileThread extends Thread {
                         e1.printStackTrace();
                     }
                 }
-
             }
 
             

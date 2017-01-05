@@ -25,35 +25,39 @@ public class SendInfoThread extends Thread
 	public void run()
 	{
 		byte[] sendData = new byte[1024];
-		try
+		while (true)
 		{
-			this.sHandler.startInfo();
-
-			DatagramSocket clientSocket = this.sHandler.getUdpInfoSocket();
-
+			if(node.checkBusyState())
 			try
 			{
+				this.sHandler.startInfo();
 
-				JSONObject jobj = new JSONObject();
-				jobj.put("type", "inforeply");
-				jobj.put("data", this.node.getBusyState());
-				System.out.println("reply on info" + jobj.toString());
+				DatagramSocket clientSocket = this.sHandler.getUdpInfoSocket();
 
-				sendData = jobj.toString().getBytes();
-				DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName(ip),
-						9666);
-				clientSocket.send(sendPacket);
+				try
+				{
 
-				System.out.println("packet sent in info");
+					JSONObject jobj = new JSONObject();
+					jobj.put("type", "inforeply");
+					jobj.put("data", this.node.getBusyState());
+					System.out.println("reply on info" + jobj.toString());
 
-			} catch (JSONException e)
+					sendData = jobj.toString().getBytes();
+					DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName(ip),
+							9666);
+					clientSocket.send(sendPacket);
+
+					System.out.println("packet sent in info");
+
+				} catch (JSONException e)
+				{
+					e.printStackTrace();
+				}
+			} catch (IOException e)
 			{
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 }
