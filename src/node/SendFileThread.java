@@ -52,6 +52,7 @@ public class SendFileThread extends Thread {
                 try {
                     String name = file.getName();
                     String ip = rmi.getPrevIp(file.getAbsolutePath());
+                    System.out.println("filesize_: " + file.length() );
 
                     int hash = rmi.getHash(name);
                     if (ip.equals(rmi.getIp(this.node.getCurrent()))) {
@@ -60,7 +61,7 @@ public class SendFileThread extends Thread {
                     if (!ip.equals(rmi.getIp(this.node.getCurrent()))) {
                         InetAddress IPAddress = InetAddress.getByName(ip);
 
-                        while (this.rmi.getBusyState(hash))
+                        while (this.rmi.getBusyState(this.rmi.getFileNode(hash)))
                         {
                             try {
                                 Thread.sleep(100);
@@ -130,6 +131,7 @@ public class SendFileThread extends Thread {
      */
     private String createJsonString(String name, long size) {
         try {
+        	System.out.println("filesize: " + size);
             JSONObject jobj = new JSONObject();
             jobj.put("type", "file");
             jobj.put("data", name);
@@ -166,8 +168,9 @@ public class SendFileThread extends Thread {
         byte[] sendData = new byte[1024];
 
         try {
-            DatagramSocket clientSocket = this.sHandler.getUdpInfoSocket();
-
+            DatagramSocket clientSocket = this.sHandler.getUdpSocket();
+            System.out.println("");
+           
             sendData = data.toString().getBytes();
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ip, 6789);
 

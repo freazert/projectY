@@ -543,7 +543,7 @@ public class Node
                 //if( this.myNode  != rmi.getFileNode(this.rmi.getHash(file)))
                 //{
                 	System.out.println(file + " added");
-                    filesToSend.add(new File(file));
+                    filesToSend.add(new File("C:\\nieuwe map\\" + file));
                 //}
                 
                     
