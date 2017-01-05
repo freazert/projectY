@@ -46,7 +46,6 @@ public class SendFileThread extends Thread {
     public void run() {
         synchronized (this.node) {
 
-            node.setMapUpdate(true);
             sHandler.startSendFile();
             for (File file : files) {
                 try {
@@ -61,14 +60,18 @@ public class SendFileThread extends Thread {
                     if (!ip.equals(rmi.getIp(this.node.getCurrent()))) {
                         InetAddress IPAddress = InetAddress.getByName(ip);
 
-                        while (this.rmi.getBusyState(this.rmi.getFileNode(hash)))
+                        while (this.rmi.getBusyState(rmi.getFileNode(hash)))
                         {
                             try {
-                                Thread.sleep(100);
+                                System.out.println("bussy");
+                                Thread.sleep(1000);
                             } catch (InterruptedException ex) {
                                 Logger.getLogger(SendFileThread.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
+                        node.setMapUpdate(true);
+            
+                        
                         
                         this.rmi.setbusy(node.getCurrent(), true);
 
@@ -169,8 +172,7 @@ public class SendFileThread extends Thread {
 
         try {
             DatagramSocket clientSocket = this.sHandler.getUdpSocket();
-            System.out.println("");
-           
+
             sendData = data.toString().getBytes();
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ip, 6789);
 

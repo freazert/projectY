@@ -1,5 +1,6 @@
 package node;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FileFiche {
@@ -15,6 +16,8 @@ public class FileFiche {
         this.ownerId = id;
         this.ownerIp = ip;
 
+       locationList = new ArrayList<Integer>(); 
+        
         locationList.add(id);
     }
 

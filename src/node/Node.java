@@ -76,27 +76,33 @@ public class Node
 	 */
 	public Node(String name, INodeRMI rmi)
 	{
-		this.ownerList = new ArrayList<String>();
-		this.localList = new ArrayList<String>();
-		this.name = name;
-		this.mapUpdate = false;
-		this.sHandler = new SocketHandler(TCP_PORT, UDP_PORT, MULTICAST_PORT);
-
+            try {
+                this.ownerList = new ArrayList<String>();
+                this.localList = new ArrayList<String>();
+                this.name = name;
+                this.mapUpdate = false;
+                this.sHandler = new SocketHandler(TCP_PORT, UDP_PORT, MULTICAST_PORT);
+                
+                
                 isBussy =false;
-		this.sHandler.startServerSocket();
-
-		/*
-		 * ListenToCmdThread cmd = new ListenToCmdThread(this); cmd.start();
-		 */
-		MulticastClient mc = new MulticastClient(this, this.sHandler);
-
-		mc.multicastStart(name);
-
-		this.rmi = rmi;
-		this.initNodes();
-		printNodes();
-
-		new StartupThread(rmi, this, this.sHandler).start();
+                this.sHandler.startServerSocket();
+                
+                /*
+                * ListenToCmdThread cmd = new ListenToCmdThread(this); cmd.start();
+                */
+                MulticastClient mc = new MulticastClient(this, this.sHandler);
+                
+                mc.multicastStart(name);
+                
+                this.rmi = rmi;
+                this.initNodes();
+                printNodes();
+                
+                rmi.setbusy(this.getCurrent(),true);
+                new StartupThread(rmi, this, this.sHandler).start();
+            } catch (RemoteException ex) {
+                Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
+            }
 	}
 
 	// Getters
