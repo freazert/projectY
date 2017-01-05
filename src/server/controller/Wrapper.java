@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import javax.xml.bind.JAXBContext;
@@ -55,6 +56,7 @@ public class Wrapper
 	{
 		int success = this.hmap.removeRecord(name);
 		this.isBusy.remove(name);
+		this.printMap();
                 try
 		{
 			objectToXml();
@@ -110,6 +112,7 @@ public class Wrapper
 			int success = this.hmap.addRecord(new Hashing(name), ip);
 			this.isBusy.put(new Hashing(name).getHash(), false);
                         System.out.println("creating node " + name + ", status: " + success);
+                        this.printMap();
 			objectToXml();
 
 			return success;
@@ -168,6 +171,21 @@ public class Wrapper
 	public HashingMap getHashMap()
 	{
 		return this.hmap;
+	}
+	
+	/**
+	 * Print the complete hashmap
+	 * 
+	 * @param map
+	 */
+	public <K, V> void printMap()
+	{
+		System.out.println();
+		System.out.println("status map");
+		for (Entry<Integer, Boolean> entry : this.isBusy.entrySet())
+		{
+			System.out.println("Key: " + entry.getKey() + " value : " + entry.getValue());
+		}
 	}
 
 }

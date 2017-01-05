@@ -114,6 +114,7 @@ public class NodeRMI extends UnicastRemoteObject implements INodeRMI
 
     @Override
     public boolean getBusyState(int hash) throws RemoteException {
+    	System.out.println("the hash to be status checked: " +hash);
         return wrap.getBussyState(hash);
     }
 
