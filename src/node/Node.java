@@ -17,6 +17,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import interfaces.INodeRMI;
+
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,6 +32,7 @@ public class Node
         private boolean isBussy;
 	private List<String> ownerList;
 	private List<String> localList;
+    public TreeMap<String, Boolean> SystemList;
 	private boolean mapUpdate;
 	private String serverIP = "192.168.1.16";
 	private String folderString = "C:" + File.separator + "nieuwe map";
@@ -42,6 +45,10 @@ public class Node
 	{
 		return localList;
 	}
+    public List<String> getOwnerList()
+    {
+        return ownerList;
+    }
 
 	public void addLocalList(String fileName)
 	{
@@ -99,6 +106,10 @@ public class Node
 	{
 		return this.prevNode;
 	}
+
+	public TreeMap<String, Boolean> getSystemList() { return this.SystemList; }
+
+    public void updateSystemList(TreeMap<String, Boolean> newList) { this.SystemList = newList; }
 
 	public String getFolderString()
 	{
