@@ -93,7 +93,7 @@ public class ReceiveInfoThread extends Thread
 		switch (type)
 		{
 		case "info" :
-			new SendInfoThread(this.node, this.sHandler, ip).start();
+			//new SendInfoThread(this.node, this.sHandler, ip).start();
 			break;
 		}
 

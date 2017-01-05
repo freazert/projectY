@@ -52,7 +52,7 @@ public class SendFileThread extends Thread {
                     String ip = getIP(file.getName());
                     if (!ip.equals(rmi.getIp(this.node.getCurrent()))) {
                         InetAddress IPAddress = InetAddress.getByName(ip);
-                        new SendInfoThread(this.node, this.sHandler, ip).start();
+                        new SendInfoThread(this.node, this.sHandler, ip, rmi).start();
 
                        /* boolean canSendFile = false;
                         while (!canSendFile && !this.node.getBusyState()) {
