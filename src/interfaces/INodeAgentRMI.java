@@ -12,7 +12,7 @@ import java.rmi.RemoteException;
 public interface INodeAgentRMI extends Remote{
 
     /**
-     * Start de File List Agent.
+     * Starts the File List Agent.
      *
      * @param agent
      *            the agent that needs to be started.
@@ -22,7 +22,7 @@ public interface INodeAgentRMI extends Remote{
     FileListAgent startFileAgent(FileListAgent agent) throws RemoteException, MalformedURLException, NotBoundException;
 
     /**
-     * Start de File Recovery Agent.
+     * Starts the File Recovery Agent.
      *
      * @param agent
      *            the agent that needs to be started.
