@@ -42,61 +42,34 @@ public class SendFileThread extends Thread {
     }
 
     @Override
+    @SuppressWarnings("empty-statement")
     public void run() {
         synchronized (this.node) {
-        	
+
             node.setMapUpdate(true);
             sHandler.startSendFile();
             for (File file : files) {
                 try {
-                    String ip = getIP(file.getName());
+                    String name = file.getName();
+                    String ip = rmi.getPrevIp(file.getAbsolutePath());
+
+                    int hash = rmi.getHash(name);
+                    if (ip.equals(rmi.getIp(this.node.getCurrent()))) {
+                        ip = rmi.getIp(this.node.getPrev());
+                    }
                     if (!ip.equals(rmi.getIp(this.node.getCurrent()))) {
                         InetAddress IPAddress = InetAddress.getByName(ip);
-                        new SendInfoThread(this.node, this.sHandler, ip, rmi).run();
 
-                       /* boolean canSendFile = false;
-                        while (!canSendFile && !this.node.getBusyState()) {
-                            String jsonString = createJsonInfo();
-                            System.out.print(jsonString);
+                        while (this.rmi.getBusyState(hash))
+                        {
                             try {
                                 Thread.sleep(100);
                             } catch (InterruptedException ex) {
                                 Logger.getLogger(SendFileThread.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                            sendUdp(jsonString, IPAddress);
-
-                            byte[] receiveData = new byte[10240];
-
-                            System.out.println("rft receiveUDP");
-                            
-                            sHandler.startInfo();
-
-                            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-                            System.out.println("waiting for udp receive");
-                            sHandler.getUdpInfoSocket().receive(receivePacket);
-                           
-                            String receive = new String(receivePacket.getData());
-                            System.out.print(receive);
-                            try { 
-                                JSONObject json = new JSONObject(receive);
-                                if(json.get("type").equals("inforeply"))
-                                {
-                                    canSendFile = !json.getBoolean("data");
-                                }
-                            } catch (JSONException ex) {
-                                Logger.getLogger(SendFileThread.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                            try
-							{
-								this.sleep(1000);
-							} catch (InterruptedException e)
-							{
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-                        }*/
+                        }
                         
-                        //this.node.setBussy(true);
+                        this.rmi.setbusy(node.getCurrent(), true);
 
                         String jsonString = createJsonString(file.getName(), file.length());
                         System.out.print(jsonString);
@@ -106,6 +79,9 @@ public class SendFileThread extends Thread {
                         TCPSend sendFile = new TCPSend(this.sHandler);
                         sendFile.send(file.getName());
                         this.node.removeOwnerList(file.getName());
+                        
+                        
+                        this.rmi.setbusy(node.getCurrent(), false);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -117,7 +93,6 @@ public class SendFileThread extends Thread {
                 }
             }
 
-            
             //this.node.setBussy(false);
             sHandler.stopSendFile();
             node.setMapUpdate(false);

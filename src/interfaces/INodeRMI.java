@@ -114,5 +114,9 @@ public interface INodeRMI extends Remote
 	int getNext(int hash) throws RemoteException;
 
 	String getFileIp(String name) throws RemoteException;
+        
+        boolean getBusyState(int hash) throws RemoteException;
+        
+        void setbusy(int hash, boolean isBusy) throws RemoteException;
 
 }

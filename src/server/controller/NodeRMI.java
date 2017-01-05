@@ -112,4 +112,14 @@ public class NodeRMI extends UnicastRemoteObject implements INodeRMI
 		return this.hashmap.getCount();
 	}
 
+    @Override
+    public boolean getBusyState(int hash) throws RemoteException {
+        return wrap.getBussyState(hash);
+    }
+
+    @Override
+    public void setbusy(int hash, boolean isBusy) throws RemoteException {
+        wrap.setBusy(hash, isBusy);
+    }
+
 }
