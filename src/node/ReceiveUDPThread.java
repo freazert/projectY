@@ -36,7 +36,7 @@ public class ReceiveUDPThread extends Thread {
         while (true) {
             try {
             	System.out.print("ok");
-                while (!node.isMapUpdate()) {
+                while (true || !node.isMapUpdate()) {
 
                    
                     System.out.println("receiveUDPThread run");
@@ -98,6 +98,7 @@ public class ReceiveUDPThread extends Thread {
         switch (type) { 
             case "file":
                 System.out.println("receive file");
+                node.is_receiving = true;
                 TCPReceive receive = new TCPReceive(node, this.sHandler);
                 String name = jobj.getString("data");
                 int size = (int) jobj.getLong("size");

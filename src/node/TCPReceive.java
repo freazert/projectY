@@ -56,6 +56,7 @@ public class TCPReceive
 	public void receiveFile(String ip, String name, int size) throws IOException
 	{
 		System.out.println("receive file started.");
+		System.out.println(ip);
 		this.sHandler.startReceiveTCPSocket(ip);
 		// Socket socket = new Socket(ip, this.socketPort);
 		try
@@ -69,6 +70,7 @@ public class TCPReceive
 		}
 
 		this.sHandler.stopSendFile();
+		node.is_receiving = false;
 	}
 
 	/**
@@ -105,6 +107,8 @@ public class TCPReceive
 		int filesize = size;
 
 		byte[] bytearray = new byte[filesize];
+		
+		Thread.sleep(2000);
 		InputStream is = this.sHandler.getReceiveTCPSocket().getInputStream();
 		FileOutputStream fos = new FileOutputStream(filePath + name);
 		BufferedOutputStream bos = new BufferedOutputStream(fos);

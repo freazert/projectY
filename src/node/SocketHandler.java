@@ -136,6 +136,11 @@ public class SocketHandler
 	{
 		try
 		{
+			//if(this.receiveTCPSocket != null )
+				//this.receiveTCPSocket.close();
+			this.closeServerSocket();
+			
+			System.out.println("tcp port " + this.tcpPort);
 			this.receiveTCPSocket = new Socket(ip, this.tcpPort);
 		} catch (UnknownHostException e)
 		{

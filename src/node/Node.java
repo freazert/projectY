@@ -41,6 +41,8 @@ public class Node
 	private final int UDP_PORT = 6789;
 	private final int MULTICAST_PORT = 4446;
 	private final int TCP_PORT = 5555;
+	
+	public boolean is_receiving = false;
 
 	public List<String> getLocalList()
 	{

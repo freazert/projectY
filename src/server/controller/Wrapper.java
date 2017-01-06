@@ -13,6 +13,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Wrapper
 {
 	/**
@@ -113,6 +116,7 @@ public class Wrapper
 			this.isBusy.put(new Hashing(name).getHash(), false);
                         System.out.println("creating node " + name + ", status: " + success);
                         this.printMap();
+                        printMap();
 			objectToXml();
 
 			return success;
@@ -161,10 +165,12 @@ public class Wrapper
         public void setBusy(int hash, boolean isbusy)
         {
             this.isBusy.replace(hash, isbusy);
+            printMap();
         }
         
         public boolean getBussyState(int hash)
         {
+        	printMap();
             return this.isBusy.get(hash);
         }
         
@@ -180,11 +186,56 @@ public class Wrapper
 	 */
 	public <K, V> void printMap()
 	{
+		try
+		{
+			saveMap();
+		} catch (JAXBException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println();
 		System.out.println("status map");
 		for (Entry<Integer, Boolean> entry : this.isBusy.entrySet())
 		{
 			System.out.println("Key: " + entry.getKey() + " value : " + entry.getValue());
+		}
+	}
+	
+	public void saveMap() throws JAXBException
+	{
+		Object object = this.isBusy;
+		JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
+		// StringWriter writerTo = new StringWriter();
+		FileOutputStream fileOut;
+		try
+		{
+			fileOut = new FileOutputStream("statusmap.json");
+			
+			JSONObject jobj = new JSONObject();
+			for (Entry<Integer, Boolean> entry : this.isBusy.entrySet())
+			{
+				jobj.put(entry.getKey().toString(), entry.getValue());
+				
+			}
+			
+			fileOut.write(jobj.toString().getBytes());
+			fileOut.close();
+			
+			/*Marshaller marshaller = jaxbContext.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			marshaller.marshal(object, fileOut);*/
+		} catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		} catch (JSONException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
