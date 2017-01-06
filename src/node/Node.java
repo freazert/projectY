@@ -29,11 +29,11 @@ public class Node
 	private INodeRMI rmi;
 	// private DatagramSocket serverSocket;
 	private String name;
-        private boolean isBussy;
+	private boolean isBussy;
 	private List<String> ownerList;
 	private List<String> localList;
 	private List<FileFiche> FicheList;
-    public TreeMap<String, Boolean> SystemList;
+	public TreeMap<String, Boolean> SystemList;
 	private boolean mapUpdate;
 	private String serverIP = "192.168.1.16";
 	private String folderString = "C:" + File.separator + "nieuwe map";
@@ -46,12 +46,16 @@ public class Node
 	{
 		return localList;
 	}
-    public List<String> getOwnerList()
-    {
-        return ownerList;
-    }
 
-    public void addFileFiche(FileFiche fiche) {FicheList.add(fiche);}
+	public List<String> getOwnerList()
+	{
+		return ownerList;
+	}
+
+	public void addFileFiche(FileFiche fiche)
+	{
+		FicheList.add(fiche);
+	}
 
 	public void addLocalList(String fileName)
 	{
@@ -76,33 +80,34 @@ public class Node
 	 */
 	public Node(String name, INodeRMI rmi)
 	{
-            try {
-                this.ownerList = new ArrayList<String>();
-                this.localList = new ArrayList<String>();
-                this.name = name;
-                this.mapUpdate = false;
-                this.sHandler = new SocketHandler(TCP_PORT, UDP_PORT, MULTICAST_PORT);
-                
-                
-                isBussy =false;
-                this.sHandler.startServerSocket();
-                
-                /*
-                * ListenToCmdThread cmd = new ListenToCmdThread(this); cmd.start();
-                */
-                MulticastClient mc = new MulticastClient(this, this.sHandler);
-                
-                mc.multicastStart(name);
-                
-                this.rmi = rmi;
-                this.initNodes();
-                printNodes();
-                
-                rmi.setbusy(this.getCurrent(),true);
-                new StartupThread(rmi, this, this.sHandler).start();
-            } catch (RemoteException ex) {
-                Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
-            }
+		try
+		{
+			this.ownerList = new ArrayList<String>();
+			this.localList = new ArrayList<String>();
+			this.name = name;
+			this.mapUpdate = true;
+			this.sHandler = new SocketHandler(TCP_PORT, UDP_PORT, MULTICAST_PORT);
+
+			isBussy = false;
+			this.sHandler.startServerSocket();
+
+			/*
+			 * ListenToCmdThread cmd = new ListenToCmdThread(this); cmd.start();
+			 */
+			MulticastClient mc = new MulticastClient(this, this.sHandler);
+
+			mc.multicastStart(name);
+
+			this.rmi = rmi;
+			this.initNodes();
+			printNodes();
+
+			rmi.setbusy(this.getCurrent(), false);
+			new StartupThread(rmi, this, this.sHandler).start();
+		} catch (RemoteException ex)
+		{
+			Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
+		}
 	}
 
 	// Getters
@@ -116,9 +121,15 @@ public class Node
 		return this.prevNode;
 	}
 
-	public TreeMap<String, Boolean> getSystemList() { return this.SystemList; }
+	public TreeMap<String, Boolean> getSystemList()
+	{
+		return this.SystemList;
+	}
 
-    public void updateSystemList(TreeMap<String, Boolean> newList) { this.SystemList = newList; }
+	public void updateSystemList(TreeMap<String, Boolean> newList)
+	{
+		this.SystemList = newList;
+	}
 
 	public String getFolderString()
 	{
@@ -239,7 +250,8 @@ public class Node
 
 			DatagramSocket socket = this.sHandler.getUdpSocket();
 
-			if(size == 1) {
+			if (size == 1)
+			{
 				this.nextNode = this.myNode;
 				this.prevNode = this.myNode;
 			}
@@ -399,12 +411,12 @@ public class Node
 			this.myNode = this.rmi.getCurrent(name);
 			this.prevNode = this.rmi.getPrevious(name);
 			this.nextNode = this.rmi.getNext(name);
-                        
-                        if(this.myNode == this.prevNode && this.myNode  == this.nextNode )
-                        {
-                            this.isBussy = true;
-                        }
-                        
+
+			if (this.myNode == this.prevNode && this.myNode == this.nextNode)
+			{
+				this.isBussy = true;
+			}
+
 		} catch (RemoteException e)
 		{
 			e.printStackTrace();
@@ -439,7 +451,7 @@ public class Node
 				|| this.myNode == this.nextNode)
 		{
 			this.nextNode = hash;
-                        sendFilesToNewNode();
+			sendFilesToNewNode();
 		}
 	}
 
@@ -539,39 +551,61 @@ public class Node
 	/**
 	 * TODO: schrap files die verstuurd zijn.
 	 */
-    private void sendFilesToNewNode() {
-    	System.out.println("send file to new node");
-        List<File> filesToSend = new ArrayList<>();
-        for(String file : this.ownerList)
-        {
-        	System.out.println("filename: " + file);
-            //try {
-                //if( this.myNode  != rmi.getFileNode(this.rmi.getHash(file)))
-                //{
-                	System.out.println(file + " added");
-                    filesToSend.add(new File("C:\\nieuwe map\\" + file));
-                //}
-                
-                    
-            //} catch (RemoteException ex) {
-            //    Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
-            //}
-        }
-        System.out.println("send files - list made");
-        this.sendFiles(filesToSend);
-    }
+	private void sendFilesToNewNode()
+	{
+		System.out.println("send file to new node");
+		List<File> filesToSend = new ArrayList<>();
+		for (String file : this.ownerList)
+		{
+			System.out.println("filename: " + file);
+			// try {
+			// if( this.myNode != rmi.getFileNode(this.rmi.getHash(file)))
+			// {
+			System.out.println(file + " added");
+			filesToSend.add(new File("C:\\nieuwe map\\" + file));
+			// }
 
-    void removeOwnerList(String name) {
-        this.ownerList.remove(name);
-    }
+			// } catch (RemoteException ex) {
+			// Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null,
+			// ex);
+			// }
+		}
+		System.out.println("send files - list made");
+		try
+		{
+			while(this.rmi.getBusyState(this.nextNode)) {
+				try
+				{
+					Thread.sleep(1000);
+				} catch (InterruptedException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			this.sendFiles(filesToSend);
+		} catch (RemoteException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 
-    boolean getBusyState() {
-    	return this.isBussy;
-    }
+	void removeOwnerList(String name)
+	{
+		this.ownerList.remove(name);
+	}
 
-    void setBussy(boolean b) {
-        this.isBussy = b;
-    }
+	boolean getBusyState()
+	{
+		return this.isBussy;
+	}
+
+	void setBussy(boolean b)
+	{
+		this.isBussy = b;
+	}
 
 	public boolean checkBusyState()
 	{
