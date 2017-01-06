@@ -130,11 +130,11 @@ public class TCPReceive
 		 */
 		//bytesRead = is.read(bytearray, 0, bytearray.length);
 		do {
-			System.out.println("gunna read");
+			//System.out.println("gunna read");
 			bytesRead = is.read(bytearray, 0, filesize);
-			System.out.println(currentTot);
+			System.out.println(currentTot + "B read");
 			bos.write(bytearray, 0, bytesRead);
-			System.out.println("bytesWritten");
+			//System.out.println("bytesWritten");
 			//;
 			//Thread.sleep(100);
 			if (bytesRead > 0)
@@ -142,7 +142,7 @@ public class TCPReceive
 			else break;
 		} while (currentTot < size);
 		System.out.println("bytes: " + currentTot);
-		System.out.println(new String(bytearray));
+		//System.out.println(new String(bytearray));
 
 		//bos.write(bytearray, 0, bytearray.length);
 

@@ -54,10 +54,11 @@ public class SendFileThread extends Thread {
                     System.out.println("filesize_: " + file.length() );
 
                     int hash = rmi.getHash(name);
-                    if (ip.equals(rmi.getIp(this.node.getCurrent()))) {
+                    System.out.println(node.shutting_down);
+                    if (node.shutting_down || ip.equals(rmi.getIp(this.node.getCurrent()))) {
                         ip = rmi.getIp(this.node.getPrev());
                     }
-                    if (!ip.equals(rmi.getIp(this.node.getCurrent()))) {
+                    if (node.shutting_down || !ip.equals(rmi.getIp(this.node.getCurrent()))) {
                         InetAddress IPAddress = InetAddress.getByName(ip);
 
                         while (rmi.getFileNode(hash) != node.getCurrent() && this.rmi.getBusyState(rmi.getFileNode(hash)))
@@ -79,7 +80,7 @@ public class SendFileThread extends Thread {
 
                         // receive
                         TCPSend sendFile = new TCPSend(this.sHandler);
-                        sendFile.send(file.getName());
+                        sendFile.send(file);
                         this.node.removeOwnerList(file.getName());
                         node.setMapUpdate(false);
                         
