@@ -9,7 +9,7 @@ import java.io.File;
 
 public class FileListAgent implements Runnable, Serializable {
     private TreeMap<String, Boolean> newSystemFileList;
-    Node node;
+    private Node node;
 
     public FileListAgent(Node node) {
         newSystemFileList = new TreeMap<>();
