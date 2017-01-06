@@ -85,7 +85,7 @@ public class SendFileThread extends Thread {
                         this.node.removeOwnerList(file.getName());
                         
                         
-                        this.rmi.setbusy(node.getCurrent(), false);
+                        
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -95,6 +95,14 @@ public class SendFileThread extends Thread {
                         e1.printStackTrace();
                     }
                 }
+                try
+				{
+					this.rmi.setbusy(node.getCurrent(), false);
+				} catch (RemoteException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
 
             //this.node.setBussy(false);
