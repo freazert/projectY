@@ -57,6 +57,14 @@ public class TCPReceive
 	{
 		System.out.println("receive file started.");
 		System.out.println(ip);
+		try
+		{
+			Thread.sleep(10);
+		} catch (InterruptedException e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		this.sHandler.startReceiveTCPSocket(ip);
 		// Socket socket = new Socket(ip, this.socketPort);
 		try
@@ -108,7 +116,7 @@ public class TCPReceive
 
 		byte[] bytearray = new byte[filesize];
 		
-		Thread.sleep(2000);
+		//Thread.sleep(2000);
 		InputStream is = this.sHandler.getReceiveTCPSocket().getInputStream();
 		FileOutputStream fos = new FileOutputStream(filePath + name);
 		BufferedOutputStream bos = new BufferedOutputStream(fos);
