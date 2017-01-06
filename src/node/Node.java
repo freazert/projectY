@@ -85,7 +85,7 @@ public class Node
 			this.ownerList = new ArrayList<String>();
 			this.localList = new ArrayList<String>();
 			this.name = name;
-			this.mapUpdate = true;
+			
 			this.sHandler = new SocketHandler(TCP_PORT, UDP_PORT, MULTICAST_PORT);
 
 			isBussy = false;
@@ -100,9 +100,16 @@ public class Node
 
 			this.rmi = rmi;
 			this.initNodes();
+			if(this.myNode == this.nextNode && this.myNode == this.prevNode) {
+				this.mapUpdate = true;
+				rmi.setbusy(this.getCurrent(), false);
+			} else {
+				this.mapUpdate = false;
+				rmi.setbusy(this.getCurrent(), true);
+			}
 			printNodes();
 
-			rmi.setbusy(this.getCurrent(), false);
+			
 			new StartupThread(rmi, this, this.sHandler).start();
 		} catch (RemoteException ex)
 		{
