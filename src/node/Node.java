@@ -428,10 +428,18 @@ public class Node
 			if (this.myNode == this.prevNode && this.myNode == this.nextNode)
 			{
 				this.isBussy = true;
+				AgentStarter runAgent = new AgentStarter(this);
+				FileListAgent fileAgent = new FileListAgent(this);
+
+				runAgent.startFileAgent(fileAgent);
 			}
 
 		} catch (RemoteException e)
 		{
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (NotBoundException e) {
 			e.printStackTrace();
 		}
 	}
