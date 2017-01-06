@@ -26,6 +26,7 @@ public class CheckFolderThread extends Thread
 	{
 		while (true)
 		{
+			if(!node.is_receiving) {
 			File folder = new File(this.folderString);
 			File[] listOfFiles = folder.listFiles();
 			List<File> newFiles = new ArrayList<File>();
@@ -44,6 +45,7 @@ public class CheckFolderThread extends Thread
 			if (newFiles.size() != 0)
 				System.out.println("sendfiles");
 				node.sendFiles(newFiles);
+			}
 			try
 			{
 				Thread.sleep(this.refreshMs);

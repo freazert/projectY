@@ -60,19 +60,17 @@ public class SendFileThread extends Thread {
                     if (!ip.equals(rmi.getIp(this.node.getCurrent()))) {
                         InetAddress IPAddress = InetAddress.getByName(ip);
 
-                        while (this.rmi.getBusyState(rmi.getFileNode(hash)))
+                        while (rmi.getFileNode(hash) != node.getCurrent() && this.rmi.getBusyState(rmi.getFileNode(hash)))
                         {
                             try {
                                 System.out.println("bussy");
+                                //this.rmi.
                                 Thread.sleep(1000);
                             } catch (InterruptedException ex) {
                                 Logger.getLogger(SendFileThread.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
                         node.setMapUpdate(true);
-            
-                        
-                        
                         this.rmi.setbusy(node.getCurrent(), true);
 
                         String jsonString = createJsonString(file.getName(), file.length());
@@ -83,7 +81,7 @@ public class SendFileThread extends Thread {
                         TCPSend sendFile = new TCPSend(this.sHandler);
                         sendFile.send(file.getName());
                         this.node.removeOwnerList(file.getName());
-                        
+                        node.setMapUpdate(false);
                         
                         
                     }
@@ -95,19 +93,19 @@ public class SendFileThread extends Thread {
                         e1.printStackTrace();
                     }
                 }
-                try
-				{
-					this.rmi.setbusy(node.getCurrent(), false);
-				} catch (RemoteException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+                
             }
-
+            try
+			{
+				this.rmi.setbusy(node.getCurrent(), false);
+			} catch (RemoteException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             //this.node.setBussy(false);
             sHandler.stopSendFile();
-            node.setMapUpdate(false);
+            
         }
 
     }

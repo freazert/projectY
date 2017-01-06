@@ -30,6 +30,15 @@ public class StartupThread extends Thread
 		
 		ReceiveUDPThread rft = new ReceiveUDPThread(this.node, this.sHandler);
                 rft.start();
+                
+                /*try
+				{
+					Thread.sleep(10000);
+				} catch (InterruptedException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}*/
                 new CheckFolderThread(this.node, 10000, this.node.getFolderString()).start();
 		//new ReceiveInfoThread(this.node, this.sHandler).start();
 		new FailureThread(this.node, rmi).start();
