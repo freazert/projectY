@@ -87,7 +87,7 @@ public class Node
 			this.name = name;
 			
 			this.sHandler = new SocketHandler(TCP_PORT, UDP_PORT, MULTICAST_PORT);
-
+			this.mapUpdate = false;
 			isBussy = false;
 			this.sHandler.startServerSocket();
 
@@ -99,14 +99,15 @@ public class Node
 			mc.multicastStart(name);
 
 			this.rmi = rmi;
+			
 			this.initNodes();
-			if(this.myNode == this.nextNode && this.myNode == this.prevNode) {
-				this.mapUpdate = true;
-				rmi.setbusy(this.getCurrent(), false);
-			} else {
-				this.mapUpdate = false;
-				rmi.setbusy(this.getCurrent(), true);
-			}
+			//if(this.myNode == this.nextNode && this.myNode == this.prevNode) {
+			rmi.setbusy(this.getCurrent(), true);
+				
+			//} else {
+				//this.mapUpdate = false;
+				//rmi.setbusy(this.getCurrent(), true);
+			//}
 			printNodes();
 
 			
