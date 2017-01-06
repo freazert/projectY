@@ -35,7 +35,7 @@ public class TCPSend
 		// this.connectedSocket = new Socket(6789);
 		this.sHandler = sHandler;
 		this.filePath = "C:" + File.separator + "nieuwe map" + File.separator;
-		System.out.println("creating");
+		//System.out.println("creating");
 
 	}
 
@@ -53,7 +53,7 @@ public class TCPSend
 		DataOutputStream outToClient;
 		Socket socket;
 
-		System.out.println("waiting for accept");
+		System.out.print("\nwaiting for accept...\n");
                 this.sHandler.startServerSocket();
 		ServerSocket sSocket = this.sHandler.getServerSocket();
 		sSocket.setSoTimeout(60000);
@@ -67,7 +67,7 @@ public class TCPSend
 		InputStream is = socket.getInputStream();
 
 		File transferFile = file;//new File(fullName);
-		System.out.println("Received: " + fullName);
+		System.out.println("Sending: " + fullName);
 
 		if (transferFile.exists())
 		{
@@ -121,7 +121,7 @@ public class TCPSend
 		/// OutputStream os = socket.getOutputStream();
 
 		// send file
-		System.out.println("Sending Files...");
+		//System.out.println("Sending Files...");
 		outToClient.write(bytearray, 0, bytearray.length);
 		outToClient.flush();
 		fin.close();

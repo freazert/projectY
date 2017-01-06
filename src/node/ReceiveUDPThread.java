@@ -35,7 +35,7 @@ public class ReceiveUDPThread extends Thread {
     public void run() {
         while (true) {
             try {
-            	System.out.print("ok");
+            	//System.out.print("ok");
                 while (true || !node.isMapUpdate()) {
 
                    
@@ -53,7 +53,7 @@ public class ReceiveUDPThread extends Thread {
                 e.printStackTrace();
             }
             
-    System.out.println("lol");
+    //System.out.println("lol");
         }
         
     }

@@ -7,9 +7,13 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.SocketException;
+import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +49,8 @@ public class Node
 	
 	public boolean is_receiving = false;
 	public boolean shutting_down = false;
+	private AgentStarter agentStarter;
+	private FileListAgent fileAgent;
 
 	public List<String> getLocalList()
 	{
@@ -103,8 +109,21 @@ public class Node
 			mc.multicastStart(name);
 
 			this.rmi = rmi;
+		
 			
 			this.initNodes();
+			this.agentStarter = new AgentStarter(this, this.rmi);
+			Registry registry = LocateRegistry.createRegistry(this.myNode + 10000);
+			try
+			{
+				registry.bind("AgentStarter", (Remote) agentStarter);
+				System.out.println("agent rmi startup");
+			} catch (AlreadyBoundException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			this.fileAgent = new FileListAgent(this);
 			//if(this.myNode == this.nextNode && this.myNode == this.prevNode) {
 			rmi.setbusy(this.getCurrent(), false);
 				
@@ -424,24 +443,23 @@ public class Node
 			this.myNode = this.rmi.getCurrent(name);
 			this.prevNode = this.rmi.getPrevious(name);
 			this.nextNode = this.rmi.getNext(name);
+			
+			
+			
 
-			if (this.myNode == this.prevNode && this.myNode == this.nextNode)
+			/*if (this.myNode == this.prevNode && this.myNode == this.nextNode)
 			{
 				this.isBussy = true;
-				AgentStarter runAgent = new AgentStarter(this);
+				AgentStarter runAgent = new AgentStarter(this, this.rmi);
 				FileListAgent fileAgent = new FileListAgent(this);
 
 				runAgent.startFileAgent(fileAgent);
-			}
+			}*/
 
 		} catch (RemoteException e)
 		{
 			e.printStackTrace();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (NotBoundException e) {
-			e.printStackTrace();
-		}
+		} 
 	}
 
 	/**
@@ -468,11 +486,30 @@ public class Node
 	 */
 	private void setNext(int hash)
 	{
+		int oldNode = this.nextNode;
 		if ((hash < this.nextNode && hash > this.myNode) || (this.myNode > this.nextNode && hash < this.nextNode)
 				|| this.myNode == this.nextNode)
 		{
 			this.nextNode = hash;
 			sendFilesToNewNode();
+			if(oldNode == this.myNode) {
+				try
+				{
+					this.agentStarter.startFileAgent(this.fileAgent);
+				} catch (RemoteException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (MalformedURLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NotBoundException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 

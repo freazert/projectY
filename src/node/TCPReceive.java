@@ -56,7 +56,7 @@ public class TCPReceive
 	public void receiveFile(String ip, String name, int size) throws IOException
 	{
 		System.out.println("receive file started.");
-		System.out.println(ip);
+		//System.out.println(ip);
 		try
 		{
 			Thread.sleep(10);
@@ -120,7 +120,7 @@ public class TCPReceive
 		InputStream is = this.sHandler.getReceiveTCPSocket().getInputStream();
 		FileOutputStream fos = new FileOutputStream(filePath + name);
 		BufferedOutputStream bos = new BufferedOutputStream(fos);
-		System.out.println("bytearray length: " + bytearray.length);
+		//System.out.println("bytearray length: " + bytearray.length);
 		// bytesRead = is.read(bytearray, 0, bytearray.length);
 		currentTot = 0;// 0bytesRead;
 		/**
@@ -132,7 +132,7 @@ public class TCPReceive
 		do {
 			//System.out.println("gunna read");
 			bytesRead = is.read(bytearray, 0, filesize);
-			System.out.println(currentTot + "B read");
+			//System.out.println(currentTot + "B read");
 			bos.write(bytearray, 0, bytesRead);
 			//System.out.println("bytesWritten");
 			//;
