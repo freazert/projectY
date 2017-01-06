@@ -46,10 +46,10 @@ public class TCPSend
 	 *            the name of the file that needs to be sent.
 	 * @throws IOException
 	 */
-	public void send(String fileName) throws IOException
+	public void send(File file) throws IOException
 	{
-		String fullName = this.filePath + fileName;
-		System.out.print(fullName);
+		String fullName = file.getAbsolutePath();
+		System.out.print(file.getName());
 		DataOutputStream outToClient;
 		Socket socket;
 
@@ -66,7 +66,7 @@ public class TCPSend
 
 		InputStream is = socket.getInputStream();
 
-		File transferFile = new File(fullName);
+		File transferFile = file;//new File(fullName);
 		System.out.println("Received: " + fullName);
 
 		if (transferFile.exists())

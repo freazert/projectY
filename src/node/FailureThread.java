@@ -34,22 +34,25 @@ public class FailureThread extends Thread
 		{
 			try
 			{
-				int nextNode = node.getNext();
-				InetAddress inet = InetAddress.getByName(nodeRMI.getIp(nextNode));
-				boolean reachable = inet.isReachable(10000);
-				System.out.print(reachable);
+				if (!node.shutting_down)
+				{
+					int nextNode = node.getNext();
+					InetAddress inet = InetAddress.getByName(nodeRMI.getIp(nextNode));
+					boolean reachable = inet.isReachable(10000);
+					System.out.print(reachable);
 
-				if (!reachable)
-				{
-					node.failure(nextNode);
-				}
+					if (!reachable)
+					{
+						node.failure(nextNode);
+					}
 
-				try
-				{
-					Thread.sleep(10000);
-				} catch (InterruptedException ex)
-				{
-					Logger.getLogger(FailureThread.class.getName()).log(Level.SEVERE, null, ex);
+					try
+					{
+						Thread.sleep(10000);
+					} catch (InterruptedException ex)
+					{
+						Logger.getLogger(FailureThread.class.getName()).log(Level.SEVERE, null, ex);
+					}
 				}
 			} catch (IOException ex)
 			{

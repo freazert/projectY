@@ -37,12 +37,14 @@ public class Node
 	private boolean mapUpdate;
 	private String serverIP = "192.168.1.16";
 	private String folderString = "C:" + File.separator + "nieuwe map";
+	private String receiveString = "C:" + File.separator + "receive";
 	private SocketHandler sHandler;
 	private final int UDP_PORT = 6789;
 	private final int MULTICAST_PORT = 4446;
 	private final int TCP_PORT = 5555;
 	
 	public boolean is_receiving = false;
+	public boolean shutting_down = false;
 
 	public List<String> getLocalList()
 	{
@@ -216,6 +218,7 @@ public class Node
 			System.out.println("shutting down");
 
 			rmi.removeNode(this.myNode);
+			this.shutting_down = true;
 			if (rmi.getHmapSize() > 0)
 			{
 
@@ -479,7 +482,7 @@ public class Node
 		for (String filename : this.ownerList)
 		{
 			System.out.println(filename);
-			File f = new File(folderString + File.separator + filename);
+			File f = new File(this.receiveString + File.separator + filename);
 			if (f.isFile())
 			{
 				System.out.println("addFile");
@@ -490,6 +493,7 @@ public class Node
 		SendFileThread sft = new SendFileThread(files, this.rmi, this, this.sHandler);
 		sft.start();
 		sft.join();
+		System.out.println("shutdown sent complete");
 	}
 
 	/**
