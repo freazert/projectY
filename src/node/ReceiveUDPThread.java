@@ -95,7 +95,7 @@ public class ReceiveUDPThread extends Thread {
 
         String type = jobj.getString("type");
         System.out.println("type: " + type);
-        switch (type) {
+        switch (type) { 
             case "file":
                 System.out.println("receive file");
                 TCPReceive receive = new TCPReceive(node, this.sHandler);
