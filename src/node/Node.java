@@ -104,7 +104,7 @@ public class Node
 			
 			this.initNodes();
 			//if(this.myNode == this.nextNode && this.myNode == this.prevNode) {
-			rmi.setbusy(this.getCurrent(), true);
+			rmi.setbusy(this.getCurrent(), false);
 				
 			//} else {
 				//this.mapUpdate = false;

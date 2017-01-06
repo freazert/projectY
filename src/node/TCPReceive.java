@@ -112,7 +112,7 @@ public class TCPReceive
 	{
 		int bytesRead;
 		int currentTot = 0;
-		int filesize = size;
+		int filesize = 1000000;
 
 		byte[] bytearray = new byte[filesize];
 		
@@ -128,15 +128,23 @@ public class TCPReceive
 		 * 
 		 * glue parts of bigger files together.
 		 */
-		// do {
-		bytesRead = is.read(bytearray, currentTot, (filesize - currentTot));
-		if (bytesRead >= 0)
-			currentTot += bytesRead;
-		// } while (bytesRead > -1);
+		//bytesRead = is.read(bytearray, 0, bytearray.length);
+		do {
+			System.out.println("gunna read");
+			bytesRead = is.read(bytearray, 0, filesize);
+			System.out.println(currentTot);
+			bos.write(bytearray, 0, bytesRead);
+			System.out.println("bytesWritten");
+			//;
+			//Thread.sleep(100);
+			if (bytesRead > 0)
+				currentTot += bytesRead;
+			else break;
+		} while (currentTot < size);
 		System.out.println("bytes: " + currentTot);
 		System.out.println(new String(bytearray));
 
-		bos.write(bytearray, 0, bytearray.length);
+		//bos.write(bytearray, 0, bytearray.length);
 
 		node.addOwnerList(name);
 
