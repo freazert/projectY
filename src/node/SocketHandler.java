@@ -1,6 +1,7 @@
 package node;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.DatagramSocket;
 import java.net.MulticastSocket;
 import java.net.ServerSocket;
@@ -8,7 +9,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-public class SocketHandler
+public class SocketHandler implements Serializable
 {
 	private DatagramSocket udpSocket;
 	private DatagramSocket udpInfoSocket;
