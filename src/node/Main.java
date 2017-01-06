@@ -7,7 +7,10 @@ import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.ServerNotActiveException;
 import java.util.Scanner;
 
@@ -39,6 +42,7 @@ public class Main
 		try
 		{
 			INodeRMI rmi = (INodeRMI) Naming.lookup("//" + SERVER_IP + "/nodeRMI");
+			
 			int success = 0;
 			String name = "";
 			Scanner sc = new Scanner(System.in);
