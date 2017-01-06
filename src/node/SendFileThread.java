@@ -72,7 +72,7 @@ public class SendFileThread extends Thread {
                         }
                         node.setMapUpdate(true);
                         this.rmi.setbusy(node.getCurrent(), true);
-
+                        node.is_receiving = true;
                         String jsonString = createJsonString(file.getName(), file.length());
                         System.out.print(jsonString);
                         sendUdp(jsonString, IPAddress);
@@ -104,6 +104,7 @@ public class SendFileThread extends Thread {
 				e.printStackTrace();
 			}
             //this.node.setBussy(false);
+            node.is_receiving = false;
             sHandler.stopSendFile();
             
         }
