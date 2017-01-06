@@ -14,6 +14,11 @@ public class AgentStarter extends UnicastRemoteObject implements INodeAgentRMI
 
 	INodeRMI rmi;
 	Node node;
+	
+	/**
+	 * serializable version.
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public AgentStarter(Node node, INodeRMI rmi) throws RemoteException
 	{
@@ -38,23 +43,27 @@ public class AgentStarter extends UnicastRemoteObject implements INodeAgentRMI
 		while (true)
 		{
 			// System.out.println("File Agent running!");
-			// if (!agentThread.isAlive()) {
-			// System.out.println("agentThread is not alive");
-			// node.updateSystemList(agent.getnewSystemFileList());
-			// return agent;
-			// }
-			// else {
-			// System.out.println("next node:" + rmi.getIp(node.getNext()));
-			if (node.getCurrent() != node.getNext())
+			if (!agentThread.isAlive())
 			{
-				INodeAgentRMI nextAgentRmi = (INodeAgentRMI) Naming.lookup("//" + rmi.getIp(node.getNext()) + "/AgentStarter");
+				System.out.println("agentThread is not alive");
+				node.updateSystemList(agent.getnewSystemFileList());
+				return agent;
+			} else
+			{
+				// System.out.println("next node:" + rmi.getIp(node.getNext()));
+				if (node.getCurrent() != node.getNext())
+				{
+					int nextNode = node.getNext() + 10000;
+					System.out.println(nextNode);
+					INodeAgentRMI nextAgentRmi = (INodeAgentRMI) Naming
+							.lookup("//" + rmi.getIp(node.getNext()) + "/AgentStarter");
 
-				FileListAgent nextAgent = nextAgentRmi.startFileAgent(agent);
-				System.out.println("File Agent moved to next node!");
-				startFileAgent(nextAgent);
+					FileListAgent nextAgent = nextAgentRmi.startFileAgent(agent);
+					System.out.println("File Agent moved to next node!");
+					startFileAgent(nextAgent);
 
+				}
 			}
-			// }
 			try
 			{
 				Thread.sleep(100);

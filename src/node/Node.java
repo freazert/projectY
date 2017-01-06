@@ -2,6 +2,7 @@ package node;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -26,8 +27,13 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Node
+public class Node implements Serializable
 {
+	
+	/**
+	 * serializable version.
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private int nextNode, prevNode, myNode;
 	private INodeRMI rmi;
@@ -113,10 +119,10 @@ public class Node
 			
 			this.initNodes();
 			this.agentStarter = new AgentStarter(this, this.rmi);
-			Registry registry = LocateRegistry.createRegistry(this.myNode + 10000);
+			Registry registry = LocateRegistry.createRegistry(1099);
 			try
 			{
-				registry.bind("AgentStarter", (Remote) agentStarter);
+				registry.bind("AgentStarter",  agentStarter);
 				System.out.println("agent rmi startup");
 			} catch (AlreadyBoundException e)
 			{
