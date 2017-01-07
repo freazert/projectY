@@ -7,35 +7,83 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.ListModel;
 
+/**
+ * 
+ * Model Class responsible for handling the data.
+ * Contains the logic that does action with the files and the Node, fired from the Controller.
+ *
+ */
 public class Model {
 	
+	/**
+	 * This DefaultListModel lists all the files in the network.
+	 * This list of data is used in the JList's constructor, so when this data gets updated the JList gets updated to.
+	 * The data in this DefaultListModel should be updated with the observer pattern (NEEDS TO BE IMPLEMENTED STILL)
+	 * 
+	 */
 	private DefaultListModel listModel = new DefaultListModel();
-	JList list;
+	/**
+	 * The actual list of data that is displayed in the view's JScrollPane.
+	 * This JList gets instanciated with DefaultListModel listModel as constructor, and updated whenever the listModel gets updated.
+	 */
+	private JList list;
 
+	
+	/**
+	 * The constructor of the gui's Model ( M in MVC pattern ).
+	 * instanciates a Jlist with a DefaultListModel in it's constructor
+	 * fills the listmodel with data from c/nieuwe map > SHOULD BE OBSERVING THE AGENT's FILELIST
+	 */
 	public Model()
 	{
 		this.list = new JList(listModel);
 		fillListModel();
 	}
 
+	/**
+	 * Gets the DefaultListModel listModel data.
+	 * 
+	 * @return the DefaultListModel listModel
+	 */
 	public DefaultListModel getListModel() {
 		return listModel;
 	}
 
+	/**
+	 * Sets the Model's DefaultListModel listModel to param data.
+	 * 
+	 * @param listModel
+	 * 					The new DefaultListModel data.
+	 * 
+	 */
 	public void setListModel(DefaultListModel listModel) {
 		this.listModel = listModel;
 	}
 	
+	
+	/**
+	 * Gets the JList list data.
+	 * 
+	 * @return The JList list.
+	 */
 	public JList getList() {
 		return list;
 	}
-
+	/**
+	 * Sets the Model's JList list to param data.
+	 * 
+	 * @param list
+	 * 				The new JList data.
+	 */
 	public void setList(JList list) {
 		this.list = list;
 	}
 	
 	
-
+	/**
+	 * Fills the DefaultListModel listModel.
+	 * Currently with files from "c:/nieuwe map" > SHOULD BE FILLED WITH FILEFICHES FROM AGENT.
+	 */
 	public void fillListModel()
 	{
 		File directory = new File("c:/nieuwe map");
@@ -54,11 +102,17 @@ public class Model {
 
 	}
 
+	/**
+	 * Empties the DefaultListModel listModel.
+	 */
 	public void emptyListModel()
 	{
 		listModel.removeAllElements();
 	}
 	
+	/**
+	 * Refreshes the DefaultListModel listModel.
+	 */
 	public void refreshListModel()
 	{
 		emptyListModel();
@@ -67,7 +121,9 @@ public class Model {
 	
 	
 	
-
+	/**
+	 * Opens a selected file
+	 */
 	public void openSelected(){
 		File file = (File) list.getSelectedValue();
 		try
@@ -81,6 +137,9 @@ public class Model {
 		}
 	}
 	
+	/**
+	 * Removes a selected file locally
+	 */
 	public void removeSelected(){
 		File file = null;
 		String path = null;
@@ -90,6 +149,9 @@ public class Model {
 		listModel.removeElementAt(list.getSelectedIndex());
 	}
 	
+	/**
+	 * SHOULD DOWNLOAD SELECTED FILE
+	 */
 	public void downloadSelected(){
 		File _file = (File) list.getSelectedValue();
 		int _index = list.getSelectedIndex();
