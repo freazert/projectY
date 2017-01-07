@@ -14,7 +14,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.ServerNotActiveException;
 import java.util.Scanner;
 
-import gui.GUIView;
+import gui.GUI;
 import interfaces.INodeRMI;
 
 public class Main
@@ -66,8 +66,8 @@ public class Main
 
 			Node node = new Node(name, rmi);
 
-			// GUIView gui_view = new GUIView(name);
-			// gui_view.setVisible(true);
+			//GUI gui = new GUI();
+			
 			//MulticastClient mc = new MulticastClient(node);
 			while (true)
 			{
