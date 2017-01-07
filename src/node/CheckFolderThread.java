@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import gui.GUIController;
-import gui.GUIModel;
 
 public class CheckFolderThread extends Thread
 {
@@ -38,8 +36,8 @@ public class CheckFolderThread extends Thread
 					System.out.println(listOfFiles[i].getName());
 					newFiles.add(listOfFiles[i]);
 					node.addOwnerList(listOfFiles[i].getName());
-					GUIController gui_controller = new GUIController();
-					gui_controller.refreshList(this.folderString);
+					//GUIController gui_controller = new GUIController();
+					//gui_controller.refreshList(this.folderString);
 				}
 			}
 			if (newFiles.size() != 0)

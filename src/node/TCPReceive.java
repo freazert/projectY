@@ -3,9 +3,6 @@ package node;
 import java.io.*;
 import java.net.Socket;
 
-import gui.GUIController;
-import gui.GUIModel;
-
 public class TCPReceive
 {
 	/**
@@ -150,8 +147,8 @@ public class TCPReceive
 
 		bos.flush();
 		bos.close();
-		GUIController gui_controller = new GUIController();
-		gui_controller.refreshList(filePath);
+		//GUIController gui_controller = new GUIController();
+		//gui_controller.refreshList(filePath);
 	}
 
 }
