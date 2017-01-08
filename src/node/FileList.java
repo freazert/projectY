@@ -5,23 +5,40 @@ import java.util.List;
 import java.util.Observable;
 import java.util.TreeMap;
 
-public class FileList extends Observable implements Serializable {
-
+public class FileList  extends Observable implements Serializable  {
     private TreeMap<String, Boolean> newSystemFileList;
-
-    public FileList() {
-        newSystemFileList = new TreeMap<String, Boolean>();
+    
+    
+    public FileList(){ }
+    
+    public TreeMap<String, Boolean> getFileList()
+    {
+    	return newSystemFileList;
     }
+    
 
-    public TreeMap<String, Boolean> getFileList() {
-        return newSystemFileList;
-    }
 
-    public void addLocalFileList(String file) {
-        newSystemFileList.put(file, false);
-        
-        setChanged(); //mark the observable as change
-        notifyObservers(newSystemFileList);
-        System.out.println("\nSET newSystemFileList: " + newSystemFileList);
+
+
+    
+    public void setFileList(Node node){
+    	 List <String> local = node.getLocalList();
+         List <String> owner = node.getOwnerList();
+         for (int i = 0; i<local.size(); i++)
+         {
+        	  if(newSystemFileList!=null){
+                  if(!newSystemFileList.containsKey(local.get(i)))
+                  {
+                      newSystemFileList.put(local.get(i), false);
+                  }       		  
+        	  }
+        	  else{
+        		  newSystemFileList = new TreeMap<String, Boolean>(); 
+                  newSystemFileList.put(local.get(i), false);
+        	  }
+         }
+     	 setChanged(); //mark the observable as change
+     	 notifyObservers(newSystemFileList);
+         System.out.println("\nSET newSystemFileList: "+newSystemFileList);
     }
 }

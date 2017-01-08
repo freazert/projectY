@@ -47,18 +47,18 @@ public class Main
 			String name = "";
 			Scanner sc = new Scanner(System.in);
 
-			//while (success <= 0)
-			//{
-			//	System.out.println("Enter name of the new node: ");
+			while (success <= 0)
+			{
+				System.out.println("Enter name of the new node: ");
 				
 				name = sc.nextLine();
 				success = rmi.createNode(name);
-			//	if (success == 0) {
-			//		System.out.println("This name is already taken, please choose another.");
-			//	} else {
-			//		System.out.println("Node added succesfully.");
-			//	}
-			//}
+				if (success == 0) {
+					System.out.println("This name is already taken, please choose another.");
+				} else {
+					System.out.println("Node added succesfully.");
+				}
+			}
 			
 			/*System.out.println("verwijderen node met naam " + name + ", status: " + rmi.removeNode(rmi.getHash(name)));
 			System.out.println("verwijderen node met naam alfred, status: " + rmi.removeNode(rmi.getHash("alfred")));
