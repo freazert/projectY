@@ -9,27 +9,21 @@ import java.io.File;
 
 public class FileListAgent implements Runnable, Serializable {
     private TreeMap<String, Boolean> newSystemFileList;
-    private Node node;
+    private FileList fileList;
 
-    public FileListAgent(Node node) {
-        newSystemFileList = new TreeMap<>();
-        this.node = node;
+    public FileListAgent(FileList fileList) {
+        this.newSystemFileList = new TreeMap<>();
+        this.fileList = fileList;
     }
 
     public void run() {
-        List <String> local = node.getLocalList();
-        List <String> owner = node.getOwnerList();
+    	newSystemFileList = fileList.getFileList();
+    	//System.out.println("\n\nRUN getFileList()>"+newSystemFileList);
 
-        for (int i = 0; i<local.size(); i++)
-        {
-            if(!newSystemFileList.containsKey(local.get(i)))
-            {
-                newSystemFileList.put(local.get(i), false);
-            }
-        }
     }
 
     public TreeMap<String, Boolean> getnewSystemFileList() {
+    	//System.out.println("\n\ngetnewSystemFileList()>"+newSystemFileList);
         return newSystemFileList;
     }
 }

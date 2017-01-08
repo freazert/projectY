@@ -50,18 +50,25 @@ public class AgentStarter extends UnicastRemoteObject implements INodeAgentRMI
 				return agent;
 			} else
 			{
+				System.out.println("\n\nagentThread is  alive");
 				// System.out.println("next node:" + rmi.getIp(node.getNext()));
 				if (node.getCurrent() != node.getNext())
 				{
+					System.out.println("node.getcurrent() !=  node.getNext !");
 					int nextNode = node.getNext() + 10000;
-					System.out.println(nextNode);
+					System.out.println("next node:" + nextNode);
 					INodeAgentRMI nextAgentRmi = (INodeAgentRMI) Naming
 							.lookup("//" + rmi.getIp(node.getNext()) + "/AgentStarter");
-
+					System.out.println("START file agent, nextAgentRmi= "+nextAgentRmi);
 					FileListAgent nextAgent = nextAgentRmi.startFileAgent(agent);
 					System.out.println("File Agent moved to next node!");
 					startFileAgent(nextAgent);
 
+				}
+				else{
+					System.out.println("node.getcurrent() ==  node.getNext");
+					System.out.println("node.getCurrent="+node.getCurrent());
+					System.out.println("node.getNext="+node.getNext());
 				}
 			}
 			try
