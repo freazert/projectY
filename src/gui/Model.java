@@ -1,11 +1,17 @@
 package gui;
 
 import java.io.File;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.TreeMap;
 
 import javax.accessibility.AccessibleContext;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.ListModel;
+
+import node.FileList;
 
 /**
  * 
@@ -13,7 +19,10 @@ import javax.swing.ListModel;
  * Contains the logic that does action with the files and the Node, fired from the Controller.
  *
  */
-public class Model {
+public class Model implements Observer{
+
+	private FileList fileList;
+	private TreeMap<String, Boolean> treeMap;
 	
 	/**
 	 * This DefaultListModel lists all the files in the network.
@@ -34,11 +43,22 @@ public class Model {
 	 * instanciates a Jlist with a DefaultListModel in it's constructor
 	 * fills the listmodel with data from c/nieuwe map > SHOULD BE OBSERVING THE AGENT's FILELIST
 	 */
-	public Model()
+	public Model(FileList fileList)
 	{
 		this.list = new JList(listModel);
+		this.fileList = fileList;
+		this.treeMap = new TreeMap<String,Boolean>();
 		fillListModel();
 	}
+	
+	
+	
+	@Override
+	public
+	void update(Observable o, Object arg){
+		refreshListModel();
+	}	
+	
 
 	/**
 	 * Gets the DefaultListModel listModel data.
@@ -86,8 +106,19 @@ public class Model {
 	 */
 	public void fillListModel()
 	{
-		File directory = new File("c:/nieuwe map");
-		File[] fList = directory.listFiles();
+		treeMap = fileList.getFileList();
+		if(treeMap!=null){
+			for(Map.Entry<String, Boolean> entry : treeMap.entrySet())
+			{
+				System.out.println("Key: "+entry.getKey()+". Value: " + entry.getValue());
+				listModel.addElement(entry.getKey());
+
+			}			
+		}
+
+		
+		/*File directory = new File("c:/nieuwe map");
+		File[] fList = FileList fileList.listFiles();
 
 		if (fList != null && fList.length > 0)
 		{
@@ -98,7 +129,7 @@ public class Model {
 					listModel.addElement(file);
 				}
 			}
-		}
+		}*/
 
 	}
 
