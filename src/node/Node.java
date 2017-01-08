@@ -21,6 +21,7 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import gui.GUI;
 import interfaces.INodeRMI;
 
 import java.util.TreeMap;
@@ -141,6 +142,8 @@ public class Node implements Serializable
 				//rmi.setbusy(this.getCurrent(), true);
 			//}
 			printNodes();
+			
+			GUI gui = new GUI(fileList);
 
 			
 			new StartupThread(rmi, this, this.sHandler).start();

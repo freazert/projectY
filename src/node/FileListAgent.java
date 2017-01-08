@@ -4,10 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Observable;
 import java.util.TreeMap;
 import java.io.File;
 
-public class FileListAgent implements Runnable, Serializable {
+public class FileListAgent  implements Runnable, Serializable{
     private TreeMap<String, Boolean> newSystemFileList;
     private FileList fileList;
 
@@ -18,8 +19,9 @@ public class FileListAgent implements Runnable, Serializable {
 
     public void run() {
     	newSystemFileList = fileList.getFileList();
-    	//System.out.println("\n\nRUN getFileList()>"+newSystemFileList);
 
+    	
+    	//System.out.println("\n\nRUN getFileList()>"+newSystemFileList);
     }
 
     public TreeMap<String, Boolean> getnewSystemFileList() {
