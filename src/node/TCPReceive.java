@@ -35,7 +35,7 @@ public class TCPReceive
 	public TCPReceive(Node node, SocketHandler sHandler)
 	{
 		this.filePath = "c:" + File.separator + "receive" + File.separator;
-		//this.filePath = File.separator + "Users" + File.separator + "kevinvdm" + File.separator + "systemwhy";
+		//this.filePath = File.separator + "Users" + File.separator + "kevinvdm" + File.separator + "systemwhy" + File.separator;
 		this.sHandler = sHandler;
 		this.node = node;
 	}
