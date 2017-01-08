@@ -48,9 +48,9 @@ public class Node implements Serializable
 	private boolean mapUpdate;
 	private String serverIP = "192.168.1.16";
 	private String folderString = "C:" + File.separator + "nieuwe map";
-	//private String folderString = File.separator + "Users" + File.separator + "kevinvdm" + File.separator + "systemwhy";
+	//private String folderString = File.separator + "Users" + File.separator + "kevinvdm" + File.separator + "systemwhy" + File.separator;
 	private String receiveString = "C:" + File.separator + "receive";
-	//private String receiveString = File.separator + "Users" + File.separator + "kevinvdm" + File.separator + "systemwhy";
+	//private String receiveString = File.separator + "Users" + File.separator + "kevinvdm" + File.separator + "systemwhy" + File.separator;
 
 	private SocketHandler sHandler;
 	private final int UDP_PORT = 6789;
@@ -76,6 +76,7 @@ public class Node implements Serializable
 	public void addFileFiche(FileFiche fiche)
 	{
 		FicheList.add(fiche);
+		System.out.println(FicheList);
 	}
 
 	public void addLocalList(String fileName)
