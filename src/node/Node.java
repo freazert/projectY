@@ -31,7 +31,7 @@ public class Node implements Serializable
 {
 	
 	/**
-	 * serializable version.
+	 * serializable version.	
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -42,7 +42,7 @@ public class Node implements Serializable
 	private boolean isBussy;
 	private List<String> ownerList;
 	private List<String> localList;
-	private List<FileFiche> FicheList;
+//	private List<FileFiche> FicheList;
 	public TreeMap<String, Boolean> SystemList;
 	private boolean mapUpdate;
 	private String serverIP = "192.168.1.16";
@@ -57,6 +57,7 @@ public class Node implements Serializable
 	public boolean shutting_down = false;
 	private AgentStarter agentStarter;
 	private FileListAgent fileAgent;
+	private FileList fileList;
 
 	public List<String> getLocalList()
 	{
@@ -68,10 +69,10 @@ public class Node implements Serializable
 		return ownerList;
 	}
 
-	public void addFileFiche(FileFiche fiche)
+	/*public void addFileFiche(FileFiche fiche)
 	{
 		FicheList.add(fiche);
-	}
+	}*/
 
 	public void addLocalList(String fileName)
 	{
@@ -100,6 +101,7 @@ public class Node implements Serializable
 		{
 			this.ownerList = new ArrayList<String>();
 			this.localList = new ArrayList<String>();
+			this.fileList = new FileList();
 			this.name = name;
 			
 			this.sHandler = new SocketHandler(TCP_PORT, UDP_PORT, MULTICAST_PORT);
@@ -129,7 +131,8 @@ public class Node implements Serializable
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			this.fileAgent = new FileListAgent(this);
+			 //het probleem is dat op dit moment de localList en ownerList van de node nog niet gevuld zijn
+			this.fileAgent = new FileListAgent(fileList);
 			//if(this.myNode == this.nextNode && this.myNode == this.prevNode) {
 			rmi.setbusy(this.getCurrent(), false);
 				
@@ -192,6 +195,8 @@ public class Node implements Serializable
 	{
 		return this.myNode;
 	}
+
+
 
 	// Setters
 	/**
@@ -393,6 +398,11 @@ public class Node implements Serializable
 	{
 		this.localList.add(name);
 		this.ownerList.add(name);
+		setFileList();
+	}
+	
+	public void setFileList(){
+		this.fileList.setFileList(this);
 	}
 
 	/**

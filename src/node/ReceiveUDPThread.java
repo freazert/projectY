@@ -39,7 +39,7 @@ public class ReceiveUDPThread extends Thread {
                 while (true || !node.isMapUpdate()) {
 
                    
-                    System.out.println("receiveUDPThread run");
+                    //System.out.println("receiveUDPThread run");
                     DatagramPacket data = getData();
                     String ip = data.getAddress().getHostAddress();
 
@@ -67,10 +67,10 @@ public class ReceiveUDPThread extends Thread {
     private DatagramPacket getData() throws IOException {
         byte[] receiveData = new byte[10240];
 
-        System.out.println("rft receiveUDP");
+        //System.out.println("rft receiveUDP");
 
         DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-        System.out.println("waiting for udp receive");
+        //System.out.println("waiting for udp receive");
         sHandler.getUdpSocket().receive(receivePacket);
 
         System.out.println("UDP received");
