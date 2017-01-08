@@ -43,12 +43,15 @@ public class Node implements Serializable
 	private boolean isBussy;
 	private List<String> ownerList;
 	private List<String> localList;
-//	private List<FileFiche> FicheList;
+	private List<FileFiche> FicheList;
 	public TreeMap<String, Boolean> SystemList;
 	private boolean mapUpdate;
 	private String serverIP = "192.168.1.16";
 	private String folderString = "C:" + File.separator + "nieuwe map";
+	//private String folderString = File.separator + "Users" + File.separator + "kevinvdm" + File.separator + "systemwhy";
 	private String receiveString = "C:" + File.separator + "receive";
+	//private String receiveString = File.separator + "Users" + File.separator + "kevinvdm" + File.separator + "systemwhy";
+
 	private SocketHandler sHandler;
 	private final int UDP_PORT = 6789;
 	private final int MULTICAST_PORT = 4446;
@@ -70,10 +73,10 @@ public class Node implements Serializable
 		return ownerList;
 	}
 
-	/*public void addFileFiche(FileFiche fiche)
+	public void addFileFiche(FileFiche fiche)
 	{
 		FicheList.add(fiche);
-	}*/
+	}
 
 	public void addLocalList(String fileName)
 	{
@@ -641,6 +644,7 @@ public class Node implements Serializable
 			// {
 			System.out.println(file + " added");
 			filesToSend.add(new File("C:\\nieuwe map\\" + file));
+			//filesToSend.add(new File(File.separator + "Users" + File.separator + "kevinvdm" + File.separator + "systemwhy" + file));
 			// }
 
 			// } catch (RemoteException ex) {

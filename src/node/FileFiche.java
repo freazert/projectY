@@ -6,7 +6,7 @@ import java.util.List;
 public class FileFiche {
 
     private String fileName;
-    private List<Integer> locationList;
+    private List<Integer> locationList = new ArrayList<Integer>();
     private int ownerId;
     private String ownerIp;
 
@@ -15,8 +15,6 @@ public class FileFiche {
         this.fileName = name;
         this.ownerId = id;
         this.ownerIp = ip;
-
-       locationList = new ArrayList<Integer>(); 
         
         locationList.add(id);
     }

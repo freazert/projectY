@@ -35,6 +35,7 @@ public class TCPSend
 		// this.connectedSocket = new Socket(6789);
 		this.sHandler = sHandler;
 		this.filePath = "C:" + File.separator + "nieuwe map" + File.separator;
+		//this.filePath = File.separator + "Users" + File.separator + "kevinvdm" + File.separator + "systemwhy";
 		//System.out.println("creating");
 
 	}
