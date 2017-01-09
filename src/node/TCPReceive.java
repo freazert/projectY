@@ -3,6 +3,9 @@ package node;
 import java.io.*;
 import java.net.Socket;
 
+/**
+ * The method to receive data over TCP.
+ */
 public class TCPReceive
 {
 	/**
@@ -29,13 +32,16 @@ public class TCPReceive
 	/**
 	 * The constructor method for the TCP receive.
 	 * 
-	 * @param node The node that will receive the file.
-	 * @param sHandler The object that maintains all sockets
+	 * @param node
+	 *            The node that will receive the file.
+	 * @param sHandler
+	 *            The object that maintains all sockets
 	 */
 	public TCPReceive(Node node, SocketHandler sHandler)
 	{
 		this.filePath = "c:" + File.separator + "receive" + File.separator;
-		//this.filePath = File.separator + "Users" + File.separator + "kevinvdm" + File.separator + "systemwhy" + File.separator;
+		// this.filePath = File.separator + "Users" + File.separator +
+		// "kevinvdm" + File.separator + "systemwhy" + File.separator;
 		this.sHandler = sHandler;
 		this.node = node;
 	}
@@ -49,12 +55,13 @@ public class TCPReceive
 	 *            the name of the file.
 	 * @param size
 	 *            the size of the file.
-	 * @throws IOException Something went wrong while reading the file.
+	 * @throws IOException
+	 *             Something went wrong while reading the file.
 	 */
 	public void receiveFile(String ip, String name, int size) throws IOException
 	{
 		System.out.println("receive file started.");
-		//System.out.println(ip);
+		// System.out.println(ip);
 		try
 		{
 			Thread.sleep(10);
@@ -76,15 +83,17 @@ public class TCPReceive
 		}
 
 		this.sHandler.stopSendFile();
-		node.is_receiving = false;
+		node.isReceiving = false;
 	}
 
 	/**
 	 * Create connection and receive filename.
 	 * 
-	 * @param socket The socket used to connect
+	 * @param socket
+	 *            The socket used to connect
 	 * @return the data written to the socket
-	 * @throws IOException something went wrong while reading the data.
+	 * @throws IOException
+	 *             something went wrong while reading the data.
 	 */
 	private String connect(Socket socket) throws IOException
 	{
@@ -104,7 +113,8 @@ public class TCPReceive
 	 *            The size of the file.
 	 * @param name
 	 *            The name of the file.
-	 * @throws Exception There went something wrong while receiving the file.
+	 * @throws Exception
+	 *             There went something wrong while receiving the file.
 	 */
 	private void getFile(String name, int size) throws Exception
 	{
@@ -113,54 +123,29 @@ public class TCPReceive
 		int filesize = 1000000;
 
 		byte[] bytearray = new byte[filesize];
-		
-		//Thread.sleep(2000);
+
 		InputStream is = this.sHandler.getReceiveTCPSocket().getInputStream();
 		FileOutputStream fos = new FileOutputStream(filePath + name);
 		BufferedOutputStream bos = new BufferedOutputStream(fos);
-		//System.out.println("bytearray length: " + bytearray.length);
-		// bytesRead = is.read(bytearray, 0, bytearray.length);
 		currentTot = 0;// 0bytesRead;
-		/**
-		 * TODO: bigger files.
-		 * 
-		 * glue parts of bigger files together.
-		 */
-		//bytesRead = is.read(bytearray, 0, bytearray.length);
-		do {
-			//System.out.println("gunna read");
+		do
+		{
 			bytesRead = is.read(bytearray, 0, filesize);
-			//System.out.println(currentTot + "B read");
-			//System.out.print("\nNew local File discovered: ");
-			System.out.print("BYTEARRAY: "+bytearray);
-			System.out.print("1");
-			System.out.print("1");
-
-			System.out.print("bytesRead: "+bytesRead);
-			System.out.print("3");
-			System.out.print("4");
 
 			bos.write(bytearray, 0, bytesRead);
 			System.out.print("bos.write ok");
 
-			//System.out.println("bytesWritten");
-			//;
-			//Thread.sleep(100);
 			if (bytesRead > 0)
 				currentTot += bytesRead;
-			else break;
+			else
+				break;
 		} while (currentTot < size);
 		System.out.println("bytes: " + currentTot);
-		//System.out.println(new String(bytearray));
-
-		//bos.write(bytearray, 0, bytearray.length);
 
 		node.addOwnerList(name);
 
 		bos.flush();
 		bos.close();
-		//GUIController gui_controller = new GUIController();
-		//gui_controller.refreshList(filePath);
 	}
 
 }

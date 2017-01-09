@@ -17,6 +17,9 @@ import java.util.Scanner;
 import gui.GUI;
 import interfaces.INodeRMI;
 
+/**
+ * The static class used to run the node side of the project.
+ */
 public class Main
 {
 	/**
@@ -24,25 +27,24 @@ public class Main
 	 */
 	private static String SERVER_IP = "192.168.1.16";
 
-	public static void main(String args[]) throws MalformedURLException, RemoteException, NotBoundException
+	/**
+	 * The first function that is ran by the user.
+	 * 
+	 * @param args
+	 *            all the arguments given in the console
+	 * @throws MalformedURLException
+	 *             Something went wrong while forming the RMI url.
+	 * @throws RemoteException
+	 *             Something went wrong while conecting to the server.
+	 */
+	public static void main(String args[]) throws MalformedURLException, RemoteException
 	{
-
 		System.setProperty("java.net.preferIPv4Stack", "true");
 
-		/*
-		 * String name; if(args.length > 0) { name = args[0]; } else { name =
-		 * "noName"; } IWrapper obj = (IWrapper) Naming.lookup("//" +
-		 * "192.168.1.16" + "/hash"); // objectname
-		 * 
-		 * System.out.println("connected"); //obj.createNode(name, ip) // in
-		 * //obj.createNode(name); String ip = obj.getFileNode("lalala");
-		 * System.out.println(ip); boolean test = ping(ip); if(test) {
-		 * System.out.println("yowza"); }
-		 */
 		try
 		{
 			INodeRMI rmi = (INodeRMI) Naming.lookup("//" + SERVER_IP + "/nodeRMI");
-			
+
 			int success = 0;
 			String name = "";
 			Scanner sc = new Scanner(System.in);
@@ -50,47 +52,26 @@ public class Main
 			while (success <= 0)
 			{
 				System.out.println("Enter name of the new node: ");
-				
+
 				name = sc.nextLine();
 				success = rmi.createNode(name);
-				if (success == 0) {
+				if (success == 0)
+				{
 					System.out.println("This name is already taken, please choose another.");
-				} else {
+				} else
+				{
 					System.out.println("Node added succesfully.");
 				}
 			}
-			
-			/*System.out.println("verwijderen node met naam " + name + ", status: " + rmi.removeNode(rmi.getHash(name)));
-			System.out.println("verwijderen node met naam alfred, status: " + rmi.removeNode(rmi.getHash("alfred")));
-			*/
 
 			Node node = new Node(name, rmi);
 
-			//GUI gui = new GUI();
-			
-			//MulticastClient mc = new MulticastClient(node);
-			while (true)
-			{
-				String cmd;
-				// System.out.println("waiting for the cmd...");
-				while (!sc.hasNextLine())
-				{
-					// System.out.println("noooooz");
-				}
-
-				cmd = sc.nextLine();
-				System.out.println("ciao bello");
-				node.shutdown();
-
-				// } catch (Exception e) {
-				// e.printStackTrace(arg0);
-				// }
-			}
+			listenForInput(node, sc);
 		} catch (MalformedURLException | RemoteException | NotBoundException e)
 		{
 			// failure();
 			e.printStackTrace();
-		}  catch (ServerNotActiveException e)
+		} catch (ServerNotActiveException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -139,6 +120,34 @@ public class Main
 		 * // System.out.print(ip);
 		 * 
 		 */
+	}
+
+	/**
+	 * Listen for input in the command line.
+	 * 
+	 * @param node
+	 *            The node that runs the project.
+	 * @param sc
+	 *            The reader object for the command line.
+	 */
+	private static void listenForInput(Node node, Scanner sc)
+	{
+		while (true)
+		{
+			String cmd;
+			while (!sc.hasNextLine())
+			{
+				// System.out.println("noooooz");
+			}
+
+			cmd = sc.nextLine();
+			System.out.println("ciao bello");
+			node.shutdown();
+
+			// } catch (Exception e) {
+			// e.printStackTrace(arg0);
+			// }
+		}
 	}
 
 }

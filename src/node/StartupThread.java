@@ -1,22 +1,38 @@
 package node;
 
-import java.io.File;
-import java.util.List;
-
 import interfaces.INodeRMI;
 
+/**
+ * Startup the basics for running the node.
+ */
 public class StartupThread extends Thread
 {
-
-	private List<File> files;
+	/**
+	 * The remote method invocation object to connect to the server.
+	 */
 	private INodeRMI rmi;
+	/**
+	 * The node that is running the project.
+	 */
 	private Node node;
+	/**
+	 * The object that maintains all socket information.
+	 */
 	private SocketHandler sHandler;
 
+	/**
+	 * The constructor method for the startup thread
+	 * 
+	 * @param rmi
+	 *            the remote method invocation object to connect to the server.
+	 * @param node
+	 *            The node thatis runing the project.
+	 * @param sHandler
+	 *            The object that maintains all socket information.
+	 */
 	public StartupThread(INodeRMI rmi, Node node, SocketHandler sHandler)
 	{
 		this.sHandler = sHandler;
-		this.files = files;
 		this.rmi = rmi;
 		this.node = node;
 	}
@@ -24,24 +40,10 @@ public class StartupThread extends Thread
 	@Override
 	public void run()
 	{
-		// SendFileThread sft = new SendFileThread(files, rmi, node);
-		// sft.start();
-		// sft.join();
-		
 		ReceiveUDPThread rft = new ReceiveUDPThread(this.node, this.sHandler);
-                rft.start();
-                
-                /*try
-				{
-					Thread.sleep(10000);
-				} catch (InterruptedException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}*/
-                new CheckFolderThread(this.node, 10000, this.node.getFolderString()).start();
-		//new ReceiveInfoThread(this.node, this.sHandler).start();
+		rft.start();
+
+		new CheckFolderThread(this.node, 10000, this.node.getFolderString()).start();
 		new FailureThread(this.node, rmi).start();
 	}
-
 }

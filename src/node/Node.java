@@ -9,9 +9,7 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.rmi.AlreadyBoundException;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -30,75 +28,112 @@ import java.util.logging.Logger;
 
 public class Node implements Serializable
 {
-	
+
 	/**
-	 * serializable version.	
+	 * serializable version.
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * The nodes known to the current node.
+	 */
 	private int nextNode, prevNode, myNode;
+	/**
+	 * The remote method invocation object.
+	 */
 	private INodeRMI rmi;
-	// private DatagramSocket serverSocket;
+	/**
+	 * The name of the node.
+	 */
 	private String name;
-	private boolean isBussy;
+	/**
+	 * The state of the node.
+	 */
+	private boolean isBusy;
+	/**
+	 * A list of files of which the current node is the owner.
+	 */
 	private List<String> ownerList;
+	/**
+	 * A list of files that the current node has locally.
+	 */
 	private List<String> localList;
+	/**
+	 * A list of file fiches of all the files in in systemY known to the current
+	 * node
+	 */
 	private List<FileFiche> FicheList;
+	/**
+	 * A Treemap representation of all the files in systemY known to the current
+	 * node, with the locked state of each file.
+	 */
 	public TreeMap<String, Boolean> SystemList;
-	private boolean mapUpdate;
+	/**
+	 * The state of the system.
+	 */
+	private boolean isMapUpdating;
+	/**
+	 * A string representation of the ip address of the server.
+	 */
 	private String serverIP = "192.168.1.16";
+	/**
+	 * The folder to check for new files.
+	 */
 	private String folderString = "C:" + File.separator + "nieuwe map";
-	//private String folderString = File.separator + "Users" + File.separator + "kevinvdm" + File.separator + "systemwhy" + File.separator;
+	// private String folderString = File.separator + "Users" + File.separator +
+	// "kevinvdm" + File.separator + "systemwhy" + File.separator;
+	/**
+	 * The folder that holds the downloaded files.
+	 */
 	private String receiveString = "C:" + File.separator + "receive";
-	//private String receiveString = File.separator + "Users" + File.separator + "kevinvdm" + File.separator + "systemwhy" + File.separator;
+	// private String receiveString = File.separator + "Users" + File.separator
+	// + "kevinvdm" + File.separator + "systemwhy" + File.separator;
 
+	/**
+	 * The object that maintains all the objects.
+	 */
 	private SocketHandler sHandler;
+	/**
+	 * The port number for UDP communication.
+	 */
 	private final int UDP_PORT = 6789;
+	/**
+	 * The port number for multicast communication.
+	 */
 	private final int MULTICAST_PORT = 4446;
+	/**
+	 * The port number for TCP communication.
+	 */
 	private final int TCP_PORT = 5555;
-	
-	public boolean is_receiving = false;
-	public boolean shutting_down = false;
+	/**
+	 * the current receiving state.
+	 */
+	public boolean isReceiving = false;
+	/**
+	 * the current shutdown state.
+	 */
+	public boolean isShuttingDown = false;
+	/**
+	 * The object that maintains the agents
+	 */
 	private AgentStarter agentStarter;
+	/**
+	 * The file agent.
+	 */
 	private FileListAgent fileAgent;
+	/**
+	 * A list of all the files in the system.
+	 */
 	private FileList fileList;
-
-	public List<String> getLocalList()
-	{
-		return localList;
-	}
-
-	public List<String> getOwnerList()
-	{
-		return ownerList;
-	}
-
-	public void addFileFiche(FileFiche fiche)
-	{
-		FicheList.add(fiche);
-		System.out.println(FicheList);
-	}
-
-	public void addLocalList(String fileName)
-	{
-		localList.add(fileName);
-	}
-
-	public synchronized boolean isMapUpdate()
-	{
-		return this.mapUpdate;
-	}
-
-	public synchronized void setMapUpdate(boolean mapUpdate)
-	{
-		this.mapUpdate = mapUpdate;
-	}
 
 	/**
 	 * The constructor method node.
 	 *
 	 * @param name
 	 *            the agentname of the node.
+	 * @param rmi
+	 *            the remote method invocation object to converse with the
+	 *            server.
 	 */
 	public Node(String name, INodeRMI rmi)
 	{
@@ -108,48 +143,45 @@ public class Node implements Serializable
 			this.localList = new ArrayList<String>();
 			this.fileList = new FileList();
 			this.name = name;
-			
+
 			this.sHandler = new SocketHandler(TCP_PORT, UDP_PORT, MULTICAST_PORT);
-			this.mapUpdate = false;
-			isBussy = false;
+			this.isMapUpdating = false;
+			isBusy = false;
 			this.sHandler.startServerSocket();
 
-			/*
-			 * ListenToCmdThread cmd = new ListenToCmdThread(this); cmd.start();
-			 */
 			MulticastClient mc = new MulticastClient(this, this.sHandler);
 
 			mc.multicastStart(name);
 
 			this.rmi = rmi;
-		
-			
-			this.initNodes();
+
+			this.initNodes(name);
 			this.agentStarter = new AgentStarter(this, this.rmi);
 			Registry registry = LocateRegistry.createRegistry(1099);
 			try
 			{
-				registry.bind("AgentStarter",  agentStarter);
+				registry.bind("AgentStarter", agentStarter);
 				System.out.println("agent rmi startup");
 			} catch (AlreadyBoundException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			 //het probleem is dat op dit moment de localList en ownerList van de node nog niet gevuld zijn
+			// het probleem is dat op dit moment de localList en ownerList van
+			// de node nog niet gevuld zijn
 			this.fileAgent = new FileListAgent(fileList);
-			//if(this.myNode == this.nextNode && this.myNode == this.prevNode) {
+			// if(this.myNode == this.nextNode && this.myNode == this.prevNode)
+			// {
 			rmi.setbusy(this.getCurrent(), false);
-				
-			//} else {
-				//this.mapUpdate = false;
-				//rmi.setbusy(this.getCurrent(), true);
-			//}
+
+			// } else {
+			// this.mapUpdate = false;
+			// rmi.setbusy(this.getCurrent(), true);
+			// }
 			printNodes();
-			
+
 			GUI gui = new GUI(fileList);
 
-			
 			new StartupThread(rmi, this, this.sHandler).start();
 		} catch (RemoteException ex)
 		{
@@ -158,6 +190,37 @@ public class Node implements Serializable
 	}
 
 	// Getters
+
+	/**
+	 * Get the list of files that this node has locally
+	 * 
+	 * @return the local list.
+	 */
+	public List<String> getLocalList()
+	{
+		return localList;
+	}
+
+	/**
+	 * Get the list of which this node is the owner.
+	 * 
+	 * @return the owner list.
+	 */
+	public List<String> getOwnerList()
+	{
+		return ownerList;
+	}
+
+	/**
+	 * The state of updating the file lists.
+	 * 
+	 * @return The state of updating the file list of this node.
+	 */
+	public synchronized boolean isMapUpdating()
+	{
+		return this.isMapUpdating;
+	}
+
 	/**
 	 * Get previous node.
 	 *
@@ -168,16 +231,21 @@ public class Node implements Serializable
 		return this.prevNode;
 	}
 
+	/**
+	 * Get the list of files on the system.
+	 * 
+	 * @return the system list.
+	 */
 	public TreeMap<String, Boolean> getSystemList()
 	{
 		return this.SystemList;
 	}
 
-	public void updateSystemList(TreeMap<String, Boolean> newList)
-	{
-		this.SystemList = newList;
-	}
-
+	/**
+	 * Get the folder where is checked for new files.
+	 * 
+	 * @return the folder in a string representation.
+	 */
 	public String getFolderString()
 	{
 		return this.folderString;
@@ -203,9 +271,52 @@ public class Node implements Serializable
 		return this.myNode;
 	}
 
-
-
 	// Setters
+	/**
+	 * Update the list of all files in the system.
+	 * 
+	 * @param newList
+	 *            the list to merge with.
+	 */
+	public void updateSystemList(TreeMap<String, Boolean> newList)
+	{
+		this.SystemList = newList;
+	}
+
+	/**
+	 * Add a file fiche to the fiche list.
+	 * 
+	 * @param fiche
+	 *            the file ficheof the new file.
+	 */
+	public void addFileFiche(FileFiche fiche)
+	{
+		FicheList.add(fiche);
+		System.out.println(FicheList);
+	}
+
+	/**
+	 * Add filename to the local list.
+	 * 
+	 * @param fileName
+	 *            the filename of the new file.
+	 */
+	public void addLocalList(String fileName)
+	{
+		localList.add(fileName);
+	}
+
+	/**
+	 * Set if the map is updating or not.
+	 * 
+	 * @param mapUpdate
+	 *            the state.
+	 */
+	public synchronized void setMapUpdating(boolean mapUpdate)
+	{
+		this.isMapUpdating = mapUpdate;
+	}
+
 	/**
 	 * set previous and next node when a new connection is made, using the name
 	 * of the new node.
@@ -232,11 +343,23 @@ public class Node implements Serializable
 		printNodes();
 	}
 
+	/**
+	 * Set the new next node.
+	 * 
+	 * @param hash
+	 *            the hashed value of the next node name.
+	 */
 	public void setNextNode(int hash)
 	{
 		this.nextNode = hash;
 	}
 
+	/**
+	 * Set the new previous node.
+	 * 
+	 * @param hash
+	 *            the hashed value of the previous node name.
+	 */
 	public void setPrevNode(int hash)
 	{
 		this.prevNode = hash;
@@ -255,7 +378,7 @@ public class Node implements Serializable
 			System.out.println("shutting down");
 
 			rmi.removeNode(this.myNode);
-			this.shutting_down = true;
+			this.isShuttingDown = true;
 			if (rmi.getHmapSize() > 0)
 			{
 
@@ -285,6 +408,9 @@ public class Node implements Serializable
 	/**
 	 * Next node fails. notify server and next + previous node of this change.
 	 * reinitialize own previous and next nodes.
+	 * 
+	 * @param failingNode
+	 *            the hashed value of the node name that is failing.
 	 */
 	public void failure(int failingNode)
 	{
@@ -338,56 +464,6 @@ public class Node implements Serializable
 
 	}
 
-	public void controlFiles()
-	{
-		// TODO Auto-generated method stub
-		for (String bestand : this.localList)
-		{
-			try
-			{
-				// <<<<<<< HEAD
-				if (this.rmi.getHash(this.rmi.getPrevIp(bestand)) == this.prevNode)
-				{
-
-				}
-				/*
-				 * ======= DatagramPacket packetNext, packetPrevious; IWrapper
-				 * obj = (IWrapper) Naming.lookup("//" + "192.168.1.15" +
-				 * "/hash"); obj.removeNode(this.myNode);
-				 * 
-				 * try { DatagramSocket socket = new DatagramSocket(4448);
-				 * 
-				 * String toSendPrev = "node gone, previous: " + this.prevNode;
-				 * byte[] bufPrev = new byte[toSendPrev.getBytes().length];
-				 * bufPrev = toSendPrev.getBytes();
-				 * 
-				 * packetNext = new DatagramPacket(bufPrev, bufPrev.length,
-				 * InetAddress.getByName(obj.getIp(this.nextNode)), 4448);
-				 * socket.send(packetNext);
-				 * 
-				 * String toSendNext = "node gone, next: " + this.nextNode;
-				 * byte[] bufNext = new byte[toSendNext.getBytes().length];
-				 * bufNext = toSendNext.getBytes();
-				 * 
-				 * packetPrevious = new DatagramPacket(bufNext, bufNext.length,
-				 * InetAddress.getByName(obj.getIp(this.prevNode)), 4448);
-				 * socket.send(packetPrevious); } catch
-				 * (java.net.SocketException e){ // ODO Auto-generated catch
-				 * block e.printStackTrace(); } catch(java.io.IOException e) {
-				 * // ODO Auto-generated catch block e.printStackTrace(); }
-				 * 
-				 * } catch (MalformedURLException e) { // ODO Auto-generated
-				 * catch block e.printStackTrace(); >>>>>>>
-				 * origin/feature/shutdown
-				 */
-			} catch (RemoteException e)
-			{
-				// failure();
-				e.printStackTrace();
-			}
-		}
-	}
-
 	/**
 	 * Send list of files.
 	 *
@@ -401,14 +477,24 @@ public class Node implements Serializable
 		sft.start();
 	}
 
+	/**
+	 * Add new file to both the owner and the local list.
+	 * 
+	 * @param name
+	 *            The name of the file.
+	 */
 	public void addOwnerList(String name)
 	{
 		this.localList.add(name);
 		this.ownerList.add(name);
 		setFileList();
 	}
-	
-	public void setFileList(){
+
+	/**
+	 * Set the file list
+	 */
+	public void setFileList()
+	{
 		this.fileList.setFileList(this);
 	}
 
@@ -458,31 +544,31 @@ public class Node implements Serializable
 
 	/**
 	 * Initialize nodes on startup.
+	 * 
+	 * @param name
+	 *            the name of the node
 	 */
-	private void initNodes()
+	private void initNodes(String name)
 	{
 		try
 		{
 			this.myNode = this.rmi.getCurrent(name);
 			this.prevNode = this.rmi.getPrevious(name);
 			this.nextNode = this.rmi.getNext(name);
-			
-			
-			
 
-			/*if (this.myNode == this.prevNode && this.myNode == this.nextNode)
-			{
-				this.isBussy = true;
-				AgentStarter runAgent = new AgentStarter(this, this.rmi);
-				FileListAgent fileAgent = new FileListAgent(this);
-
-				runAgent.startFileAgent(fileAgent);
-			}*/
+			/*
+			 * if (this.myNode == this.prevNode && this.myNode == this.nextNode)
+			 * { this.isBussy = true; AgentStarter runAgent = new
+			 * AgentStarter(this, this.rmi); FileListAgent fileAgent = new
+			 * FileListAgent(this);
+			 * 
+			 * runAgent.startFileAgent(fileAgent); }
+			 */
 
 		} catch (RemoteException e)
 		{
 			e.printStackTrace();
-		} 
+		}
 	}
 
 	/**
@@ -515,7 +601,8 @@ public class Node implements Serializable
 		{
 			this.nextNode = hash;
 			sendFilesToNewNode();
-			if(oldNode == this.myNode) {
+			if (oldNode == this.myNode)
+			{
 				try
 				{
 					this.agentStarter.startFileAgent(this.fileAgent);
@@ -632,6 +719,8 @@ public class Node implements Serializable
 
 	/**
 	 * TODO: schrap files die verstuurd zijn.
+	 * 
+	 * Start sending files to newly arrived node.
 	 */
 	private void sendFilesToNewNode()
 	{
@@ -645,7 +734,9 @@ public class Node implements Serializable
 			// {
 			System.out.println(file + " added");
 			filesToSend.add(new File("C:\\nieuwe map\\" + file));
-			//filesToSend.add(new File(File.separator + "Users" + File.separator + "kevinvdm" + File.separator + "systemwhy" + file));
+			// filesToSend.add(new File(File.separator + "Users" +
+			// File.separator + "kevinvdm" + File.separator + "systemwhy" +
+			// file));
 			// }
 
 			// } catch (RemoteException ex) {
@@ -656,7 +747,8 @@ public class Node implements Serializable
 		System.out.println("send files - list made");
 		try
 		{
-			while(this.rmi.getBusyState(this.nextNode)) {
+			while (this.rmi.getBusyState(this.nextNode))
+			{
 				try
 				{
 					Thread.sleep(1000);
@@ -672,28 +764,38 @@ public class Node implements Serializable
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
+	/**
+	 * Remove file from the owner list.
+	 * 
+	 * @param name
+	 *            The name of the file.
+	 */
 	void removeOwnerList(String name)
 	{
 		this.ownerList.remove(name);
 	}
 
+	/**
+	 * Get the state of the node
+	 * 
+	 * @return the busy state.
+	 */
 	boolean getBusyState()
 	{
-		return this.isBussy;
+		return this.isBusy;
 	}
 
-	void setBussy(boolean b)
+	/**
+	 * Set the busy state
+	 * 
+	 * @param isBusy
+	 *            the new busy state of the node.
+	 */
+	void setBusy(boolean isBusy)
 	{
-		this.isBussy = b;
+		this.isBusy = isBusy;
 	}
-
-	public boolean checkBusyState()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }

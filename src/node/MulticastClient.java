@@ -7,17 +7,37 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import org.json.*;
 
+/**
+ * Send username over the multicast and start running the listen on multicast
+ * thread.
+ */
 public class MulticastClient
 {
+	/**
+	 * The port used for multicasting.
+	 */
 	private static int portMulticasting = 4446;
-
-	private DatagramSocket socket;
+	/**
+	 * The group address of the multicast
+	 */
 	private String group = "230.2.2.3"; // group address
-	private DatagramSocket socketReceive;
-	private MulticastSocket multiSocket;
+	/**
+	 * The node that runs the project.
+	 */
 	private Node node;
+	/**
+	 * The object that maintains all sockets.
+	 */
 	private SocketHandler sHandler;
 
+	/**
+	 * The constructor method for the MulticastClient.
+	 * 
+	 * @param node
+	 *            The node that runs the project.
+	 * @param sHandler
+	 *            The object that maintains all sockets.
+	 */
 	public MulticastClient(Node node, SocketHandler sHandler)
 	{
 		this.node = node;
@@ -25,6 +45,12 @@ public class MulticastClient
 		sHandler.startMulticastSend();
 	}
 
+	/**
+	 * Send message to the multicast group.
+	 * 
+	 * @param name
+	 *            the name of the node.
+	 */
 	public void start(String name)
 	{
 		DatagramPacket packet;
@@ -41,17 +67,22 @@ public class MulticastClient
 			// socket.close();
 		} catch (IOException e)
 		{
-			
+
 			e.printStackTrace();
 		}
 	}
 
-	public MulticastRecieveThread multicastStart(String name)
+	/**
+	 * The method to start up the multicast send and when finished start the
+	 * multicast listen.
+	 * 
+	 * @param name
+	 *            the name of the node.
+	 */
+	public void multicastStart(String name)
 	{
 		try
 		{
-			// TODO Auto-generated method stub
-
 			JSONObject jobj = new JSONObject();
 			jobj.put("type", "new");
 			jobj.put("data", name);
@@ -61,17 +92,12 @@ public class MulticastClient
 			start(jobj.toString());
 
 			this.sHandler.startMulticastReceive();
-			// socket.close();
-
-			// multiSocket = new MulticastSocket(portMulticasting);
-
+			
 			new MulticastRecieveThread(group, this.node, this.sHandler).start();
 		} catch (Exception e)
 		{
-			
 			e.printStackTrace();
 		}
-		return null;
 	}
 
 }
