@@ -104,8 +104,8 @@ public class ReceiveUDPThread extends Thread {
                 int size = (int) jobj.getLong("size");
                 System.out.println("the name is: " + name);
                 receive.receiveFile(ip, name, size);
-                FileFiche fiche = new FileFiche(name, 2, ip); //voeg nieuwe filefiche toe --> ID VAN STURENDE NODE?
-                node.addFileFiche(fiche);
+               // FileFiche fiche = new FileFiche(name, 2, ip); //voeg nieuwe filefiche toe --> ID VAN STURENDE NODE?
+                //node.addFileFiche(fiche);
                 break;
             case "next":
                 this.node.setNextNode(jobj.getInt("data"));

@@ -131,7 +131,18 @@ public class TCPReceive
 			//System.out.println("gunna read");
 			bytesRead = is.read(bytearray, 0, filesize);
 			//System.out.println(currentTot + "B read");
+			//System.out.print("\nNew local File discovered: ");
+			System.out.print("BYTEARRAY: "+bytearray);
+			System.out.print("1");
+			System.out.print("1");
+
+			System.out.print("bytesRead: "+bytesRead);
+			System.out.print("3");
+			System.out.print("4");
+
 			bos.write(bytearray, 0, bytesRead);
+			System.out.print("bos.write ok");
+
 			//System.out.println("bytesWritten");
 			//;
 			//Thread.sleep(100);
