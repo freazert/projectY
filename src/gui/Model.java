@@ -156,28 +156,49 @@ public class Model implements Observer{
 	 * Opens a selected file
 	 */
 	public void openSelected(){
-		File file = (File) list.getSelectedValue();
-		try
+		String filePath = "c:\\nieuwe map\\"+(String)list.getSelectedValue();
+		File file = new File(filePath);
+		if(file.exists())
 		{
-			Runtime.getRuntime()
-					.exec(new String[] { "rundll32", "url.dll,FileProtocolHandler", file.getAbsolutePath() });
+			try
+			{
+				Runtime.getRuntime()
+						.exec(new String[] { "rundll32", "url.dll,FileProtocolHandler", file.getAbsolutePath() });
 
-		} catch (Exception e)
-		{
-			e.printStackTrace(System.err);
+			} catch (Exception e)
+			{
+				e.printStackTrace(System.err);
+			}		
 		}
+		else
+		{
+			System.out.println("\n\n\n File not available on this node. Implement DOWNLOAD first");
+			// Agent.lock(file);
+			//~~ File downloaded = Agent.download(file,nodeThatOwnsFile); //normale download zoals elke file, naar c:\nieuwe map voor checkFolderThread
+			// Agent.unlock(file);
+			
+			//Runtime.getRuntime().exec(new String[] { "rundll32", "url.dll,FileProtocolHandler", file.getAbsolutePath() });
+
+		}
+
 	}
 	
 	/**
 	 * Removes a selected file locally
 	 */
 	public void removeSelected(){
-		File file = null;
-		String path = null;
-		file = (File) list.getSelectedValue();
-		System.out.println("open file: "+file+"\t(absolute path: "+file.getAbsolutePath()+")");
-		file.delete();
-		listModel.removeElementAt(list.getSelectedIndex());
+		String filePath = "c:\\nieuwe map\\"+(String)list.getSelectedValue();
+		File file = new File(filePath);
+		if(file.exists())
+		{
+			file.delete();
+			listModel.removeElementAt(list.getSelectedIndex());			
+		}
+		else{
+			System.out.println("\n\n\n File not available on this node. Implement  remote deleting of files (by agent?/owner?) first");
+			
+		}
+
 	}
 	
 	/**

@@ -24,32 +24,37 @@ public class CheckFolderThread extends Thread
 	{
 		while (true)
 		{
-			if(!node.is_receiving) {
-			File folder = new File(this.folderString);
-			File[] listOfFiles = folder.listFiles();
-			List<File> newFiles = new ArrayList<File>();
-			for (int i = 0; i < listOfFiles.length; i++)
-			{
-				if (listOfFiles[i].isFile() && !node.getLocalList().contains(listOfFiles[i].getName()))
+			//if(!node.is_receiving) {
+				System.out.print("[CheckFolder]");
+				File folder = new File(this.folderString);
+				File[] listOfFiles = folder.listFiles();
+				List<File> newFiles = new ArrayList<File>();
+				for (int i = 0; i < listOfFiles.length; i++)
 				{
-					System.out.print("\nNew local File discovered: ");
-					System.out.println(listOfFiles[i].getName());
-					newFiles.add(listOfFiles[i]);
-					node.addOwnerList(listOfFiles[i].getName());
-					//GUIController gui_controller = new GUIController();
-					//gui_controller.refreshList(this.folderString);
+					if (listOfFiles[i].isFile() && !node.getLocalList().contains(listOfFiles[i].getName()))
+					{
+						System.out.print("\nNew local File discovered: ");
+						System.out.println(listOfFiles[i].getName());
+						newFiles.add(listOfFiles[i]);
+						node.addOwnerList(listOfFiles[i].getName());
+						//GUIController gui_controller = new GUIController();
+						//gui_controller.refreshList(this.folderString);
+					}
 				}
-			}
-			if (newFiles.size() != 0)
-				System.out.println("sendfiles");
-				node.sendFiles(newFiles);
-			}
+				if (newFiles.size() != 0){
+					System.out.println("sendfiles");
+					node.sendFiles(newFiles);
+				}
+			//}
+			/*else{
+				System.out.print("[nod.receiving]");
+			}*/
 			try
 			{
 				Thread.sleep(this.refreshMs);
 			} catch (InterruptedException e)
 			{
-				// TODO Auto-generated catch block
+				System.out.print("checkfolderthread.sleep exception!");
 				e.printStackTrace();
 			}
 

@@ -78,6 +78,9 @@ public class NodeRMI extends UnicastRemoteObject implements INodeRMI
 	@Override
 	public String getIp(int hash) throws RemoteException
 	{
+		System.out.print("NodeRMI.getIP(int hash)");
+		System.out.print("hash: "+hash);
+		System.out.print("this.hashmap.getIP(hash): "+this.hashmap.getIp(hash));
 		return this.hashmap.getIp(hash);
 	}
 
