@@ -16,87 +16,103 @@ import interfaces.INodeRMI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SendFileThread extends Thread {
+/**
+ * Send list of files to the right owner.
+ */
+public class SendFileThread extends Thread
+{
 
-    private List<File> files;
-    private INodeRMI rmi;
-    private Node node;
-    ServerSocket serverSocket;
-    private SocketHandler sHandler;
+	private List<File> files;
+	private INodeRMI rmi;
+	private Node node;
+	ServerSocket serverSocket;
+	private SocketHandler sHandler;
 
-    /**
-     * The constructor method for the SendFileThread.
-     *
-     * @param files List of files to be sent
-     * @param rmi the remote method invocation object used to communicate with
-     * the nameServer.
-     * @param node the node that sends the files.
-     * @param sHandler the object that maintains all the sockets.
-     */
-    public SendFileThread(List<File> files, INodeRMI rmi, Node node, SocketHandler sHandler) {
+	/**
+	 * The constructor method for the SendFileThread.
+	 *
+	 * @param files
+	 *            List of files to be sent
+	 * @param rmi
+	 *            the remote method invocation object used to communicate with
+	 *            the nameServer.
+	 * @param node
+	 *            the node that sends the files.
+	 * @param sHandler
+	 *            the object that maintains all the sockets.
+	 */
+	public SendFileThread(List<File> files, INodeRMI rmi, Node node, SocketHandler sHandler)
+	{
 
-        this.sHandler = sHandler;
-        this.files = files;
-        this.rmi = rmi;
-        this.node = node;
-    }
+		this.sHandler = sHandler;
+		this.files = files;
+		this.rmi = rmi;
+		this.node = node;
+	}
 
-    @Override
-    @SuppressWarnings("empty-statement")
-    public void run() {
-        synchronized (this.node) {
+	@Override
+	public void run()
+	{
+		synchronized (this.node)
+		{
 
-            sHandler.startSendFile();
-            for (File file : files) {
-                try {
-                    String name = file.getName();
-                    String ip = rmi.getPrevIp(file.getAbsolutePath());
-                    System.out.println("filesize_: " + file.length() );
+			sHandler.startSendFile();
+			for (File file : files)
+			{
+				try
+				{
+					String name = file.getName();
+					String ip = rmi.getPrevIp(file.getAbsolutePath());
 
-                    int hash = rmi.getHash(name);
-                    System.out.println(node.shutting_down);
-                    if (node.shutting_down || ip.equals(rmi.getIp(this.node.getCurrent()))) {
-                        ip = rmi.getIp(this.node.getPrev());
-                    }
-                    if (node.shutting_down || !ip.equals(rmi.getIp(this.node.getCurrent()))) {
-                        InetAddress IPAddress = InetAddress.getByName(ip);
+					int hash = rmi.getHash(name);
 
-                        while (rmi.getFileNode(hash) != node.getCurrent() && this.rmi.getBusyState(rmi.getFileNode(hash)))
-                        {
-                            try {
-                                System.out.println("bussy");
-                                //this.rmi.
-                                Thread.sleep(1000);
-                            } catch (InterruptedException ex) {
-                                Logger.getLogger(SendFileThread.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }
-                        node.setMapUpdate(true);
-                        this.rmi.setbusy(node.getCurrent(), true);
-                        node.is_receiving = true;
-                        String jsonString = createJsonString(file.getName(), file.length());
-                        System.out.print(jsonString);
-                        sendUdp(jsonString, IPAddress);
+					if (node.isShuttingDown || ip.equals(rmi.getIp(this.node.getCurrent())))
+					{
+						ip = rmi.getIp(this.node.getPrev());
+					}
+					if (node.isShuttingDown || !ip.equals(rmi.getIp(this.node.getCurrent())))
+					{
+						InetAddress IPAddress = InetAddress.getByName(ip);
 
-                        // receive
-                        TCPSend sendFile = new TCPSend(this.sHandler);
-                        sendFile.send(file);
-                        this.node.removeOwnerList(file.getName());
-                        node.setMapUpdate(false);
-                        
-                        
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    try {
-                        node.failure(this.rmi.getPrevious(file.getName()));
-                    } catch (RemoteException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-                
-            }
-            try
+						// wait untill the other party is no longer busy.
+						while (rmi.getFileNode(hash) != node.getCurrent()
+								&& this.rmi.getBusyState(rmi.getFileNode(hash)))
+						{
+							try
+							{
+								System.out.println("busy");
+								// this.rmi.
+								Thread.sleep(1000);
+							} catch (InterruptedException ex)
+							{
+								Logger.getLogger(SendFileThread.class.getName()).log(Level.SEVERE, null, ex);
+							}
+						}
+						
+						node.setMapUpdating(true);
+						this.rmi.setbusy(node.getCurrent(), true);
+						node.isReceiving = true;
+						String jsonString = createJsonString(file.getName(), file.length());
+						
+						sendUdp(jsonString, IPAddress);
+
+						startSendFile(file);
+
+					}
+				} catch (IOException e)
+				{
+					e.printStackTrace();
+					try
+					{
+						node.failure(this.rmi.getPrevious(file.getName()));
+					} catch (RemoteException e1)
+					{
+						e1.printStackTrace();
+					}
+				}
+
+			}
+			try
 			{
 				this.rmi.setbusy(node.getCurrent(), false);
 			} catch (RemoteException e)
@@ -104,99 +120,106 @@ public class SendFileThread extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-            //this.node.setBussy(false);
-            node.is_receiving = false;
-            sHandler.stopSendFile();
-            
-        }
+			// this.node.setBussy(false);
+			node.isReceiving = false;
+			sHandler.stopSendFile();
 
-    }
+		}
 
-    /**
-     * Send server a message with the name of a file, requesting the ip of the
-     * node that needs to be sent to. return null if
-     *
-     * @param name the name of file
-     * @return the ip of the client node.
-     *
-     * @throws RemoteException Something went wrong while using the remote
-     * method invocation to the name server.
-     */
-    private String getIP(String name) throws RemoteException {
-        String ip = rmi.getPrevIp(name);
+	}
 
-        int hash = rmi.getHash(name);
-        if (ip.equals(rmi.getIp(this.node.getCurrent()))) {
-            ip = rmi.getIp(this.node.getPrev());
-        }
+	/**
+	 * Send server a message with the name of a file, requesting the ip of the
+	 * node that needs to be sent to. return null if
+	 *
+	 * @param name
+	 *            the name of file
+	 * @return the ip of the client node.
+	 *
+	 * @throws RemoteException
+	 *             Something went wrong while using the remote method invocation
+	 *             to the name server.
+	 */
+	private String getIP(String name) throws RemoteException
+	{
+		String ip = rmi.getPrevIp(name);
 
-        return ip;
-    }
+		int hash = rmi.getHash(name);
+		if (ip.equals(rmi.getIp(this.node.getCurrent())))
+		{
+			ip = rmi.getIp(this.node.getPrev());
+		}
 
-    /**
-     * Create the string that needs to be sent to the other node.
-     *
-     * @param name the name of the file.
-     * @param size the size of the file.
-     * @return the string for the user, on failure returns an empty string.
-     */
-    private String createJsonString(String name, long size) {
-        try {
-        	System.out.println("filesize: " + size);
-            JSONObject jobj = new JSONObject();
-            jobj.put("type", "file");
-            jobj.put("data", name);
-            jobj.put("size", size);
+		return ip;
+	}
 
-            return jobj.toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+	/**
+	 * Create the string that needs to be sent to the other node.
+	 *
+	 * @param name
+	 *            the name of the file.
+	 * @param size
+	 *            the size of the file.
+	 * @return the string for the user, on failure returns an empty string.
+	 */
+	private String createJsonString(String name, long size)
+	{
+		try
+		{
+			System.out.println("filesize: " + size);
+			JSONObject jobj = new JSONObject();
+			jobj.put("type", "file");
+			jobj.put("data", name);
+			jobj.put("size", size);
 
-        return "";
-    }
+			return jobj.toString();
+		} catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
 
-    private String createJsonInfo() {
-        try {
-            JSONObject jobj = new JSONObject();
-            jobj.put("type", "info");
+		return "";
+	}
 
-            return jobj.toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+	/**
+	 * send UDP message to node that receives file.
+	 *
+	 * @param data
+	 *            the data that needs to be sent.
+	 * @param ip
+	 *            the IP address of the receiving node.
+	 */
+	private void sendUdp(String data, InetAddress ip)
+	{
+		byte[] sendData = new byte[1024];
 
-        return "";
-    }
+		try
+		{
+			DatagramSocket clientSocket = this.sHandler.getUdpSocket();
 
-    /**
-     * send UDP message to node that receives file.
-     *
-     * @param data the data that needs to be sent.
-     * @param ip the IP address of the receiving node.
-     */
-    private void sendUdp(String data, InetAddress ip) {
-        byte[] sendData = new byte[1024];
+			sendData = data.toString().getBytes();
+			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ip, 6789);
 
-        try {
-            DatagramSocket clientSocket = this.sHandler.getUdpSocket();
-
-            sendData = data.toString().getBytes();
-            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ip, 6789);
-
-            clientSocket.send(sendPacket);
-
-            /*
-			 * DatagramPacket receivePacket = new DatagramPacket(receiveData,
-			 * receiveData.length); clientSocket.receive(receivePacket); String
-			 * modifiedSentence = new String(receivePacket.getData());
-			 * System.out.println("FROM SERVER:" + modifiedSentence);
-             */
-            // clientSocket.close();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
+			clientSocket.send(sendPacket);
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Start sending the file.
+	 * 
+	 * @param file the file that has to be sent
+	 * @throws IOException there went something wrong while sending the file.
+	 */
+	private void startSendFile(File file) throws IOException
+	{
+		TCPSend sendFile = new TCPSend(this.sHandler);
+		sendFile.send(file);
+		this.node.removeOwnerList(file.getName());
+		node.setMapUpdating(false);
+	}
 
 }

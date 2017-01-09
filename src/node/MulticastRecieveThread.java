@@ -3,16 +3,26 @@ package node;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
-import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 import org.json.JSONObject;
 import org.json.JSONException;
 
+/**
+ * The thread that listens for multicast messages and handles accordingly.
+ */
 public class MulticastRecieveThread extends Thread
 {
-
+	/**
+	 * The object that maintains all sockets.
+	 */
 	private SocketHandler sHandler;
+	/**
+	 * The group address of the multicast.
+	 */
 	private String addr;
+	/**
+	 * The node that runs the project.
+	 */
 	private Node node;
 
 	/**
@@ -32,6 +42,7 @@ public class MulticastRecieveThread extends Thread
 		this.sHandler = sHandler;
 	}
 
+	@Override
 	public void run()
 	{
 		try
@@ -86,8 +97,7 @@ public class MulticastRecieveThread extends Thread
 		switch (type)
 		{
 		case "next" :
-			name = jobj.getString("data");
-			node.controlFiles();
+			name = jobj.getString("data");			
 			break;
 		case "new" :
 			name = jobj.getString("data");

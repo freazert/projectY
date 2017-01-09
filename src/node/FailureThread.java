@@ -12,19 +12,31 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author Kris
+ * The Thread that checks if the next node is still reachable. it pings every
+ * 10s to the next node and when the node doesn't reply runs the failure
+ * sequence.
  */
 public class FailureThread extends Thread
 {
-
+	/**
+	 * The node that runs the project
+	 */
 	private Node node;
-	private INodeRMI nodeRMI;
+	/**
+	 * The remote method invocation object that invokes methods on the server.
+	 */
+	private INodeRMI rmi;
 
-	public FailureThread(Node node, INodeRMI nodeRMI)
+	/**
+	 * The constructor of the FailureThread.
+	 * 
+	 * @param node The node that runs the project.
+	 * @param rmi the remote method invocation object that invokes methds on the server.
+	 */
+	public FailureThread(Node node, INodeRMI rmi)
 	{
 		this.node = node;
-		this.nodeRMI = nodeRMI;
+		this.rmi = rmi;
 	}
 
 	@Override
@@ -34,10 +46,10 @@ public class FailureThread extends Thread
 		{
 			try
 			{
-				if (!node.shutting_down)
+				if (!node.isShuttingDown)
 				{
 					int nextNode = node.getNext();
-					InetAddress inet = InetAddress.getByName(nodeRMI.getIp(nextNode));
+					InetAddress inet = InetAddress.getByName(rmi.getIp(nextNode));
 					boolean reachable = inet.isReachable(10000);
 					System.out.print(reachable);
 

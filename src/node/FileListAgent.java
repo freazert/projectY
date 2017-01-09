@@ -8,24 +8,45 @@ import java.util.Observable;
 import java.util.TreeMap;
 import java.io.File;
 
-public class FileListAgent  implements Runnable, Serializable{
-    private TreeMap<String, Boolean> newSystemFileList;
-    private FileList fileList;
+/**
+ * The agent that passes the file list to all the nodes.
+ */
+public class FileListAgent implements Runnable, Serializable
+{
+	/**
+	 * A Treemap representation of the list of files present in the system.
+	 */
+	private TreeMap<String, Boolean> newSystemFileList;
+	/**
+	 * A list of files present in the system
+	 */
+	private FileList fileList;
 
-    public FileListAgent(FileList fileList) {
-        this.newSystemFileList = new TreeMap<>();
-        this.fileList = fileList;
-    }
+	/**
+	 * The constructor method for the file list agent.
+	 * 
+	 * @param fileList
+	 *            A list of all the files in the system.
+	 */
+	public FileListAgent(FileList fileList)
+	{
+		this.newSystemFileList = new TreeMap<>();
+		this.fileList = fileList;
+	}
 
-    public void run() {
-    	newSystemFileList = fileList.getFileList();
+	@Override
+	public void run()
+	{
+		newSystemFileList = fileList.getFileList();
+	}
 
-    	
-    	//System.out.println("\n\nRUN getFileList()>"+newSystemFileList);
-    }
-
-    public TreeMap<String, Boolean> getnewSystemFileList() {
-    	//System.out.println("\n\ngetnewSystemFileList()>"+newSystemFileList);
-        return newSystemFileList;
-    }
+	/**
+	 * Get the treemap representation of all files present in the system.
+	 * 
+	 * @return a treemap representation of the file list.
+	 */
+	public TreeMap<String, Boolean> getnewSystemFileList()
+	{
+		return newSystemFileList;
+	}
 }

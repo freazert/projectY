@@ -43,9 +43,9 @@ public class TCPSend
 	/**
 	 * send a file over the TCP connection
 	 *
-	 * @param fileName
-	 *            the name of the file that needs to be sent.
-	 * @throws IOException
+	 * @param file
+	 *            The file that needs to be sent.
+	 * @throws IOException Something went wrong while transferring the file.
 	 */
 	public void send(File file) throws IOException
 	{

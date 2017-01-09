@@ -1,7 +1,6 @@
 package node;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.DatagramSocket;
 import java.net.MulticastSocket;
 import java.net.ServerSocket;
@@ -9,19 +8,50 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-public class SocketHandler implements Serializable
+/**
+ * Maintain all socket information
+ */
+public class SocketHandler
 {
+	/**
+	 * The socket used for udp communication
+	 */
 	private DatagramSocket udpSocket;
+	/**
+	 * The second socket used for udp communication
+	 */
 	private DatagramSocket udpInfoSocket;
+	/**
+	 * The socket used for listening to the multicast.
+	 */
 	private MulticastSocket multiSocket;
+	/**
+	 * The socket used for sending to the multicast;
+	 */
 	private DatagramSocket multicastSendSocket;
+	/**
+	 * The socket used to send over tcp.
+	 */
 	private ServerSocket serverSocket;
+	/**
+	 * The socket used to receive over tcp.
+	 */
 	private Socket receiveTCPSocket;
-
+	/**
+	 * The port number to initialize all sockets.
+	 */
 	private int tcpPort, udpPort, multicastPort, udpInfoPort;
 
-	// private multicastAddress
-
+	/**
+	 * The constructor method for the socket handler.
+	 * 
+	 * @param tcpPort
+	 *            The port for tcp
+	 * @param udpPort
+	 *            The port for udp
+	 * @param multicastPort
+	 *            The port for multicast
+	 */
 	public SocketHandler(int tcpPort, int udpPort, int multicastPort)
 	{
 		this.tcpPort = tcpPort;
@@ -40,27 +70,41 @@ public class SocketHandler implements Serializable
 	}
 
 	// getters
-
+	/**
+	 * Get the udp socket.
+	 * 
+	 * @return The udp socket.
+	 */
 	public DatagramSocket getUdpSocket()
 	{
 		return udpSocket;
 	}
-	
-	public DatagramSocket getUdpInfoSocket()
-	{
-		return udpInfoSocket;
-	}
 
+	/**
+	 * Get the socket for listening to the multicast
+	 * 
+	 * @return the socket for listening to the multicast.
+	 */
 	public MulticastSocket getMultiSocket()
 	{
 		return multiSocket;
 	}
 
+	/**
+	 * Get the socket to send over TCP
+	 * 
+	 * @return the socket to send over TCP
+	 */
 	public ServerSocket getServerSocket()
 	{
 		return serverSocket;
 	}
 
+	/**
+	 * Get the socket to send to the multicast group
+	 * 
+	 * @return the socket to send to the multicast group
+	 */
 	public DatagramSocket getMulticastSendSocket()
 	{
 		if (this.multicastSendSocket == null)
@@ -70,11 +114,19 @@ public class SocketHandler implements Serializable
 
 	// startup
 
+	/**
+	 * Get the socket to receive TCP from.
+	 * 
+	 * @return the socket to receive TCP from
+	 */
 	public Socket getReceiveTCPSocket()
 	{
 		return receiveTCPSocket;
 	}
 
+	/**
+	 * Start running the UDP socket.
+	 */
 	public void startUdpSocket()
 	{
 		try
@@ -86,16 +138,10 @@ public class SocketHandler implements Serializable
 			e.printStackTrace();
 		}
 	}
-	
-	public void startUdpInfoSocket()
-	{
-		try {
-			this.udpInfoSocket = new DatagramSocket(this.udpInfoPort);
-		} catch (SocketException e) {
-			e.printStackTrace();
-		}
-	}
 
+	/**
+	 * Start running the TCP socket.
+	 */
 	public void startServerSocket()
 	{
 		try
@@ -109,6 +155,9 @@ public class SocketHandler implements Serializable
 		}
 	}
 
+	/**
+	 * Start the socket to listen on multicast.
+	 */
 	public void startMulticastSocket()
 	{
 		try
@@ -121,6 +170,9 @@ public class SocketHandler implements Serializable
 		}
 	}
 
+	/**
+	 * Start the socket to send over multicast.
+	 */
 	public void startMulticastSendSocket()
 	{
 		try
@@ -133,41 +185,43 @@ public class SocketHandler implements Serializable
 		}
 	}
 
+	/**
+	 * Start the socket to receive over TCP
+	 * 
+	 * @param ip
+	 *            the ip of the sender.
+	 */
 	public void startReceiveTCPSocket(String ip)
 	{
 		try
 		{
-			//if(this.receiveTCPSocket != null )
-				//this.receiveTCPSocket.close();
 			this.closeServerSocket();
-			
+
 			System.out.println("tcp port " + this.tcpPort);
 			this.receiveTCPSocket = new Socket(ip, this.tcpPort);
 		} catch (UnknownHostException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	// close
 
+	/**
+	 * Close the udp socket
+	 */
 	public void closeUdpSocket()
 	{
 		if (this.udpSocket != null && !this.udpSocket.isClosed())
 			this.udpSocket.close();
 	}
-	
-	public void closeUdpInfoSocket()
-	{
-		if (this.udpInfoSocket != null && ! this.udpInfoSocket.isClosed())
-			this.udpInfoSocket.close();
-	}
 
+	/**
+	 * Close the TCP send socket.
+	 */
 	public void closeServerSocket()
 	{
 		try
@@ -181,18 +235,27 @@ public class SocketHandler implements Serializable
 		}
 	}
 
+	/**
+	 * Close the socket for listening on multicast.
+	 */
 	public void closeMulticastSocket()
 	{
 		if (this.multiSocket != null && !this.multiSocket.isClosed())
 			this.multiSocket.close();
 	}
 
+	/**
+	 * Close the socket for sending over multcast.
+	 */
 	public void closeMulticastSendSocket()
 	{
 		if (this.multicastSendSocket != null && !this.multicastSendSocket.isClosed())
 			this.multicastSendSocket.close();
 	}
 
+	/**
+	 * Close the socket to receive over TCP
+	 */
 	public void closeReceiveTCPSocket()
 	{
 		try
@@ -205,6 +268,9 @@ public class SocketHandler implements Serializable
 		}
 	}
 
+	/**
+	 * Start receiving over multicast.
+	 */
 	public void startMulticastReceive()
 	{
 		this.closeMulticastSendSocket();
@@ -214,7 +280,6 @@ public class SocketHandler implements Serializable
 
 	/**
 	 * Start TCP serverSocket and return value of server socket.
-	 * 
 	 */
 	public void startSendFile()
 	{
@@ -233,6 +298,9 @@ public class SocketHandler implements Serializable
 		this.closeServerSocket();
 	}
 
+	/**
+	 * Start &amp; stop the correct sockets to start sending over multicast.
+	 */
 	public void startMulticastSend()
 	{
 		this.closeMulticastSocket();
@@ -240,11 +308,4 @@ public class SocketHandler implements Serializable
 		this.startMulticastSendSocket();
 
 	}
-	
-	public void startInfo()
-	{
-		this.closeUdpInfoSocket();
-		this.startUdpInfoSocket();
-	}
-
 }
